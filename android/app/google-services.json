@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "918100630248",
+    "project_id": "orderapp-652bc",
+    "storage_bucket": "orderapp-652bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:918100630248:android:8644102f60e42f997cc75d",
+        "android_client_info": {
+          "package_name": "com.navigation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "918100630248-5h310953eb0684rr9d1809g0cuv5ggf4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfAZnY3OfXSN_qhf_t4NBfK0vPSD4LXr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "918100630248-5h310953eb0684rr9d1809g0cuv5ggf4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

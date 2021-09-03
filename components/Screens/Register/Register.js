@@ -1,12 +1,13 @@
 import React,{useContext} from 'react';
-import { StyleSheet, Text, View, Button, SafeAreaView, TextInput, Image } from 'react-native'
+import { Button, SafeAreaView, StyleSheet, Text, View, Image,TextInput, Alert } from 'react-native';
 import Banner from '../../../img/banner.jpg';
 import { AuthContext } from '../../Routes/AuthProvider';
 
-const LoginScreen = ({navigation}) => {
-    const {login} = useContext(AuthContext);
+export default function RegisterScreen({navigation}) {
+    const {register} = useContext(AuthContext);
     const [email, onChangeEmail] = React.useState("");
     const [password, onChangePass] = React.useState("");
+    const [confirmPassword, onChangeconfirmPassword] = React.useState("");
 
     return (
         <SafeAreaView style={{flex: 1, flexDirection: 'row'}}>
@@ -16,30 +17,39 @@ const LoginScreen = ({navigation}) => {
                 </View>
                 <View style={styles.Input}>
                     <View style={styles.input1}>
-                        <Text style={styles.text}>Phone</Text>
+                        <Text style={styles.text}>Email</Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={(text)=> onChangeEmail(text)}
                             value={email}
-                            placeholder="Enter your email..."
-                            keyboardType="email-address"
+                            placeholder="Nhập email..."
                         />
                     </View>
                     <View>
-                        <Text style={styles.text}>Password</Text>
+                        <Text style={styles.text}>Mật khẩu</Text>
                         <TextInput
                             style={styles.input}
                             onChangeText={(text)=> onChangePass(text)}
                             value={password}
-                            placeholder="Enter your password..."
+                            placeholder="Nhập mật khẩu..."
+                            secureTextEntry={true}
+                        />
+                    </View>
+                    <View>
+                        <Text style={styles.text}>Nhập lại mật khẩu</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={(text)=> onChangeconfirmPassword(text)}
+                            value={confirmPassword}
+                            placeholder="Nhập lại mật khẩu..."
                             secureTextEntry={true}
                         />
                     </View>
                     <View style={styles.wrapButton}>
                         <View style={styles.button}>
-                            <Button title="Login" onPress={() => login(email, password)}/>
-                            <Text style={{padding: 15, fontSize: 17, textAlign:'center'}}>Need an account?</Text>
-                            <Button title="Register" onPress={()=>navigation.navigate('Register')} />
+                            <Button title="Đăng ký" onPress={() => register(email, password)} />
+                            <Text style={{padding: 15, fontSize: 17, textAlign:'center'}}>Đã có tài khoản?</Text>
+                            <Button title="Đăng nhập" onPress={()=>navigation.navigate("Login")} />
                         </View>
                     </View>
                 </View>
@@ -48,6 +58,7 @@ const LoginScreen = ({navigation}) => {
     )
 }
 const styles = StyleSheet.create({
+
     bannerWrapp: {
         width: '100%',
         flex: 2,
@@ -59,7 +70,7 @@ const styles = StyleSheet.create({
     Input: {
         width: '100%',
         backgroundColor: 'white',
-        flex: 3,
+        flex: 5,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         top: -25,
@@ -89,6 +100,3 @@ const styles = StyleSheet.create({
           marginTop: 3,
       }
 });
-export default LoginScreen;
-
-

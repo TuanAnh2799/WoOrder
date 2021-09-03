@@ -12,6 +12,10 @@ target 'Navigation' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'NavigationTests' do
     inherit! :complete
     # Pods for testing
