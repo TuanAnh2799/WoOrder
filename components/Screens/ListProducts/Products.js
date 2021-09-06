@@ -12,7 +12,6 @@ import {
 import {styles} from './styles';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import {TouchableRipple} from 'react-native-paper';
 
 export default function ProductsScreen() {
   {

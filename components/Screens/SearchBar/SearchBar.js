@@ -5,13 +5,13 @@ import firestore from '@react-native-firebase/firestore';
 
 
 export default function SearchScreen({navigation}) {
-    const [searchQuery, setSearchQuery] = React.useState('');
+
     const [products, setProducts] = useState([]);
     const [searchFillter, setSearchFillter] = useState([]);
 
     const Search =(textSearch)=>{
-        const fillter = products.filter( i =>
-            i.name.toLowerCase().includes(textSearch.toLowerCase()));
+        const fillter = products.filter( e =>
+            e.name.toLowerCase().includes(textSearch.toLowerCase()));
             setSearchFillter(fillter);
     }
 
