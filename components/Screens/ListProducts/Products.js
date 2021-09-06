@@ -1,11 +1,23 @@
-import React,{useState,useEffect} from 'react';
-import { SafeAreaView, StyleSheet, Text, View,Image,FlatList,TouchableNativeFeedback, ActivityIndicator } from 'react-native';
-import { styles } from './styles';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  FlatList,
+  TouchableNativeFeedback,
+  ActivityIndicator,
+} from 'react-native';
+import {styles} from './styles';
+import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import {TouchableRipple} from 'react-native-paper';
 
-
-    const productss = [
+export default function ProductsScreen() {
+  {
+    /**
+    const products = [
     {
         id: 'guong-giay',
         name: 'Gương giấy',
@@ -42,78 +54,111 @@ import firestore from '@react-native-firebase/firestore';
     },
     
 ];
+    */
+  }
 
-
-
-export default function ProductsScreen() {
-
-  const [loading, setLoading] = useState(true); 
-  const [products, setProducts] = useState([]); 
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
 
   const navigation = useNavigation();
 
-    useEffect(() => {
-      const subscriber = firestore()
-        .collection('Products')
-        .onSnapshot(querySnapshot => {
-          const products = [];
-    
-          querySnapshot.forEach(documentSnapshot => {
-            products.push({
-              ...documentSnapshot.data(),
-              key: documentSnapshot.id,
-            });
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('Products')
+      .onSnapshot(querySnapshot => {
+        const products = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          products.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
           });
-          console.log(products)
-          setProducts(products);
-          setLoading(false);
         });
-    
-      // Unsubscribe from events when no longer in use
-      return () => subscriber();
-    }, []);
+        setProducts(products);
+        setLoading(false);
+      });
 
-      if (loading) {
-        return <ActivityIndicator size={24}/>;
-      }
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  }, []);
 
-    return (
-        <SafeAreaView style={{flex: 1}}>
-                <View style={styles.listProduct}> 
-                <FlatList
-                  data={productss}
-                  renderItem={({item}) => (
-                  <TouchableNativeFeedback onPress={ ()=> navigation.navigate("Details",{
-                    id: item.id,
-                    })}>
-                    <View style={styles.item}>
-                      <View style={styles.wrappIMG}>
-                          <Image source={{uri: item.url}} style={styles.image} resizeMode={'stretch'} />
-                            </View>
-                      <View style={styles.wrappInfo}>
-                                    <View>
-                                        <Text style={styles.name}>{item.name}</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.wrapAvaiable}>
-                                    <View>
-                                        <Text style={styles.price}>Giá: {item.price}</Text>
-                                    </View>
-                                    <View>
-                                    {item.avaiable ?
-                                        (<Text style={styles.textAvaiable}>Có sẵn</Text>):
-                                        (<Text style={styles.textAvaiable}>Hàng đợi</Text>)} 
-                                    </View>                 
-                                </View>
-                                 
-                            </View>
-                        </TouchableNativeFeedback> 
-                        )}
-                        keyExtractor={(item) => item}
-                        numColumns={2}
-                    />
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
+  const renderItem = ({item, index}) => (
+    <View style={styles.item}>
+      <View style={styles.wrappIMG}>
+        <Image
+          source={{uri: item.url}}
+          style={styles.image}
+          resizeMode={'cover'}
+        />
+      </View>
+      <View style={styles.wrappInfo}>
+        <View>
+          <Text style={styles.name}>{item.name}</Text>
+        </View>
+      </View>
+      <View style={styles.wrapAvaiable}>
+        <View>
+          <Text style={styles.price}>Giá: {item.price}</Text>
+        </View>
+        <View>
+          {item.avaiable ? (
+            <Text style={styles.textAvaiable}>Có sẵn</Text>
+          ) : (
+            <Text style={styles.textAvaiable}>Hàng đợi</Text>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+
+  return (
+    <SafeAreaView>
+      <View style={styles.listProduct}>
+        <FlatList
+          data={products}
+          renderItem={({item}) => (
+          <TouchableNativeFeedback onPress={()=>navigation.navigate('Details',
+          {id: item.id,
+          name: item.name,
+          color: item.color,
+          })}>
+            <View style={styles.item}>
+              <View style={styles.wrappIMG}>
+                <Image
+                  source={{uri: item.url}}
+                  style={styles.image}
+                  resizeMode={'stretch'}
+                />
+              </View>
+              <View style={styles.wrappInfo}>
+                <View>
+                  <Text style={styles.name}>{item.name}</Text>
                 </View>
-        </SafeAreaView>
-    )
+              </View>
+              <View style={styles.wrapAvaiable}>
+                <View>
+                  <Text style={styles.price}>Giá: {item.price}</Text>
+                </View>
+                <View>
+                  {item.avaiable ? (
+                    <Text style={styles.textAvaiable}>Có sẵn</Text>
+                  ) : (
+                    <Text style={styles.textAvaiable}>Hàng đợi</Text>
+                  )}
+                </View>
+              </View>
+            
+            </View></TouchableNativeFeedback>
+          )}
+          keyExtractor={(item, index) => index}
+          numColumns={2}
+        />
+      </View>
+    </SafeAreaView>
+  );
 }
-

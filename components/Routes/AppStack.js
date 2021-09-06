@@ -3,55 +3,31 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../Screens/Home/Home';
 import DetailsScreen from '../Screens/Details/Details';
 import ProductsScreen from '../Screens/ListProducts/Products';
-import Icon from 'react-native-vector-icons/Ionicons';
 import CartScreen from '../Screens/Cart/Cart';
-import { NavigationContainer } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
-import { Alert } from 'react-native';
+import HeaderScreen from '../Screens/Header/Header';
+import SearchScreen from '../Screens/SearchBar/SearchBar';
+
 
 const AppStack = createStackNavigator();
 
 export default function AppScreen() {
 
-    const navigation = useNavigation();
-    
     return (
-        <AppStack.Navigator
-            screenOptions={{
-                headerStyle: {
-                    backgroundColor:'#fff',
-                    
-                },
-                headerTintColor:'#000',
-                headerTitleAlign:'center',
-                headerTitleStyle: {
-                    fontWeight:'500'
-                }
-            }}
-        >
-            <AppStack.Screen name="Home" component={HomeScreen} 
-            options={{
-                title: 'Trang chủ',
-                headerLeft: ()=>(
-                    <Icon.Button name="ios-menu"
-                        size={27}
-                        backgroundColor='#fff'
-                        color='#000'
-                        onPress={()=>Alert.alert('Nhắc nhở','Chức năng sẽ có trong thời gian tới!')}
-                    />
-                ),
-                headerRight: ()=>(
-                    <Icon.Button name="cart"
-                        size={27}
-                        backgroundColor='#fff'
-                        color='red'
-                        onPress={()=> navigation.navigate('Cart')}
-                    />
-                )
-            }}/>
+        <AppStack.Navigator>
+            <AppStack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
             <AppStack.Screen name="Products" component={ProductsScreen}/>
-            <AppStack.Screen name="Details" component={DetailsScreen} />
-            <AppStack.Screen name="Cart" component={CartScreen} options={{title:'Giỏ hàng'}}/>
+            <AppStack.Screen name="Header" component={HeaderScreen}/>
+            <AppStack.Screen name="Details" component={DetailsScreen} options={{
+                title:'Chi tiết',
+                headerTitleAlign:'center',
+                }}/>
+            <AppStack.Screen name="Search" component={SearchScreen} options={{
+                title: 'Tìm kiếm',
+                headerTitleAlign:'center',
+            }} />
+            <AppStack.Screen name="Cart" component={CartScreen} options={{
+                title:'Giỏ hàng',headerTitleAlign:'center',
+                }}/>
         </AppStack.Navigator>
     )
 }

@@ -26,7 +26,6 @@ export default function ProfileScreen({navigation}) {
                 </View>
             </View>
 
-
             <View style={styles.userInfo}>
                 <View style={styles.row}>
                     <Icon name="map-marker-radius" size={20} color="#777777"/>
@@ -111,11 +110,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         marginBottom: 25,
     },
-      title: {
+    title: {
         fontSize: 24,
         fontWeight: 'bold',
     },
-      caption: {
+    caption: {
         fontSize: 14,
         lineHeight: 14,
         fontWeight: '500',

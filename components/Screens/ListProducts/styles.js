@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
         width: '100%',
         borderWidth: 1,
         padding: 5,
-        flex: 3,
+        //flex: 3,
       },
       textTitle:{
         fontSize: 20,
@@ -74,6 +74,6 @@ export const styles = StyleSheet.create({
 
     //list product
     listProduct: {
-      flex: 8,
+      //flex: 8,
     },
 });
