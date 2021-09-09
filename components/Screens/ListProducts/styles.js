@@ -7,14 +7,14 @@ export const styles = StyleSheet.create({
         marginVertical: 8,
         marginHorizontal: 10,
         width: '45%',
-        height: 250,
+        height: 270,
         borderRadius: 5,
       },
       name: {
         fontSize: 17,
       },
       price:{
-        fontSize: 16,
+        fontSize: 15,
       },
       wrappIMG:{
         width:'100%',

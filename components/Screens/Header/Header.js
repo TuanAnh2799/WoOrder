@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Alert, StyleSheet, Text, View } from 'react-native'
 import { IconButton, Colors, Title, TouchableRipple } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useDispatch, useSelector } from 'react-redux';
+
+
 
 export default function HeaderScreen() {
 
+    const data = useSelector((state)=> state.cartStore);
     const navigation = useNavigation();
+    
 
     return (
         <View style={styles.wrappHeader}>
@@ -30,15 +35,24 @@ export default function HeaderScreen() {
             <View style={{marginTop: 8}}>
                 <View style={{flexDirection:'row'}}>
                     <Icon name="cart" size={25} color= {Colors.red400} onPress={()=> navigation.navigate('Cart')}/>
-                    <View style={styles.wrappCount}>
-                        <Text style={{fontSize: 13, color:'white', textAlign:'center',top: -2}}>0</Text>
-                    </View>
+                   {
+                       data.length > 0 ?
+                        <View style={styles.wrappCount1}>
+                            <Text style={styles.text}>{data.length}</Text>
+                        </View> 
+                       
+                        : <View style={styles.wrappCount2}>
+                            <Text style={styles.text}>{data.length}</Text>
+                         </View>
+                   }
+
                 </View>
                 
             </View>
         </View>
     )
 }
+
 
 const styles = StyleSheet.create({
     wrappHeader: {
@@ -47,12 +61,28 @@ const styles = StyleSheet.create({
         justifyContent:'space-between',
         backgroundColor:'#fff'
     },
-    wrappCount: {
+    wrappCount1: {
         right: 34,
         top: -8,
-        backgroundColor: 'black',
+        backgroundColor: 'red',
         width:15,
         height:16,
         borderRadius: 5,
+    },
+    wrappCount2: {
+        right: 34,
+        top: -8,
+        backgroundColor: 'rgba(95,197,123,0.8)',
+        width:15,
+        height:16,
+        borderRadius: 5,
+    },
+    text: {
+        fontSize: 13,
+        textAlign:'center',
+        top: -2,
+        color: 'white',
+        fontWeight: 'bold',
     }
+
 })

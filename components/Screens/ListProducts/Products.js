@@ -1,17 +1,21 @@
 import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
   Image,
   FlatList,
   TouchableNativeFeedback,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {styles} from './styles';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Colors } from 'react-native-paper';
+//import { useDispatch, useSelector } from 'react-redux';
+import {connect} from 'react-redux';
 
 export default function ProductsScreen() {
   {
@@ -56,6 +60,8 @@ export default function ProductsScreen() {
     */
   }
 
+  //const data = useSelector((state)=> state.value);
+
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
 
@@ -86,7 +92,8 @@ export default function ProductsScreen() {
     return <ActivityIndicator />;
   }
 
-  const renderItem = ({item, index}) => (
+{/**
+ const renderItem = ({item, index}) => (
     <View style={styles.item}>
       <View style={styles.wrappIMG}>
         <Image
@@ -110,23 +117,33 @@ export default function ProductsScreen() {
           ) : (
             <Text style={styles.textAvaiable}>Hàng đợi</Text>
           )}
+          
         </View>
       </View>
     </View>
   );
+*/}
+ //format tiền sang VNĐ
+
+function formatCash(str) {
+  var money = ''+str;
+  return money.split('').reverse().reduce((prev, next, index) => {
+    return ((index % 3) ? next : (next + '.')) + prev
+  })
+}
 
   return (
     <SafeAreaView>
       <View style={styles.listProduct}>
         <FlatList
           data={products}
-          renderItem={({item}) => (
+          renderItem={({item, index}) => (
           <TouchableNativeFeedback onPress={()=>navigation.navigate('Details',
           {id: item.id,
           name: item.name,
           color: item.color,
           })}>
-            <View style={styles.item}>
+            <View style={styles.item} key={index}>
               <View style={styles.wrappIMG}>
                 <Image
                   source={{uri: item.url}}
@@ -141,7 +158,7 @@ export default function ProductsScreen() {
               </View>
               <View style={styles.wrapAvaiable}>
                 <View>
-                  <Text style={styles.price}>Giá: {item.price}</Text>
+                  <Text style={styles.price}>Giá: {formatCash(item.price)} VNĐ</Text>
                 </View>
                 <View>
                   {item.avaiable ? (
@@ -150,9 +167,14 @@ export default function ProductsScreen() {
                     <Text style={styles.textAvaiable}>Hàng đợi</Text>
                   )}
                 </View>
+
               </View>
-            
-            </View></TouchableNativeFeedback>
+              <Icon name="cart" size={25} color= {Colors.red400} onPress={()=>Alert.alert(
+                'Thông báo',
+                'Đã thêm vào giỏ hàng.'
+              )}/>
+            </View>
+            </TouchableNativeFeedback>
           )}
           keyExtractor={(item, index) => index}
           numColumns={2}

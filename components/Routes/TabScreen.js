@@ -27,7 +27,6 @@ export default function TabScreen() {
             size = focused ? 25 : 20;
         }
 
-        // You can return any component that you like here!
         return <FontAwesome5 name={iconName} size={size} color={color} />;
       },
     })}
