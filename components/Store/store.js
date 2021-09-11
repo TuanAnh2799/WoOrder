@@ -1,5 +1,7 @@
-import {createStore} from 'redux';
+import { createStore } from 'redux';
 
-import {cartItems} from './reducer';
+import cartItemsReducer from './reducer';
 
- export const store = createStore(cartItems);
+const store = createStore(cartItemsReducer);
+
+export default store;

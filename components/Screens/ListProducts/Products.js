@@ -14,53 +14,14 @@ import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from 'react-native-paper';
-//import { useDispatch, useSelector } from 'react-redux';
-import {connect} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { ADD_TO_CART } from '../../Store/reducer';
+
 
 export default function ProductsScreen() {
-  {
-    /**
-    const products = [
-    {
-        id: 'guong-giay',
-        name: 'Gương giấy',
-        url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxIoW865-QRwsmk2KmQL1Y0whX80_43qfodkkBCQDypRzNoJcURJE2aUX4_uM&usqp=CAc',
-        price: 80000,
-        made: 'Trung Quốc',
-        avaiable: false,
-        color: ['Trắng',
-            'Đen',
-            'Vàng']
-            ,
-        type: 'Tiêu dùng'
-    },
-    {
-        id: 'the-nho-256',
-        name: 'Thẻ nhớ 256 GB',
-        url: 'https://tuanphong.vn/pictures/thumb/2017/10/1508154361-618-the-nho-256gb-microsdxc-sandisk-ultra-a1-2017-420x420.jpg',
-        price: 100000,
-        made: 'Trung Quốc',
-        avaiable: false,
-        color: {
-        },
-        type: 'Điện tử'
-    },
-    {
-        id: 'xiao-mi-note-10-pro',
-        name: 'XiaoMi Note 10',
-        url: 'https://cdn.tgdd.vn/Products/Images/42/222758/xiaomi-redmi-note-10-xanh-duong-1-org.jpg',
-        price: 8000000,
-        made: 'Trung Quốc',
-        avaiable: false,
-        color: ['Đỏ, Xanh, Vàng'],
-        type: 'Điện tử'
-    },
-    
-];
-    */
-  }
 
-  //const data = useSelector((state)=> state.value);
+  const dispatch = useDispatch();
+  const addItemToCart = (item) => dispatch({ type: ADD_TO_CART, payload: item });
 
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
@@ -169,10 +130,7 @@ function formatCash(str) {
                 </View>
 
               </View>
-              <Icon name="cart" size={25} color= {Colors.red400} onPress={()=>Alert.alert(
-                'Thông báo',
-                'Đã thêm vào giỏ hàng.'
-              )}/>
+              <Icon name="cart" size={25} color= {Colors.red400} onPress={ () => addItemToCart(item)}/>
             </View>
             </TouchableNativeFeedback>
           )}

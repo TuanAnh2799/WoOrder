@@ -1,16 +1,16 @@
 import React from 'react';
 import { AuthProvider } from './AuthProvider';
 import Routes from './Routes';
-import {Provider} from 'react-redux';
-import { store } from '../Store/store';
+import { Provider as StoreProvider } from 'react-redux';
+import store from '../Store/store';
 
 const Providers = () => {
   return (
-    <Provider store={store}>
+    <StoreProvider store={store}>
       <AuthProvider>
-      <Routes />
-    </AuthProvider>
-    </Provider>
+        <Routes />
+      </AuthProvider>
+    </StoreProvider>
     
   );
 }

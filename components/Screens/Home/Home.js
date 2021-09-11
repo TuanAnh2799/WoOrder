@@ -9,10 +9,10 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <View>
+        <HeaderScreen/>
+      </View>
     <ScrollView>
-        <View>
-          <HeaderScreen/>
-        </View>
         <View>
           <SlideScreen/>
         </View>
