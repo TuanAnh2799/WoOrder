@@ -15,7 +15,7 @@ export default function ProfileScreen({navigation}) {
                     <Avatar.Image source = {{
                         uri: 'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg'
                     }} 
-                    size = {80} />
+                    size = {85} />
                     <View style={{marginLeft: 20}}>
                         <Title style = {[styles.title, {marginTop: 15, marginBottom: 5}]}>
                             Tiểu Anh Anh
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     userInfoSection: {
-        paddingHorizontal: 30,
-        marginBottom: 25,
+        paddingHorizontal: 15,
+        marginBottom: 30,
     },
     title: {
         fontSize: 24,
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         marginBottom: 10,
+        marginLeft:10
     },
     infoBoxWrapper: {
         borderBottomColor: '#dddddd',

@@ -20,16 +20,17 @@ export default function RegisterScreen({navigation}) {
                 <View style={styles.bannerWrapp}>
                     <Image source={Banner} style={styles.banner}/>
                 </View>
-                <View>
-                    <Text style={styles.text}>Tên tài khoản</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(text)=> onChangeUserName(text)}
-                        value={username}
-                        placeholder="Tên tài khoản..."
-                    />
-                </View>
+                
                 <View style={styles.Input}>
+                    <View style={{marginTop: 35}}>
+                        <Text style={styles.text}>Tên tài khoản</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={(text)=> onChangeUserName(text)}
+                            value={username}
+                            placeholder="Tên tài khoản..."
+                        />
+                    </View>
                     <View style={styles.input1}>
                         <Text style={styles.text}>Email</Text>
                         <TextInput
@@ -106,13 +107,13 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         padding: 10,
         borderRadius: 5,
-      },
-      input1:{
-        paddingTop: 40,
-      },
-      text: {
-          fontSize: 17,
-          left: 10,
-          marginTop: 3,
-      }
+    },
+    input1:{
+        paddingTop: 4,
+    },
+    text: {
+        fontSize: 17,
+        left: 10,
+        marginTop: 3,
+    }
 });
