@@ -51,9 +51,9 @@ export default function SearchScreen({navigation}) {
                         name: item.name,
                         color: item.color
                     })}>
-                        <View style={styles.wrapProduct}>
+                        <View style={styles.wrapProduct} key={index}>
                             <Avatar.Image source = {{
-                                    uri: item.url
+                                    uri: item.url[1]
                                 }} 
                                 size = {60} />
                                 <View style={{marginLeft: 20}}>

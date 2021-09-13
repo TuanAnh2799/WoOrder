@@ -100,14 +100,18 @@ function formatCash(str) {
           data={products}
           renderItem={({item, index}) => (
           <TouchableNativeFeedback onPress={()=>navigation.navigate('Details',
-          {id: item.id,
-          name: item.name,
-          color: item.color,
+          { id: item.id,
+            name: item.name,
+            color: item.color,
+            url: item.url,
+            price: item.price,
+            avaiable: item.avaiable,
+            info: item.info
           })}>
             <View style={styles.item} key={index}>
               <View style={styles.wrappIMG}>
                 <Image
-                  source={{uri: item.url}}
+                  source={{uri: item.url[1]}}
                   style={styles.image}
                   resizeMode={'stretch'}
                 />

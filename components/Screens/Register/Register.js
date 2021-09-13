@@ -1,19 +1,33 @@
-import React,{useContext} from 'react';
+import React,{useContext,useState, useEffect} from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, View, Image,TextInput, Alert } from 'react-native';
 import Banner from '../../../img/banner.jpg';
 import { AuthContext } from '../../Routes/AuthProvider';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export default function RegisterScreen({navigation}) {
+
     const {register} = useContext(AuthContext);
-    const [email, onChangeEmail] = React.useState("");
-    const [password, onChangePass] = React.useState("");
-    const [confirmPassword, onChangeconfirmPassword] = React.useState("");
+
+    const [username, onChangeUserName] = useState("");
+    const [email, onChangeEmail] = useState("");
+    const [password, onChangePass] = useState("");
+    const [confirmPassword, onChangeconfirmPassword] = useState("");
 
     return (
         <SafeAreaView style={{flex: 1, flexDirection: 'row'}}>
             <View style={{flex: 1}}>
                 <View style={styles.bannerWrapp}>
                     <Image source={Banner} style={styles.banner}/>
+                </View>
+                <View>
+                    <Text style={styles.text}>Tên tài khoản</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(text)=> onChangeUserName(text)}
+                        value={username}
+                        placeholder="Tên tài khoản..."
+                    />
                 </View>
                 <View style={styles.Input}>
                     <View style={styles.input1}>
@@ -47,7 +61,9 @@ export default function RegisterScreen({navigation}) {
                     </View>
                     <View style={styles.wrapButton}>
                         <View style={styles.button}>
-                            <Button title="Đăng ký" onPress={() => register(email, password)} />
+                            <Button title="Đăng ký" onPress={() => 
+                                register(email, password,username)
+                                }/>
                             <Text style={{padding: 15, fontSize: 17, textAlign:'center'}}>Đã có tài khoản?</Text>
                             <Button title="Đăng nhập" onPress={()=>navigation.navigate("Login")} />
                         </View>
