@@ -1,13 +1,28 @@
-import React, {useContext} from 'react';
+import React, {useContext,useEffect, useState} from 'react';
 import { View, Text, SafeAreaView, StyleSheet } from 'react-native'
 import { Avatar, Title, Caption, TouchableRipple } from 'react-native-paper';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext } from '../../Routes/AuthProvider';
+import firestore from '@react-native-firebase/firestore';
+
 
 export default function ProfileScreen({navigation}) {
 
-  const {logout} = useContext(AuthContext);
+  const {logout,user} = useContext(AuthContext);
+  const [userInfo,setUserInfo] = useState([]);
+  console.log(user.uid);
 
+  useEffect(() => {
+    const getData = async() => {
+      const data = await firestore()
+      .collection('Users')
+      .doc(user.uid)
+      .get();
+      setUserInfo(data);
+    } 
+    getData();
+  }, [])
+  console.log('User Inffo: ',userInfo);
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.userInfoSection}>
@@ -16,9 +31,9 @@ export default function ProfileScreen({navigation}) {
                         uri: 'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg'
                     }} 
                     size = {85} />
-                    <View style={{marginLeft: 20}}>
+                    <View style={{marginLeft: 20,width: '63%'}}>
                         <Title style = {[styles.title, {marginTop: 15, marginBottom: 5}]}>
-                            Tiểu Anh Anh
+                            {userInfo._data.name}
                         </Title>
                         <Caption style={styles.caption}>@Phàm nhân</Caption>
                     </View>
@@ -37,7 +52,7 @@ export default function ProfileScreen({navigation}) {
                 </View>
                 <View style={styles.row}>
                     <Icon name="email" size={20} color="#777777"/>
-                    <Text style={{fontSize: 15, marginLeft: 10,}}>27tuananh99@gmail.com</Text>
+                    <Text style={{fontSize: 15, marginLeft: 10,}}>{userInfo._data.email}</Text>
                 </View>
             </View>
 
@@ -123,7 +138,7 @@ const styles = StyleSheet.create({
       justifyContent:'center',
       fontSize: 30,
       paddingTop: '4%',
-      paddingLeft: '20%',
+     // paddingLeft: '20%',
     },
     row: {
         flexDirection: 'row',

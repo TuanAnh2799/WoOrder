@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
         width: '45%',
         height: 270,
         borderRadius: 5,
+        marginTop: 10
       },
       name: {
         fontSize: 17,

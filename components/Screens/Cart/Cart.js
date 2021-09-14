@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View ,FlatList, Image,TouchableOpacity, TouchableWithoutFeedback, Button } from 'react-native'
+import { StyleSheet, Text, View ,FlatList, Image,TouchableOpacity, TouchableWithoutFeedback, Button, Alert } from 'react-native'
 import Sperator from '../Sperator/Sperator';
 import { REMOVE_FROM_CART } from '../../Store/reducer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,8 +49,25 @@ function CartScreen() {
                         <View>
                           <Caption style={styles.caption}>Giá: {formatCash(item.price)} VNĐ</Caption>
                         </View>
-                        <View style={{marginRight: '10%'}}>
-                          <Icon name="trash-can-outline" size={27} color= {Colors.red400} onPress={() => removeItemFromCart(item)}/>
+                        <View style={{marginRight: '10%'}}> 
+                          <Icon name="trash-can-outline" size={27} color= {Colors.red400} onPress={() => {
+                            Alert.alert(
+                              'Xác nhận',
+                              'Bạn có muốn xóa?',
+                              [  
+                                {
+                                  text: 'Đồng ý', onPress: () => {
+                                      removeItemFromCart(item)
+                                    }
+                                },  
+                                {  
+                                    text: 'Hủy',  
+                                    onPress: () => console.log('Cancel Pressed'),  
+                                    style: 'cancel',  
+                                },  
+                              ]  
+                            );
+                          } }/>
                         </View>
                       </View>
 
@@ -78,14 +95,14 @@ function CartScreen() {
             />
           </View>
           
-           <View style={{flex:0.7, backgroundColor:'blue',width: '100%', height: 30, flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <View style={{width: '20%'}}>
-                <Text>Tổng tiền: </Text>
-              </View>
-              <View style={{width: '55%'}}>
-                <Text>12345 VNĐ</Text>
-              </View>
+           <View style={{flex:0.7, width: '100%', height: 30, flexDirection:'row',justifyContent:'space-between',alignItems:'center', borderTopWidth: 0.5}}>
               <View style={{width: '25%'}}>
+                <Text style={{fontSize: 17}}>Tổng tiền: </Text>
+              </View>
+              <View style={{width: '50%'}}>
+                <Text style={{fontSize: 18}}>12345689 VNĐ</Text>
+              </View>
+              <View style={{width: '25%',right: 5}}>
                 <Button title="Đặt hàng"/>
               </View>
           </View>

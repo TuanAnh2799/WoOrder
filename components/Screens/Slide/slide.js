@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { Text, View,Image, ScrollView } from 'react-native';
 import { styles } from './styles';
+import Swiper from 'react-native-swiper';
 
 const images = [
     'https://fandom.vn/wp-content/uploads/2019/06/mcu-bruce-banner-the-hulk-1.jpg',
@@ -12,7 +13,7 @@ const images = [
   
 export default function SlideScreen() {
 
-    const [imgActive, setImgActive] = useState(0);
+  const [imgActive, setImgActive] = useState(0);
 
   const onchange = nativeEvent => {
     if (nativeEvent) {
@@ -27,35 +28,20 @@ export default function SlideScreen() {
   
     return (
         <View style={styles.wrap}>
-          <ScrollView
-            onScroll={({ nativeEvent })=>onchange(nativeEvent)}
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            horizontal
-            style={styles.wrap}
+          <Swiper 
+          autoplay
+          loop
+          showsButtons={true}
           >
-            {
-              images.map((e, index) =>
-                <Image
-                  key={e}
-                  resizeMode="stretch"
-                  style={styles.wrap}
-                  source={{ uri: e }}
-                />
-              )
-            }
-          </ScrollView>
-          <View style={styles.wrapDot}>
-            {images.map((e, index) => (
-              <Text
-                key={e}
-                style={
-                  imgActive === index ? styles.isActive : styles.isNotActive
-                }>
-                ●
-              </Text>
+            {images.map((item,index) => (
+              <Image 
+              key={index}
+              source={{uri:item}}
+              style={styles.wrap}
+              resizeMode="stretch"
+              />
             ))}
-          </View>
+          </Swiper>
         </View>
     )
 }

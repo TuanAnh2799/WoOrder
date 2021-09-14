@@ -37,9 +37,9 @@ const LoginScreen = ({navigation}) => {
                     </View>
                     <View style={styles.wrapButton}>
                         <View style={styles.button}>
-                            <Button title="Login" onPress={() => login(email, password)}/>
+                            <Button title="Đăng nhập" onPress={() => login(email, password)}/>
                             <Text style={{padding: 15, fontSize: 17, textAlign:'center'}}>Need an account?</Text>
-                            <Button title="Register" onPress={()=>navigation.navigate('Register')} />
+                            <Button title="Đăng ký" onPress={()=>navigation.navigate('Register')} />
                         </View>
                     </View>
                 </View>
