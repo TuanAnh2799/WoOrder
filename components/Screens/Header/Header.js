@@ -10,8 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 export default function HeaderScreen() {
 
     const navigation = useNavigation();
-    const cartItems = useSelector(state => state);
-    
+    //var cartItems = useSelector(state => state.StoreProduct.numberCart);
+    const cartItems = useSelector(state => state.StoreProduct.numberCart);
     return (
         <View style={styles.wrappHeader}>
             <View style={{alignContent:'center',justifyContent:'center',left:5}}>
@@ -35,13 +35,13 @@ export default function HeaderScreen() {
                 <View style={{flexDirection:'row'}}>
                     <Icon name="cart" size={25} color= {Colors.red400} onPress={()=> navigation.navigate('Cart')}/>
                    {
-                    cartItems.length > 0 ?
+                    cartItems > 0 ?
                         <View style={styles.wrappCount1}>
-                            <Text style={styles.text}>{cartItems.length}</Text>
+                            <Text style={styles.text}>{cartItems}</Text>
                         </View> 
                        
                         : <View style={styles.wrappCount2}>
-                            <Text style={styles.text}>{cartItems.length}</Text>
+                            <Text style={styles.text}>{cartItems}</Text>
                          </View>
                    }
 

@@ -11,7 +11,7 @@ export default function ProfileScreen({navigation}) {
   const {logout,user} = useContext(AuthContext);
   const [userInfo,setUserInfo] = useState([]);
   console.log(user.uid);
-
+/*
   useEffect(() => {
     const getData = async() => {
       const data = await firestore()
@@ -19,9 +19,26 @@ export default function ProfileScreen({navigation}) {
       .doc(user.uid)
       .get();
       setUserInfo(data);
+      console.log('logdata: ',data);
     } 
     getData();
   }, [])
+  */
+
+    useEffect(() => {
+      const subscriber = firestore()
+        .collection('Users')
+        .doc(user.uid)
+        .onSnapshot(documentSnapshot => {
+          console.log('User data: ', documentSnapshot.data());
+          setUserInfo(documentSnapshot.data())
+        });
+  
+      // Stop listening for updates when no longer required
+      return () => subscriber();
+    }, []);
+
+
   console.log('User Inffo: ',userInfo);
     return (
         <SafeAreaView style={styles.container}>
@@ -33,7 +50,7 @@ export default function ProfileScreen({navigation}) {
                     size = {85} />
                     <View style={{marginLeft: 20,width: '63%'}}>
                         <Title style = {[styles.title, {marginTop: 15, marginBottom: 5}]}>
-                            {userInfo._data.name}
+                            {userInfo.name}
                         </Title>
                         <Caption style={styles.caption}>@Phàm nhân</Caption>
                     </View>
@@ -52,7 +69,7 @@ export default function ProfileScreen({navigation}) {
                 </View>
                 <View style={styles.row}>
                     <Icon name="email" size={20} color="#777777"/>
-                    <Text style={{fontSize: 15, marginLeft: 10,}}>{userInfo._data.email}</Text>
+                    <Text style={{fontSize: 15, marginLeft: 10,}}>{userInfo.email}</Text>
                 </View>
             </View>
 

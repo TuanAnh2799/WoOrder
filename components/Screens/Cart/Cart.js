@@ -5,11 +5,27 @@ import { REMOVE_FROM_CART } from '../../Store/reducer';
 import { useDispatch, useSelector } from 'react-redux';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Caption, Colors, TextInput, Title, TouchableRipple } from 'react-native-paper';
+import {IncreaseQuantity,DecreaseQuantity,DeleteCart} from '../../Store/action';
+import { connect } from 'react-redux';
 
-function CartScreen() {
-    const cartItems = useSelector(state => state)
-    const dispatch = useDispatch()
+function CartScreen({items,IncreaseQuantity,DecreaseQuantity,DeleteCart}) {
 
+  let ListCart = [];
+  let TotalCart=0;
+
+  const Carts = useSelector(state => state.StoreProduct.Carts)
+  const dispatch = useDispatch()
+
+  Object.keys(items.Carts).forEach(function(item){
+    TotalCart += items.Carts[item].quantity * items.Carts[item].price;
+    //ListCart.push(items.Carts[item]);
+  });
+//console.log('list cart: ',ListCart);
+  function TotalPrice(price,tonggia){
+      return Number(price * tonggia).toLocaleString('en-US');
+  }
+
+console.log('Gio hàng: ', Carts);
 
     function formatCash(str) {
       var money = ''+str;
@@ -18,25 +34,18 @@ function CartScreen() {
       })
     }
 
-    const removeItemFromCart = item =>
-      dispatch({
-        type: REMOVE_FROM_CART,
-        payload: item
-      })
     return (
       <View
         style={{
           flex: 1
         }}>
-        {cartItems.length !== 0 ? (
+        {Carts.length !== 0 ? (
           <View style={{flex: 1 }}>
-          <View style={{flex: 9.3}}>
-            <FlatList
-              data={cartItems}
-              keyExtractor={item => item.id.toString()}
-              ItemSeparatorComponent={() => <Sperator/>}
-              renderItem={({ item }) => (
-                <View style = {styles.container}>
+            <View style={{flex: 9.3}}>
+            {
+              Carts.map((item,key) => {
+                return(
+                  <View style = {styles.container} key={key}>
                   <View style={styles.wrappItem}>
                     <View style={{width: '40%', height: 160}}>
                         <Image source={{uri: item.url[1]}} style={styles.imageProducts}/>  
@@ -47,17 +56,17 @@ function CartScreen() {
                       </View>
                       <View style={{width: '100%' , height: 40,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                         <View>
-                          <Caption style={styles.caption}>Giá: {formatCash(item.price)} VNĐ</Caption>
+                          <Caption style={styles.caption}>Giá: {formatCash(TotalPrice(item.price,item.quantity))} VNĐ</Caption>
                         </View>
                         <View style={{marginRight: '10%'}}> 
-                          <Icon name="trash-can-outline" size={27} color= {Colors.red400} onPress={() => {
+                          <Icon name="trash-can-outline" size={27} color= {Colors.red400} onPress={() =>{
                             Alert.alert(
                               'Xác nhận',
                               'Bạn có muốn xóa?',
                               [  
                                 {
                                   text: 'Đồng ý', onPress: () => {
-                                      removeItemFromCart(item)
+                                    DeleteCart(key);
                                     }
                                 },  
                                 {  
@@ -67,20 +76,21 @@ function CartScreen() {
                                 },  
                               ]  
                             );
-                          } }/>
+
+                          }}/>
                         </View>
                       </View>
 
                       <View style={{width: '60%' , height: 40,flexDirection:'row', justifyContent:'space-around', marginTop: 15,}}>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={()=>DecreaseQuantity(key)}>
                           <View style={{width: 30, height:30, justifyContent:'center', borderWidth: 0.5, borderColor:'#008CBA', borderRadius:50,backgroundColor:'#fff'}}>  
                               <Text style={styles.textButton}> - </Text>
                           </View>
                         </TouchableOpacity>
                         <View style={{width: 30, height: 30, borderWidth: 1, borderColor:'#a9a9a9', borderRadius: 5}}>
-                          <Text style={[styles.textCount,{textAlign:'center'}]}>1</Text>
+                          <Text style={[styles.textCount,{textAlign:'center'}]}>{item.quantity}</Text>
                         </View>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={()=>IncreaseQuantity(key)}>
                           <View  style={{width: 30, height:30, backgroundColor:'#fff', justifyContent:'center',borderWidth: 1, borderColor:'#636363', borderRadius:50,alignContent:'center'}}>
                             <Text style={styles.textButton}> + </Text>
                           </View>
@@ -91,8 +101,11 @@ function CartScreen() {
                     </View>
                   </View>
                 </View>
-              )}
-            />
+                )
+                
+              })
+            }
+                
           </View>
           
            <View style={{flex:0.7, width: '100%', height: 30, flexDirection:'row',justifyContent:'space-between',alignItems:'center', borderTopWidth: 0.5}}>
@@ -100,7 +113,7 @@ function CartScreen() {
                 <Text style={{fontSize: 17}}>Tổng tiền: </Text>
               </View>
               <View style={{width: '50%'}}>
-                <Text style={{fontSize: 18}}>12345689 VNĐ</Text>
+                <Text style={{fontSize: 18}}>{formatCash(Number(TotalCart).toLocaleString('en-US'))} VNĐ</Text>
               </View>
               <View style={{width: '25%',right: 5}}>
                 <Button title="Đặt hàng"/>
@@ -118,10 +131,14 @@ function CartScreen() {
       </View>
     )
   }
+  const mapStateToProps = state =>{
+    //  console.log(state)
+      return{
+          items:state.StoreProduct
+      }
+  }
   
-  
-  
-  export default CartScreen;
+  export default connect(mapStateToProps,{IncreaseQuantity,DecreaseQuantity,DeleteCart})(CartScreen);
 
   const styles = StyleSheet.create({
     container: {

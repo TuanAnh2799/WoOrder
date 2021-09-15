@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { Component } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -8,62 +8,55 @@ import {
   TouchableNativeFeedback,
   ActivityIndicator,
   Alert,
+  Button,
 } from 'react-native';
 import {styles} from './styles';
-import {useNavigation} from '@react-navigation/native';
+import {AddCart} from '../../Store/action';
 import firestore from '@react-native-firebase/firestore';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors, TouchableRipple } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-import { ADD_TO_CART } from '../../Store/reducer';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 
-
-export default function ProductsScreen() {
-
-  const dispatch = useDispatch();
-  const addItemToCart = (item) => dispatch({ type: ADD_TO_CART, payload: item });
-
-  const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
-  const [congnghe,setCongnghe] = useState([]);
-
-  const navigation = useNavigation();
-  
-  useEffect(() => {
+class ProductScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      products: [],
+    };
+  }
+  async componentDidMount() {
     const subscriber = firestore()
       .collection('Products')
       .onSnapshot(querySnapshot => {
-        const products = [];
+        const productss = [];
 
         querySnapshot.forEach(documentSnapshot => {
-          products.push({
+          productss.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
         });
-        setProducts(products);
-        setLoading(false);
+        this.setState({products:productss} );
+        console.log(this.state.products);
       });
 
     // Unsubscribe from events when no longer in use
     return () => subscriber();
-  }, []);
 
-  if (loading) {
-    return <ActivityIndicator />;
-  }
-
-
-function formatCash(str) {
-  var money = ''+str;
-  return money.split('').reverse().reduce((prev, next, index) => {
-    return ((index % 3) ? next : (next + '.')) + prev
-  })
 }
+  render() {
 
-  return (
-    <SafeAreaView>
+    function formatCash(str) {
+      var money = ''+str;
+      return money.split('').reverse().reduce((prev, next, index) => {
+        return ((index % 3) ? next : (next + '.')) + prev
+      })
+    }
+    
+    const products = this.state.products;
+
+    return (
+      <SafeAreaView>
       <View style={styles.listProduct}>
         <Text style={{textAlign:'center', fontSize: 22, fontWeight:'bold'}}>Sản phẩm</Text>
         <View style={{height: 10, width:'100%' , marginTop: 15, borderTopWidth: 0.5, borderRightWidth: 0.5, borderLeftWidth:0.5,borderLeftColor:'red', borderTopColor:'black',borderTopLeftRadius: 30, borderTopRightRadius: 30}}>
@@ -94,15 +87,16 @@ function formatCash(str) {
           <FlatList
             data={products}
             renderItem={({item, index}) => (
-              <TouchableNativeFeedback onPress={()=>navigation.navigate('Details',
+              <TouchableNativeFeedback onPress={()=> {this.props.navigation.navigate('Details',
               { id: item.id,
                 name: item.name,
                 color: item.color,
                 url: item.url,
                 price: item.price,
                 avaiable: item.avaiable,
-                info: item.info
-              })}>
+                info: item.info,
+                quantity: item.quantity
+              })}}>
               <View style={styles.item} key={index}>
                 <View style={styles.wrappIMG}>
                   <Image
@@ -122,7 +116,9 @@ function formatCash(str) {
                   </View>
                  
                 </View>
-                <Icon name="cart" size={25} color= {Colors.red400} onPress={ () => addItemToCart(item)}/>
+                <Icon name="cart" size={25} color= {Colors.red400} onPress={() => 
+                  this.props.AddCart(item)
+                }/>
               </View>
               </TouchableNativeFeedback>
           )}
@@ -131,5 +127,14 @@ function formatCash(str) {
         />
       </View>
     </SafeAreaView>
-  );
+
+    );
+  }
 }
+function mapDispatchToProps(dispatch){
+  return{
+      AddCart:item=>dispatch(AddCart(item))
+   
+  }
+}
+export default connect(null,mapDispatchToProps)(ProductScreen)

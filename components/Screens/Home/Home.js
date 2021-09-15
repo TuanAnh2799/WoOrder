@@ -17,7 +17,7 @@ const HomeScreen = () => {
           <SlideScreen/>
         </View>
         <View style={{marginTop: 5}}>
-          <ProductsScreen/>
+          <ProductsScreen />
         </View>
         
 
