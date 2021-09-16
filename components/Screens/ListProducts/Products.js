@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component,useState, useEffect } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -16,15 +16,16 @@ import firestore from '@react-native-firebase/firestore';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors, TouchableRipple } from 'react-native-paper';
 import { connect } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+//import {AddCart} from '../../Store/action';
 
-class ProductScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      products: [],
-    };
-  }
-  async componentDidMount() {
+function ProductScreen({AddCart}) {
+
+  const navigation = useNavigation();
+
+  const [products,setProducts] = useState([]);
+  
+  useEffect(() => {
     const subscriber = firestore()
       .collection('Products')
       .onSnapshot(querySnapshot => {
@@ -36,15 +37,13 @@ class ProductScreen extends Component {
             key: documentSnapshot.id,
           });
         });
-        this.setState({products:productss} );
-        console.log(this.state.products);
+        setProducts(productss);
+        console.log(products);
       });
 
     // Unsubscribe from events when no longer in use
     return () => subscriber();
-
-}
-  render() {
+  }, [])
 
     function formatCash(str) {
       var money = ''+str;
@@ -52,8 +51,6 @@ class ProductScreen extends Component {
         return ((index % 3) ? next : (next + '.')) + prev
       })
     }
-    
-    const products = this.state.products;
 
     return (
       <SafeAreaView>
@@ -87,7 +84,7 @@ class ProductScreen extends Component {
           <FlatList
             data={products}
             renderItem={({item, index}) => (
-              <TouchableNativeFeedback onPress={()=> {this.props.navigation.navigate('Details',
+              <TouchableNativeFeedback onPress={()=> navigation.navigate('Details',
               { id: item.id,
                 name: item.name,
                 color: item.color,
@@ -96,7 +93,7 @@ class ProductScreen extends Component {
                 avaiable: item.avaiable,
                 info: item.info,
                 quantity: item.quantity
-              })}}>
+              })}>
               <View style={styles.item} key={index}>
                 <View style={styles.wrappIMG}>
                   <Image
@@ -117,7 +114,7 @@ class ProductScreen extends Component {
                  
                 </View>
                 <Icon name="cart" size={25} color= {Colors.red400} onPress={() => 
-                  this.props.AddCart(item)
+                  AddCart(item)
                 }/>
               </View>
               </TouchableNativeFeedback>
@@ -129,12 +126,11 @@ class ProductScreen extends Component {
     </SafeAreaView>
 
     );
-  }
 }
 function mapDispatchToProps(dispatch){
   return{
       AddCart:item=>dispatch(AddCart(item))
-   
   }
 }
-export default connect(null,mapDispatchToProps)(ProductScreen)
+export default connect(mapDispatchToProps,{AddCart})(ProductScreen)
+
