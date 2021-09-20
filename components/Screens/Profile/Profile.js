@@ -50,7 +50,7 @@ export default function ProfileScreen({navigation}) {
                     size = {85} />
                     <View style={{marginLeft: 20,width: '63%'}}>
                         <Title style = {[styles.title, {marginTop: 15, marginBottom: 5}]}>
-                            {userInfo.name}
+                            {userInfo.fullname}
                         </Title>
                         <Caption style={styles.caption}>@Phàm nhân</Caption>
                     </View>
@@ -65,7 +65,7 @@ export default function ProfileScreen({navigation}) {
                 </View>
                 <View style={styles.row}>
                     <Icon name="phone" size={20} color="#777777"/>
-                    <Text style={{fontSize: 15, marginLeft: 10,}}>+84 342918313</Text>
+                    <Text style={{fontSize: 15, marginLeft: 10,}}>{userInfo.phone}</Text>
                 </View>
                 <View style={styles.row}>
                     <Icon name="email" size={20} color="#777777"/>

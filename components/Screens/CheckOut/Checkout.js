@@ -129,7 +129,9 @@ console.log('list cart: ',ListCart);
                 </View>
 
                 <View>
-
+                  <View>
+                    <Text>Địa chỉ </Text>
+                  </View>
                 </View>
               </ScrollView>
             </View>

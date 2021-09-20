@@ -20,21 +20,35 @@ export const AuthProvider = ({children}) => {
              await  auth().signInWithEmailAndPassword(email, password);
               
             } catch (e) {
-              console.log(e);
+              Alert.alert(
+                'Thông báo',
+                'Sai tên tài khoản hoặc mật khẩu.',
+                [  
+                  {
+                    text: 'Đồng ý', onPress: () => {
+                       
+                      }
+                  },  
+                  
+                ]  
+              );
             }
           },
-          register: async (email, password,username) => {
+          register: async (fullname,email, phonenumber, password) => {
             try {
-             var userIfo = await auth().createUserWithEmailAndPassword(email, password);
-              console.log('abc"   ',userIfo.user.uid);
+              console.log("Auth nhaajn ddc data:",fullname,email,phonenumber,password);
+
+             var userIfo = await auth().createUserWithEmailAndPassword(email,password);
+              console.log('userid"   ',userIfo.user.uid);
               var userID = userIfo.user;
               firestore()
               .collection('Users')
               .doc(userID.uid)
               .set({
                 id: userID.uid,
-                name: username,
+                fullname: fullname,
                 email: userID.email,
+                phone: phonenumber,
                 itemCart: [],
                 
               })
@@ -42,7 +56,17 @@ export const AuthProvider = ({children}) => {
                 console.log('User added!');
               });
             } catch (e) {
-              console.log(e);
+              Alert.alert(
+                'Thông báo',
+                'Đăng ký thất bại.',
+                [  
+                  {
+                    text: 'Đồng ý', onPress: () => {
+                       
+                      }
+                  },    
+                ]  
+              );
             } 
           },
           logout: async () => {
@@ -65,7 +89,8 @@ export const AuthProvider = ({children}) => {
               );
               
             } catch (e) {
-              console.log(e);
+
+              
             }
           },
         }}>

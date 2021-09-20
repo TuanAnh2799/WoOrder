@@ -47,9 +47,7 @@ export default function SearchScreen({navigation}) {
             {searchFillter.map((item, index) => (
                 <ScrollView>
                     <TouchableWithoutFeedback onPress={()=>navigation.navigate('Details', {
-                        id: item.id,
-                        name: item.name,
-                        color: item.color
+                        product:item
                     })}>
                         <View style={styles.wrapProduct} key={index}>
                             <Avatar.Image source = {{
