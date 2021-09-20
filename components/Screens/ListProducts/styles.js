@@ -5,17 +5,19 @@ export const styles = StyleSheet.create({
         backgroundColor: '#f9c2ff',
         padding: 5,
         marginVertical: 8,
-        marginHorizontal: 10,
-        width: '45%',
+        marginHorizontal: 5,
+        width: '47%',
         height: 270,
         borderRadius: 5,
-        marginTop: 10
+        marginTop: 7
       },
       name: {
-        fontSize: 17,
+        fontSize: 16,
+        marginTop: 4,
       },
       price:{
         fontSize: 15,
+        
       },
       wrappIMG:{
         width:'100%',
@@ -29,10 +31,12 @@ export const styles = StyleSheet.create({
       },
       wrappInfo:{
         flexDirection: 'row',
+        marginLeft: 3,
       },
       wrapAvaiable: {
         alignItems:'flex-end',
         flexDirection: 'row',
+        marginLeft: 3,
       },
       textAvaiable: {
         fontSize:13,
@@ -77,4 +81,14 @@ export const styles = StyleSheet.create({
     listProduct: {
       //flex: 8,
     },
+    cartIcon: {
+      alignItems:'flex-start',
+      marginRight: 4,
+    },
+    wrappIcon: {
+      justifyContent:'flex-end',
+      alignItems:'flex-end',
+      flexDirection:'row',
+      marginTop: 1
+    }
 });

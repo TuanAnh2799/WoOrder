@@ -5,6 +5,8 @@ export const GET_NUMBER_CART = 'GET_NUMBER_CART';
 export const ADD_CART = 'ADD_CART' ;
 export const UPDATE_CART = 'UPDATE_CART';
 export const DELETE_CART = 'DELETE_CART';
+export const ADD_FAVORITE = 'ADD_FAVORITE';
+export const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
 
 export function AddCart(payload){
     return {
@@ -37,4 +39,16 @@ export function DecreaseQuantity(payload){
         payload
     }
 }
+
+export const AddToFavorite =(payload)=> {
+    return {
+        type: 'ADD_FAVORITE',payload
+    }
+    
+};
+
+export const RemoveToFavorite =(payload)=> {
+    return { type: REMOVE_FAVORITE,payload}
+}; 
+
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import ChatScreen from '../Screens/Chat/Chat';
 import AppScreen from './AppStack';
 import ProfileStackScreen from '../Screens/Profile/ProfileStack';
+import CheckOutScreen from '../Screens/CheckOut/Checkout';
+import CheckStackScreen from '../Screens/CheckOut/CheckoutStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,15 +17,15 @@ export default function TabScreen() {
 
         if (route.name === 'Trang chủ') {
           iconName = 'home';
-          size = focused ? 25 : 20;
-        } else if (route.name === 'Chat') {
-          iconName = 'comments';
-          size = focused ? 25 : 20;
+          size = focused ? 23 : 20;
+        } else if (route.name === 'Đặt hàng') {
+          iconName = 'shopping-bag';
+          size = focused ? 23 : 20;
         }
         else if(route.name === 'Tôi')
         {
             iconName = 'user-circle';
-            size = focused ? 25 : 20;
+            size = focused ? 23 : 20;
         }
 
         return <FontAwesome5 name={iconName} size={size} color={color} />;
@@ -38,7 +39,7 @@ export default function TabScreen() {
     }}
     >
       <Tab.Screen name="Trang chủ" component={AppScreen}/>
-      <Tab.Screen name="Chat" component={ChatScreen} />
+      <Tab.Screen name="Đặt hàng" component={CheckStackScreen} />
       <Tab.Screen name="Tôi" component={ProfileStackScreen} />
     </Tab.Navigator>  
     )

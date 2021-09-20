@@ -4,27 +4,30 @@ import {
   Text,
   View,
   Image,
-  FlatList,
   TouchableNativeFeedback,
   ActivityIndicator,
   Alert,
   Button,
 } from 'react-native';
 import {styles} from './styles';
-import {AddCart} from '../../Store/action';
+import {AddCart,AddToFavorite} from '../../Store/action';
 import firestore from '@react-native-firebase/firestore';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors, TouchableRipple } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-//import {AddCart} from '../../Store/action';
+import { FlatList } from 'react-native-gesture-handler';
+import Share from 'react-native-share';
 
-function ProductScreen({AddCart}) {
+
+function ProductScreen({AddToFavorite}) {
 
   const navigation = useNavigation();
 
   const [products,setProducts] = useState([]);
-  
+  const [flag,setFlag] = useState(false);
+  const [heart,setHeart] = useState('heart-outline');
+
   useEffect(() => {
     const subscriber = firestore()
       .collection('Products')
@@ -38,7 +41,6 @@ function ProductScreen({AddCart}) {
           });
         });
         setProducts(productss);
-        console.log(products);
       });
 
     // Unsubscribe from events when no longer in use
@@ -51,7 +53,18 @@ function ProductScreen({AddCart}) {
         return ((index % 3) ? next : (next + '.')) + prev
       })
     }
-
+    const customShare = async(url)=> {
+      const shareOptions = {
+        message:'Tải ngay app để order nhé!',
+        url: url,
+        link: 'http://youtube.com/',
+      }
+      try {
+        const shareRespone =await Share.open(shareOptions);
+      } catch (error) {
+        console.log(error);
+      }
+    }
     return (
       <SafeAreaView>
       <View style={styles.listProduct}>
@@ -85,19 +98,13 @@ function ProductScreen({AddCart}) {
             data={products}
             renderItem={({item, index}) => (
               <TouchableNativeFeedback onPress={()=> navigation.navigate('Details',
-              { id: item.id,
-                name: item.name,
-                color: item.color,
-                url: item.url,
-                price: item.price,
-                avaiable: item.avaiable,
-                info: item.info,
-                quantity: item.quantity
+              { 
+                product: item,  
               })}>
               <View style={styles.item} key={index}>
                 <View style={styles.wrappIMG}>
                   <Image
-                    source={{uri: item.url[1]}}
+                    source={{uri: item.url[0]}}
                     style={styles.image}
                     resizeMode={'stretch'}
                   />
@@ -113,9 +120,21 @@ function ProductScreen({AddCart}) {
                   </View>
                  
                 </View>
-                <Icon name="cart" size={25} color= {Colors.red400} onPress={() => 
-                  AddCart(item)
-                }/>
+                <View style={styles.wrappIcon}>
+                  <View style={{bottom: 2}}>
+                    <Icon name={heart} size={25} style={{color:'red',marginRight: 10,}} onPress={()=> {
+                      AddToFavorite(item)
+                      setHeart('cards-heart')
+                      Alert.alert('Thông báo',
+                      'Đã thêm vào mục yêu thích.');
+                      }}/>
+                  </View>
+                  <View>
+                    <Icon name="share-variant" size={25} style={styles.cartIcon} color= {Colors.red400} onPress={()=>customShare(item.url[0])}/>
+                  </View>
+                  
+                </View>
+                
               </View>
               </TouchableNativeFeedback>
           )}
@@ -127,10 +146,9 @@ function ProductScreen({AddCart}) {
 
     );
 }
-function mapDispatchToProps(dispatch){
-  return{
-      AddCart:item=>dispatch(AddCart(item))
-  }
-}
-export default connect(mapDispatchToProps,{AddCart})(ProductScreen)
+const mapDispatchToProps = dispatch => ({
+    AddToFavorite: item => dispatch(AddToFavorite(item))
+})
+
+export default connect(mapDispatchToProps,{AddToFavorite})(ProductScreen)
 

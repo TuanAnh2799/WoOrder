@@ -1,30 +1,33 @@
-import React,{useState} from 'react';
-import { Button, View,Text, SafeAreaView, ScrollView, Image } from 'react-native';
+import React,{useState,useEffect} from 'react';
+import { Button, View,Text, SafeAreaView,  Image, LogBox, VirtualizedList } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import HeaderScreen from '../Header/Header';
 import Header from '../Header/Header';
 import ProductsScreen from '../ListProducts/Products';
 import SlideScreen from '../Slide/slide';
 
+
 const HomeScreen = () => {
+
+  useEffect(() => {
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+  }, [])
 
   return (
     <SafeAreaView style={{flex: 1}}>
       <View >
         <HeaderScreen/>
       </View>
-    <ScrollView>
-        <View style={{marginTop: 5}}>
-          <SlideScreen/>
+      <View style={{flex: 1}}>
+        <ScrollView>
+          <View style={{marginTop: 5}}>
+            <SlideScreen/>
+          </View>
+          <View style={{marginTop: 5}}>
+            <ProductsScreen />
+          </View>
+          </ScrollView>
         </View>
-        <View style={{marginTop: 5}}>
-          <ProductsScreen />
-        </View>
-        
-
-
-    </ScrollView>
-    
-
     </SafeAreaView>
       
   );

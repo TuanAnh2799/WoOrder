@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
       },
       wrapInfo: {
         width: '100%',
-        height: 400,
+        height: HEIGHT,
         backgroundColor: '#fff',
         borderTopColor:'#a9a9a9',
         marginTop: 10,
@@ -36,7 +36,16 @@ export const styles = StyleSheet.create({
         borderRightWidth: 1,
         borderRightColor:'#a9a9a9',
         borderLeftColor:'#a9a9a9',
-
+        top: -10
+      },
+      wrapDetail: {
+        marginTop: 20,
+        marginLeft: 20
+      }, 
+      modalWrappButton: {
+        flex: 1,
+        flexDirection:'row',
+        justifyContent:'space-around'
       }
     
 });

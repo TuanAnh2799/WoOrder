@@ -1,0 +1,129 @@
+import React from 'react';
+import { SafeAreaView, StyleSheet, Text, View,FlatList, TouchableNativeFeedback,Image } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+
+export default function FavoritesScreen({navigation}) {
+
+    const Favorites = useSelector(state => state.favourites.favoriteProduct)
+
+    console.log('List favorites: ',Favorites);
+
+    return (
+        <SafeAreaView>
+            <FlatList
+            data={Favorites}
+            renderItem={({item, index}) => (
+              <TouchableNativeFeedback onPress={()=> navigation.navigate('Details',
+              { 
+                product: item,  
+              })}>
+              <View style={styles.item} key={index}>
+                <View style={styles.wrappIMG}>
+                  <Image
+                    source={{uri: item.url[1]}}
+                    style={styles.image}
+                    resizeMode={'stretch'}
+                  />
+                </View>
+                <View style={styles.wrappInfo}>
+
+                  <View style={styles.wrappName}>
+                    <Text style={styles.name}>{item.name}</Text>
+                  </View>
+                  <View style={styles.wrappTitle}>
+                    <Text style={styles.title}>Xem ngay >>></Text>
+                  </View>
+
+                </View>
+              </View>
+              </TouchableNativeFeedback>
+          )}
+          keyExtractor={(item, index) => index}
+        />
+        </SafeAreaView>
+    )
+}
+
+const styles = StyleSheet.create({
+    item: {
+        backgroundColor: '#ffffff',
+        padding: 5,
+        marginVertical: 2,
+        marginHorizontal: '2%',
+        width: '96%',
+        height: 140,
+        borderRadius: 5,
+        marginTop: 7, 
+        flexDirection:'row',
+      },
+      name: {
+        fontSize: 17,
+        marginTop: 4,
+        fontWeight:'bold'
+      },
+      price:{
+        fontSize: 15,
+        
+      },
+      wrappIMG:{
+        width:'40%',
+        height: '96%',
+        borderRadius:20,
+      },
+      image: {
+          width: '100%',
+          height: '100%',
+          borderRadius: 5,
+      },
+      wrappInfo:{
+        flexDirection: 'column',
+        marginLeft: 20,
+        width: '100%',
+        justifyContent:'space-around'
+      },
+      textAvaiable: {
+        fontSize:13,
+      },
+      textTitle:{
+        fontSize: 20,
+        textAlign: 'center',
+      },
+      wrappName: {
+        width:'100%',
+        marginBottom:'15%'
+      },
+      wrappTitle: {
+        justifyContent:'center',
+        alignItems:'center',
+        width:'100%',
+        right:40
+      },
+      title: {
+        fontSize:14,
+        textAlign:'center',
+        fontWeight:'400',
+        textDecorationLine:'underline'
+      },
+
+      imgChoose: {
+        width: '96%',
+        height: '80%',
+      },
+      imageChoose: {
+        width: '100%',
+        height: '100%',
+    },
+    nameChoose: {
+      textAlign: 'center',
+      fontSize: 16,
+    },
+    flatListChoose:{
+      padding: 5,
+    },
+
+
+    //list product
+    listProduct: {
+      //flex: 8,
+    },
+});

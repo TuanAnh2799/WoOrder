@@ -90,13 +90,16 @@ export default function ProfileScreen({navigation}) {
 
 
         <View style={styles.menuWrapper}>
+        {/*
         <TouchableRipple onPress={() => {}}>
           <View style={styles.menuItem}>
             <Icon name="cart-outline" color="#FF6347" size={25}/>
             <Text style={styles.menuItemText}>Đơn hàng</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+         */}
+        
+        <TouchableRipple onPress={() => navigation.navigate('Favorites')}>
           <View style={styles.menuItem}>
             <Icon name="heart-outline" color="#FF6347" size={25}/>
             <Text style={styles.menuItemText}>Yêu thích</Text>

@@ -11,7 +11,7 @@ export default function HeaderScreen() {
 
     const navigation = useNavigation();
     //var cartItems = useSelector(state => state.StoreProduct.numberCart);
-    const cartItems = useSelector(state => state.StoreProduct.numberCart);
+    const cartItems = useSelector(state => state.cartStore.numberCart);
     return (
         <View style={styles.wrappHeader}>
             <View style={{alignContent:'center',justifyContent:'center',left:5}}>
