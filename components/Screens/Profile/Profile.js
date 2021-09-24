@@ -1,12 +1,13 @@
 import React, {useContext,useEffect, useState} from 'react';
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native'
+import { View, Text, SafeAreaView, StyleSheet, Alert } from 'react-native'
 import { Avatar, Title, Caption, TouchableRipple } from 'react-native-paper';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext } from '../../Routes/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
+import {resetStore,ClearFavorite} from '../../Store/action';
+import { connect } from 'react-redux';
 
-
-export default function ProfileScreen({navigation}) {
+function ProfileScreen({navigation,resetStore,ClearFavorite}) {
 
   const {logout,user} = useContext(AuthContext);
   const [userInfo,setUserInfo] = useState([]);
@@ -27,10 +28,10 @@ export default function ProfileScreen({navigation}) {
 
     useEffect(() => {
       const subscriber = firestore()
-        .collection('Users')
+        .collection('UserAddress')
         .doc(user.uid)
         .onSnapshot(documentSnapshot => {
-          console.log('User data: ', documentSnapshot.data());
+          //console.log('User data: ', documentSnapshot.data());
           setUserInfo(documentSnapshot.data())
         });
   
@@ -52,7 +53,7 @@ export default function ProfileScreen({navigation}) {
                         <Title style = {[styles.title, {marginTop: 15, marginBottom: 5}]}>
                             {userInfo.fullname}
                         </Title>
-                        <Caption style={styles.caption}>@Phàm nhân</Caption>
+                        <Caption style={styles.caption}>@Người dùng</Caption>
                     </View>
                     <Icon name="account-edit-outline" size={25} color="tomato" style={styles.iconEdit} onPress={()=>navigation.navigate("EditProfile")}/>
                 </View>
@@ -61,7 +62,12 @@ export default function ProfileScreen({navigation}) {
             <View style={styles.userInfo}>
                 <View style={styles.row}>
                     <Icon name="map-marker-radius" size={20} color="#777777"/>
-                    <Text style={{fontSize: 15, marginLeft: 10,}}>Thái Nguyên, Việt Nam</Text>
+                    {
+                      userInfo.address == '' ? 
+                      (<Text style={{fontSize: 15, marginLeft: 10,}}>Việt Nam</Text>) :
+                       (<Text style={{fontSize: 15, marginLeft: 10,}}>{userInfo.address}</Text>)
+                    }
+                    
                 </View>
                 <View style={styles.row}>
                     <Icon name="phone" size={20} color="#777777"/>
@@ -124,7 +130,24 @@ export default function ProfileScreen({navigation}) {
           </View>
         </TouchableRipple>
         <TouchableRipple onPress={() => {
-          logout()
+          Alert.alert(
+                'Thông báo',
+                'Bạn muốn đăng xuất?',
+                [  
+                  {
+                    text: 'Đồng ý', onPress: () => {
+                      logout();
+                      //resetStore();
+                      ClearFavorite();
+                      }
+                  },  
+                  {  
+                      text: 'Hủy',  
+                      onPress: () => console.log('Cancel Pressed'),  
+                      style: 'cancel',  
+                  },  
+                ]  
+              );
         }}>
           <View style={styles.menuItem}>
             <Icon name="logout" color="#FF6347" size={25}/>
@@ -136,6 +159,16 @@ export default function ProfileScreen({navigation}) {
     </SafeAreaView>
     )
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    resetStore: () => dispatch(resetStore()),
+    ClearFavorite: () => dispatch(ClearFavorite()),
+    
+  }
+}
+
+export default connect(mapDispatchToProps,{resetStore,ClearFavorite})(ProfileScreen)
 
 const styles = StyleSheet.create({
     container: {

@@ -6,7 +6,10 @@ export const ADD_CART = 'ADD_CART' ;
 export const UPDATE_CART = 'UPDATE_CART';
 export const DELETE_CART = 'DELETE_CART';
 export const ADD_FAVORITE = 'ADD_FAVORITE';
-export const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
+export const CLEAR_FAVORITE = 'CLEAR_FAVORITE';
+export const ADD_HISTORIC = 'ADD_HISTORIC';
+export const CLEAR_CART = 'CLEAR_CART';
+export const RESET_STORE = 'RESET_STORE';
 
 export function AddCart(payload){
     return {
@@ -39,6 +42,11 @@ export function DecreaseQuantity(payload){
         payload
     }
 }
+export const resetStore = () => {
+    return {
+      type: RESET_STORE
+    }
+  }
 
 export const AddToFavorite =(payload)=> {
     return {
@@ -47,8 +55,12 @@ export const AddToFavorite =(payload)=> {
     
 };
 
-export const RemoveToFavorite =(payload)=> {
-    return { type: REMOVE_FAVORITE,payload}
+export const ClearFavorite =()=> {
+    return { type: CLEAR_FAVORITE}
 }; 
+
+const AddHistoricName = payload => {
+    return { type: 'ADD_HISTORIC', payload }
+  }
 
 

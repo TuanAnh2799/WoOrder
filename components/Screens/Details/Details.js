@@ -27,8 +27,8 @@ function DetailsScreen({route,navigation,AddCart}) {
     const [selectedColor, setSelectedColor] = useState(color[0]);
     const [selectedSize, setSelectedSize] = useState(size[0]);
 
-    console.log('chọn màu:',selectedColor);
-    console.log('chọn size',selectedSize);
+    //console.log('chọn màu:',selectedColor);
+    //console.log('chọn size',selectedSize);
     const splitInfo = info.split('.');
 
     const closeModal=()=>{
@@ -244,7 +244,7 @@ function DetailsScreen({route,navigation,AddCart}) {
                                       size: selectedSize,
                                   }
                                   AddCart(_item);
-                                  console.log('Thong tin hàng mua: ',_item);
+                                  //console.log('Thong tin hàng mua: ',_item);
                                   navigation.navigate('Cart')
                                 }
                                 else{
@@ -259,7 +259,7 @@ function DetailsScreen({route,navigation,AddCart}) {
                                       size: "",
                                   }
                                   AddCart(_item1);
-                                  console.log('Thong tin hàng mua loại 1 3: ',_item1);
+                                  //console.log('Thong tin hàng mua loại 1 3: ',_item1);
                                   navigation.navigate('Cart')
                                 }
                                 
@@ -280,5 +280,6 @@ function mapDispatchToProps(dispatch){
       AddCart:item=>dispatch(AddCart(item))
   }
 }
+
 export default connect(mapDispatchToProps,{AddCart})(DetailsScreen)
 

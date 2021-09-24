@@ -1,6 +1,6 @@
 import React, {createContext, useState,useContext} from 'react';
 import auth from '@react-native-firebase/auth';
-import { Alert } from 'react-native';
+import { Alert, ToastAndroid } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 export const AuthContext = createContext();
@@ -17,10 +17,12 @@ export const AuthProvider = ({children}) => {
           setUser,
           login: async (email, password) => {
             try {
-             await  auth().signInWithEmailAndPassword(email, password);
-              
+             await auth().signInWithEmailAndPassword(email, password);
+             ToastAndroid.show('Đăng nhập thành công.',ToastAndroid.SHORT);
             } catch (e) {
-              Alert.alert(
+              {
+                /*
+                Alert.alert(
                 'Thông báo',
                 'Sai tên tài khoản hoặc mật khẩu.',
                 [  
@@ -32,14 +34,17 @@ export const AuthProvider = ({children}) => {
                   
                 ]  
               );
+                 */
+              }
+              ToastAndroid.show('Sai tên tài khoản hoặc mật khẩu.',ToastAndroid.SHORT);
             }
           },
           register: async (fullname,email, phonenumber, password) => {
             try {
-              console.log("Auth nhaajn ddc data:",fullname,email,phonenumber,password);
 
              var userIfo = await auth().createUserWithEmailAndPassword(email,password);
-              console.log('userid"   ',userIfo.user.uid);
+
+             ToastAndroid.show('Đăng ký thành công.',ToastAndroid.SHORT);
               var userID = userIfo.user;
               firestore()
               .collection('Users')
@@ -53,40 +58,32 @@ export const AuthProvider = ({children}) => {
                 
               })
               .then(() => {
-                console.log('User added!');
+                //add UserAddress
+                firestore()
+                .collection('UserAddress')
+                .doc(userID.uid)
+                .set({
+                  addressID: userID.uid,
+                  fullname: fullname,
+                  email: userID.email,
+                  phone: phonenumber,
+                  address: '',
+                  
+                })
+                .then(() => {
+                  console.log('Added User Address!');
+                });
               });
+              
+
             } catch (e) {
-              Alert.alert(
-                'Thông báo',
-                'Đăng ký thất bại.',
-                [  
-                  {
-                    text: 'Đồng ý', onPress: () => {
-                       
-                      }
-                  },    
-                ]  
-              );
+              ToastAndroid.show('Đăng ký thất bại.',ToastAndroid.SHORT);
             } 
           },
           logout: async () => {
             try {
-              await Alert.alert(
-                'Thông báo',
-                'Bạn muốn đăng xuất?',
-                [  
-                  {
-                    text: 'Đồng ý', onPress: () => {
-                       auth().signOut()
-                      }
-                  },  
-                  {  
-                      text: 'Hủy',  
-                      onPress: () => console.log('Cancel Pressed'),  
-                      style: 'cancel',  
-                  },  
-                ]  
-              );
+              await auth().signOut()
+                     
               
             } catch (e) {
 

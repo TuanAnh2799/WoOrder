@@ -11,12 +11,11 @@ const LoginScreen = ({navigation}) => {
     //const [password, onChangePass] = React.useState("");
 
     const loginValidSchema = Yup.object().shape({
-        email: Yup.string().email('Vui lòng nhập địa chỉ email').required('Bạn chưa nhập địa chỉ email.').matches(
-            /(?=.*[@gmail.com])/,"Nhập sai định dạng @gmail.com"),
+        email: Yup.string().email('Vui lòng nhập địa chỉ email').required('Bạn chưa nhập địa chỉ email.'),
         password: Yup.string().min(6,({ min }) => `Mật khẩu phải lớn hơn ${min-1} ký tự`).max(10,({ max }) => `Mật khẩu tối đa ${max} ký tự` )
         .required('Bạn chưa nhập mật khẩu.').matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/,
-        "Mật khẩu phải lớn hơn 5 ký tự, bao gồm viết hoa, viết thường, chữ số và ký tự."),
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,
+        "Mật khẩu phải lớn hơn 5 ký tự, bao gồm viết hoa, viết thường và số."), //(?=.*[!@#\$%\^&\*]) bỏ phải nhập ký tự
       });
 
     return (

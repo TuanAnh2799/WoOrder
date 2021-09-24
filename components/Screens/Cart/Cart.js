@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View ,FlatList, Image,TouchableOpacity, TouchableWithoutFeedback, Button, Alert, ScrollView } from 'react-native'
 import Sperator from '../Sperator/Sperator';
 import { REMOVE_FROM_CART } from '../../Store/reducer';
@@ -8,14 +8,17 @@ import { Caption, Colors, TextInput, Title, TouchableRipple } from 'react-native
 import {IncreaseQuantity,DecreaseQuantity,DeleteCart} from '../../Store/action';
 import { connect } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+//import {saveCart, getCar} from '../API/saveToCart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function CartScreen({items,IncreaseQuantity,DecreaseQuantity,DeleteCart,}) {
 
   let ListCart = [];
   let TotalCart=0;
+  
+  const Carts = useSelector(state => state.cartStore.Carts);
 
-  const Carts = useSelector(state => state.cartStore.Carts)
   const navigation = useNavigation();
 
   Object.keys(items.Carts).forEach(function(item){
@@ -23,7 +26,7 @@ function CartScreen({items,IncreaseQuantity,DecreaseQuantity,DeleteCart,}) {
     ListCart.push(items.Carts[item]);
   });
 
-  console.log('Giỏ hàng trong reducer: ',Carts);
+  //console.log('Giỏ hàng trong reducer: ',Carts);
 
 
   function TotalPrice(price,tonggia){

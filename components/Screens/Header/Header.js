@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Alert, StyleSheet, Text, View } from 'react-native'
 import { IconButton, Colors, Title, TouchableRipple } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -10,8 +10,9 @@ import { useDispatch, useSelector } from 'react-redux';
 export default function HeaderScreen() {
 
     const navigation = useNavigation();
-    //var cartItems = useSelector(state => state.StoreProduct.numberCart);
-    const cartItems = useSelector(state => state.cartStore.numberCart);
+    //const [cartItems, setCartItems] = useState(0);
+    var cartItems = useSelector(state => state.cartStore.numberCart);
+    
     return (
         <View style={styles.wrappHeader}>
             <View style={{alignContent:'center',justifyContent:'center',left:5}}>
