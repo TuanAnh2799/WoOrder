@@ -129,7 +129,7 @@ function reducerCart(state = initProduct,action){
                 
                 return {
                     Carts: [],
-                    numberCart: state.numberCart - state.numberCart,
+                    numberCart: state.numberCart=0,
             }
         default:
             

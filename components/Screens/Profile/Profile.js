@@ -137,7 +137,7 @@ function ProfileScreen({navigation,resetStore,ClearFavorite}) {
                   {
                     text: 'Đồng ý', onPress: () => {
                       logout();
-                      //resetStore();
+                      resetStore();
                       ClearFavorite();
                       }
                   },  
