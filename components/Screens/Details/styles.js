@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
         marginLeft: 20
       }, 
       modalWrappButton: {
-        flex: 1,
+        flex: 1.5,
         flexDirection:'row',
         justifyContent:'space-around'
       }

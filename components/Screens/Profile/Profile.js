@@ -15,8 +15,10 @@ import {resetStore, ClearFavorite} from '../../Store/action';
 import {connect} from 'react-redux';
 
 function ProfileScreen({navigation, resetStore, ClearFavorite}) {
+
   const {logout, user} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState([]);
+  const [myOrder, setMyOrder] = useState(0);
   console.log(user.uid);
   /*
   useEffect(() => {
@@ -41,9 +43,37 @@ function ProfileScreen({navigation, resetStore, ClearFavorite}) {
         setUserInfo(documentSnapshot.data());
       });
 
+      getData();
     // Stop listening for updates when no longer required
     return () => subscriber();
+
+    
   }, []);
+
+
+const getData = async()=> {
+  const subscriber = await firestore()
+      .collection('Orders')
+      // Filter results
+      .where('orderBy', '==', `${user.uid}`)
+      .get()
+      .then(querySnapshot => {
+        const myorder = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          myorder.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+          
+        });
+        setMyOrder(myorder);
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+}
+
 
   console.log('User Inffo: ', userInfo);
   return (
@@ -102,13 +132,15 @@ function ProfileScreen({navigation, resetStore, ClearFavorite}) {
               borderRightWidth: 1,
             },
           ]}>
-          <Title>$200.000 VND</Title>
-          <Caption>Ví tiền</Caption>
+          <Title>0 VND</Title>
+          <Caption style={{fontSize: 17}}>Ví tiền</Caption>
         </View>
         <TouchableNativeFeedback onPress={()=>navigation.navigate('MyOrder')}>
           <View style={styles.infoBox}>
-            <Title>5</Title>
-            <Caption>Đơn hàng</Caption>
+          {
+            myOrder.length > 1 ? (<Title>{myOrder.length}</Title>):(<Title>0</Title>)
+          }
+            <Caption style={{fontSize: 17}}>Đơn hàng</Caption>
           </View>
         </TouchableNativeFeedback>
       </View>

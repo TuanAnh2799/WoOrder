@@ -109,17 +109,11 @@ console.log(userInfo.address);
 
   return (
     <SafeAreaView style={styles.WrappChat}>
-      {Carts.length < 1 ? (
+      {Carts.length == 0 ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <ImageBackground
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWrong}>
-              Bạn chưa có sản phẩm nào vào giỏ hàng.
-            </Text>
-            <Text style={styles.textWrong}>
-              Vui lòng thêm sản phẩm rồi tiến hành đặt hàng.
-            </Text>
-          </ImageBackground>
+          <Image source={{uri:'https://rtworkspace.com/wp-content/plugins/rtworkspace-ecommerce-wp-plugin/assets/img/empty-cart.png'}}
+            style={{width:'100%',height: '100%', justifyContent: 'center', alignItems: 'center'}}/>
+           
         </View>
       ) : (
         <View>
@@ -590,7 +584,7 @@ console.log(userInfo.address);
                   title="Đặt hàng"
                   onPress={() => {
                     var ID = function () {
-                      return '_' + Math.random().toString(36).substr(2, 7);
+                      return 'TA_' + Math.random().toString(36).substr(2, 7);
                     };
                     const Id = ID();
 console.log('id hiện tại: ', Id);

@@ -171,7 +171,7 @@ function DetailsScreen({route,navigation,AddCart}) {
                   <View style={{
                   backgroundColor:'#fff',
                   width:'100%',
-                  height: deviceHeight * 0.6,
+                  height: deviceHeight * 0.5,
                   borderTopRightRadius: 20,
                   borderTopLeftRadius: 20
                   }}>
@@ -220,7 +220,7 @@ function DetailsScreen({route,navigation,AddCart}) {
                               </View>):(<View></View>)}
                             </View>
 
-                            <View style={{width: '90%', marginLeft: '5%', marginTop: '35%'}}>
+                            <View style={{width: '90%', marginLeft: '5%', marginTop: '15%'}}>
                               <Text>Lưu ý: Sau khi bấm "Đặt mua" bạn không thể thay đổi kích thước và màu sắc.</Text>
                             </View>
                       </View>

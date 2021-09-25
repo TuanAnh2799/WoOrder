@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,133 +7,174 @@ import {
   Image,
   FlatList,
   Button,
+  ScrollView,
+  ImageBackground,
 } from 'react-native';
 import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from '../../Routes/AuthProvider';
+import { ActivityIndicator, Colors } from 'react-native-paper';
+
+
 
 export default function MyOrderScreen({navigation}) {
-  {
-    /*
-        {
-      id: 'the-nho-256',
-      name: 'Thẻ nhớ 256 GB',
-      url: 'https://tuanphong.vn/pictures/thumb/2017/10/1508154361-618-the-nho-256gb-microsdxc-sandisk-ultra-a1-2017-420x420.jpg',
-      price: 100000,
-      made: 'Trung Quốc',
-      avaiable: false,
-      color: {},
-      type: 'Điện tử',
-    },
-    {
-      id: 'xiao-mi-note-10-pro',
-      name: 'XiaoMi Note 10',
-      url: 'https://cdn.tgdd.vn/Products/Images/42/222758/xiaomi-redmi-note-10-xanh-duong-1-org.jpg',
-      price: 8000000,
-      made: 'Trung Quốc',
-      avaiable: false,
-      color: ['Đỏ, Xanh, Vàng'],
-      type: 'Điện tử',
-    },
-        */
+  const {user} = useContext(AuthContext);
+
+  const [myOrder, setMyOrder] = useState([]);
+  const [isLoading,setLoading] = useState(true);
+
+
+  useEffect(async () => {
+    const subscriber = await firestore()
+      .collection('Orders')
+      // Filter results
+      .where('orderBy', '==', `${user.uid}`)
+      .get()
+      .then(querySnapshot => {
+        const myorder = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          myorder.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+          
+        });
+        setLoading(false);
+        setMyOrder(myorder);
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  }, []);
+  
+  function formatCash(str) {
+    var money = ''+str;
+    return money.split('').reverse().reduce((prev, next, index) => {
+      return ((index % 3) ? next : (next + '.')) + prev
+    })
   }
-  const product = [
-    {
-      id: 'guong-giay',
-      name: 'Gương giấy',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxIoW865-QRwsmk2KmQL1Y0whX80_43qfodkkBCQDypRzNoJcURJE2aUX4_uM&usqp=CAc',
-      price: 80000,
-      made: 'Trung Quốc',
-      avaiable: false,
-      color: ['Trắng', 'Đen', 'Vàng'],
-      type: 'Tiêu dùng',
-    },
-    {
-        id: 'xiao-mi-note-10-pro',
-        name: 'XiaoMi Note 10',
-        url: 'https://cdn.tgdd.vn/Products/Images/42/222758/xiaomi-redmi-note-10-xanh-duong-1-org.jpg',
-        price: 8000000,
-        made: 'Trung Quốc',
-        avaiable: false,
-        color: ['Đỏ, Xanh, Vàng'],
-        type: 'Điện tử',
-      },
-  ];
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View style={styles.wrap}>
-        <View style={styles.wrappHeaderTitle}>
-            <View style={styles.wrappImg}>
-                <Image
-                style={styles.img}
-                source={{
-                    uri: 'https://shop.thuviencokhi.com/wp-content/uploads/2018/06/icon-van-chuyen.png',
-                }}
-                />
-            </View>
-            <View style={styles.wrapTitle}>
-                <Text style={{textAlign: 'center', fontSize: 17}}>Đơn hàng: abcxyz3955</Text>
-            </View>
-        </View>
+    {
+      isLoading ? (<View style={{flex: 1, justifyContent:'center'}}><ActivityIndicator size='large' color={Colors.blue500}/></View>) : 
+      (<View>
+        {myOrder.length > 0 ? (
+        <ScrollView>
+          {myOrder.map((item, index) => {
+            return (
+              <View style={styles.wrap} key={index}>
+                <View key={index} style={{marginTop: 5}}>
+                  <View style={styles.wrappHeaderTitle}>
+                    <View style={styles.wrappImg}>
+                      <Image
+                        style={styles.img}
+                        source={{
+                          uri: 'https://shop.thuviencokhi.com/wp-content/uploads/2018/06/icon-van-chuyen.png',
+                        }}
+                      />
+                    </View>
+                    <View style={styles.wrapTitle}>
+                      <Text
+                        style={{
+                          textAlign: 'center',
+                          fontSize: 17,
+                          marginLeft: 15,
+                          fontWeight: 'bold',
+                        }}>
+                        Đơn hàng: {item.key}
+                      </Text>
+                    </View>
+                  </View>
 
-        {/*List order */}
-        <View style={{marginTop: 5}}>
-          <FlatList
-            data={product}
-            renderItem={({item, index}) => (
-              <View style={styles.item} key={index}>
-                <View style={styles.wrappIMG}>
-                  <Image
-                    source={{uri: item.url}}
-                    style={styles.image}
-                    resizeMode={'stretch'}
-                  />
-                </View>
-                <View style={styles.wrappInfo}>
-                  <View style={styles.wrappName}>
-                    <Text style={styles.name}>{item.name}</Text>
+                  {/*List order */}
+                  <View style={{marginTop: 5}}>
+                    {
+                      item.order.map((e,index)=>{
+                        return(
+                          <View style={styles.item} key={index}>
+                          <View style={styles.wrappIMG}>
+                            <Image
+                              source={{uri: e.url[0]}}
+                              style={styles.image}
+                              resizeMode={'stretch'}
+                            />
+                          </View>
+                          <View style={styles.wrappInfo}>
+                            <View style={styles.wrappName}>
+                              <Text style={styles.name}>{e.name}</Text>
+                              <View
+                                style={{ marginTop: 10}}>
+                                <Text>Số lượng: <Text style={{fontSize: 15,fontWeight: '700'}}>{e.quantity}</Text></Text>
+                                {
+                                  e.size !== '' && (<Text>Size: <Text style={{fontSize: 15,fontWeight: '700'}}>{e.size}</Text></Text>)
+                                }
+                                <Text>Màu: <Text style={{fontSize: 15,fontWeight: '700' }}>{e.color}</Text></Text>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                        );
+                      })
+                    }
+                  </View>
+
+                  <View style={styles.WrapOrderDetail}>
+                    <View style={{marginLeft: 7, marginTop: 20}}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+
+                          marginLeft: '1%',
+                          marginTop: 5,
+                        }}>
+                        <Text style={{fontSize: 17}}>Tổng sản phẩm: </Text>
+                        <Text style={{fontSize: 16, marginRight: 10}}>{formatCash(item.total)} VNĐ</Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+
+                          marginLeft: '1%',
+                          marginTop: 5,
+                        }}>
+                        <Text style={{fontSize: 17}}>Trạng thái đơn hàng:</Text>
+                        <Text style={{fontSize: 16, marginRight: 10}}>{item.orderStatus}</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <View style={styles.WrapButton}>
+                    <View
+                      style={{
+                        width: '40%',
+                        alignItems: 'flex-end',
+                        marginLeft: '55%',
+                      }}>
+                      <Button title="Hủy đơn hàng" />
+                    </View>
                   </View>
                 </View>
               </View>
-            )}
-            keyExtractor={(item, index) => index}
-          />
+            );
+          })}
+        </ScrollView>
+      ) : (
+        <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>
+          <ImageBackground style={{width: '100%', height: '100%', marginRight: 10, justifyContent:'center'}} source={{uri: 'https://i.pinimg.com/474x/94/57/8b/94578b8106aae0097af26d35af55c1b2.jpg'}}>
+            <Text style={{textAlign:'center', marginTop: 170, fontSize: 18,fontWeight:'600'}}>CHƯA CÓ ĐƠN HÀNG NÀO</Text>
+          </ImageBackground>
         </View>
-
-        <View style={styles.WrapOrderDetail}>
-          <View style={{marginLeft: 7, marginTop: 20}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-
-                marginLeft: '1%',
-                marginTop: 5,
-              }}>
-              <Text style={{fontSize: 17}}>Tổng sản phẩm: </Text>
-              <Text style={{fontSize: 17}}>69696969 VNĐ</Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-
-                marginLeft: '1%',
-                marginTop: 5,
-              }}>
-              <Text style={{fontSize: 17}}>Trạng thái đơn hàng:</Text>
-              <Text style={{fontSize: 17}}>Chờ xác nhận</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.WrapButton}>
-          <View
-            style={{width: '40%', alignItems: 'flex-end', marginLeft: '55%'}}>
-            <Button title="Hủy đơn hàng" />
-          </View>
-        </View>
+      )}
+        
       </View>
+      )
+
+    }
+      
     </SafeAreaView>
   );
 }
