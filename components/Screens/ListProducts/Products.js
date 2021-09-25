@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {styles} from './styles';
 import {AddCart, AddToFavorite} from '../../Store/action';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors, TouchableRipple} from 'react-native-paper';
 import {connect} from 'react-redux';
@@ -20,30 +20,33 @@ import {FlatList} from 'react-native-gesture-handler';
 import Share from 'react-native-share';
 
 function ProductScreen({AddToFavorite}) {
-  const navigation = useNavigation();
 
+  const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [flag, setFlag] = useState(false);
   const [heart, setHeart] = useState('heart-outline');
 
   useEffect( async() => {
-    const subscriber = await firestore()
+
+      const subscriber = await firestore()
       .collection('Products')
       .onSnapshot(querySnapshot => {
         const productss = [];
 
         querySnapshot.forEach(documentSnapshot => {
+         
           productss.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
-        });
+        }); 
         setProducts(productss);
-        console.log('sản phẩm log về:', products);
       });
 
     // Unsubscribe from events when no longer in use
     return () => subscriber();
+
+    
   }, []);
 
   function formatCash(str) {
@@ -59,7 +62,6 @@ function ProductScreen({AddToFavorite}) {
     const shareOptions = {
       message: 'Tải ngay app để order nhé!',
       url: url,
-      link: 'http://youtube.com/',
     };
     try {
       const shareRespone = await Share.open(shareOptions);

@@ -58,7 +58,7 @@ function DetailsScreen({route,navigation,AddCart}) {
 
     return (
         <SafeAreaView>
-          <ScrollView>
+          
             <View style={styles.wrap}>
                 <ScrollView
                 onScroll={({ nativeEvent })=>onchange(nativeEvent)}
@@ -92,7 +92,7 @@ function DetailsScreen({route,navigation,AddCart}) {
             </View>
 
               {/**Thong tin sản phẩm */}
-
+              <ScrollView>
             <View style={styles.wrapInfo}>
                 <View style={styles.wrapDetail}>
                   <View >
@@ -242,6 +242,7 @@ function DetailsScreen({route,navigation,AddCart}) {
                                       type: type,
                                       color: selectedColor,
                                       size: selectedSize,
+                                      //info: info,
                                   }
                                   AddCart(_item);
                                   //console.log('Thong tin hàng mua: ',_item);
@@ -257,6 +258,7 @@ function DetailsScreen({route,navigation,AddCart}) {
                                       type: type,
                                       color: selectedColor,
                                       size: "",
+                                      //info: info,
                                   }
                                   AddCart(_item1);
                                   //console.log('Thong tin hàng mua loại 1 3: ',_item1);

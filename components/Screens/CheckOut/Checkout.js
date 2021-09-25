@@ -27,6 +27,8 @@ import {
 import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Caption, Title, Colors} from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -37,7 +39,6 @@ function CheckOutScreen({
   DecreaseQuantity,
   DeleteCart,
   route,
-  navigation,
 }) {
   let ListCart = [];
   let TotalCart = 0;
@@ -52,7 +53,7 @@ function CheckOutScreen({
   const [updatePhone, setUpdatePhone] = useState('');
 
   const Carts = useSelector(state => state.cartStore.Carts);
-  //const navigation = useNavigation();
+  const navigation = useNavigation();
 console.log(userInfo.address);
   useEffect(() => {
     const subscriber = firestore()
@@ -72,6 +73,7 @@ console.log(userInfo.address);
     ListCart.push(items.Carts[item]);
   });
   console.log('list cart: ', ListCart);
+
   function TotalPrice(price, tonggia) {
     return Number(price * tonggia).toLocaleString('en-US');
   }
@@ -355,7 +357,7 @@ console.log(userInfo.address);
                                 <Button
                                   title="Cập nhật"
                                   onPress={() => {
-                                    if (updateAddress !== '') {
+                                    if (updateAddress !== '' ) {
                                       try {
                                         firestore()
                                           .collection('UserAddress')
@@ -590,26 +592,62 @@ console.log(userInfo.address);
                     var ID = function () {
                       return '_' + Math.random().toString(36).substr(2, 7);
                     };
-                    console.log(ID());
+                    const Id = ID();
+console.log('id hiện tại: ', Id);
                     if (userInfo.address !== '') {
-                      try {
-                        firestore()
-                          .collection('Orders')
-                          .add({
-                            phone: userInfo.phone,
+
+                      const totalCash = shipCost() + Number(TotalCart);
+                      const datetime = new Date();
+console.log('lấy data to insert:', ...ListCart);
+
+                      const newOrder = ({
+                        'id': Id,
+                            
+                            orderBy: user.uid,
+                            addressID: user.uid,
+                            total: totalCash,
+                            dateTime: datetime,
+                            orderStatus: 'Đang chờ xử lý',
+                            
+                           order : ListCart
                           })
-                          .then(() => {
-                            ToastAndroid.show(
-                              'Đặt hàng thành công.',
-                              ToastAndroid.SHORT,
-                            );
-                          });
-                      } catch {
-                        ToastAndroid.show(
-                          'Đặt hàng thất bại.',
-                          ToastAndroid.SHORT,
+                          Alert.alert(
+                          'Thông báo',
+                          'Bạn muốn đặt hàng?',
+                          [  
+                            {
+                              text: 'Đồng ý', onPress: () => {
+                                try {
+                                firestore()
+                                  .collection('Orders')
+                                  .doc(Id)
+                                  .set(newOrder)
+                                  .then(() => {
+                                    ToastAndroid.show(
+                                      'Đặt hàng thành công.',
+                                      ToastAndroid.SHORT,
+                                    );
+                                    navigation.navigate('MyOrder');
+                                  });
+                              } catch(e) {
+                                ToastAndroid.show(
+                                  'Đặt hàng thất bại.',
+                                  ToastAndroid.SHORT,
+                                );
+                                console.log('erro: ',e)
+                              }
+                                }
+                              
+                            },  
+                            {  
+                              text: 'Hủy',  
+                              onPress: () => console.log('Cancel Pressed'),  
+                              style: 'cancel',  
+                            },
+                            
+                          ]  
                         );
-                      }
+                      
                     } else {
                       ToastAndroid.show(
                         'Bạn chưa nhập đầy đủ thông tin.',

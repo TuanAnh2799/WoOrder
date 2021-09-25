@@ -118,15 +118,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 
-  imgChoose: {
-    width: '96%',
-    height: '80%',
-  },
-  imageChoose: {
-    width: '100%',
-    height: '100%',
-  },
-
   emptyFavContainer: {
     width: '100%',
     height:'100%',

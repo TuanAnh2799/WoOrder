@@ -41,7 +41,7 @@ const favoriteReducer = (state =initFav, action) => {
     
 }
 
-function reducerCart(state = initProduct,action){
+function reducerCart( state = initProduct, action){
     
     switch(action.type){
 
@@ -60,7 +60,7 @@ function reducerCart(state = initProduct,action){
                     type: action.payload.type,
                     color: action.payload.color,
                     size: action.payload.size,
-                    info: action.payload.info
+                    //info: action.payload.info
                 } 
                 state.Carts.push(cart); 
                  
@@ -83,7 +83,7 @@ function reducerCart(state = initProduct,action){
                         type: action.payload.type,
                         color: action.payload.color,
                         size: action.payload.size,
-                        info:action.payload.info
+                        //info:action.payload.info
                     }
                     state.Carts.push(_cart);
                 }

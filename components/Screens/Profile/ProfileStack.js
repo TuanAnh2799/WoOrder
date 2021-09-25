@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from './Profile';
 import EditProfile from './EditProfile';
 import FavoritesScreen from './Favorites';
+import MyOrderScreen from './myOrder';
 
 const ProfileStack = createStackNavigator();
 
@@ -30,6 +31,14 @@ const ProfileStackScreen = ({navigation}) => (
         <ProfileStack.Screen 
         name="Favorites" 
         component={FavoritesScreen} 
+        />
+        <ProfileStack.Screen 
+        name="MyOrder" 
+        component={MyOrderScreen} 
+        options={{
+                title:'Đơn hàng',
+                headerTitleAlign:'center',
+            }}
         />
     </ProfileStack.Navigator>
 )
