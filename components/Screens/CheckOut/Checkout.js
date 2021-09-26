@@ -52,8 +52,9 @@ function CheckOutScreen({
   const [updatePhone, setUpdatePhone] = useState('');
 
   const Carts = useSelector(state => state.cartStore.Carts);
+
   const navigation = useNavigation();
-  console.log(userInfo.address);
+  
   useEffect(() => {
     const subscriber = firestore()
       .collection('UserAddress')
@@ -371,6 +372,7 @@ function CheckOutScreen({
                                               'Cập nhật thành công.',
                                               ToastAndroid.SHORT,
                                             );
+                                            closeModal()
                                           });
                                       } catch {
                                         ToastAndroid.show(
@@ -497,6 +499,7 @@ function CheckOutScreen({
                                     ToastAndroid.show(
                                       'Cập nhật thành công.',
                                       ToastAndroid.SHORT,
+                                      closeModalPhone()
                                     );
                                   });
                               } catch {
@@ -632,7 +635,7 @@ function CheckOutScreen({
                                     'Đặt hàng thành công.',
                                     ToastAndroid.SHORT,
                                   );
-                                  navigation.navigate('MyOrder');
+                                  navigation.navigate('Profile');
                                 });
                             } catch (e) {
                               ToastAndroid.show(

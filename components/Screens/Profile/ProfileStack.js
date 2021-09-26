@@ -3,11 +3,12 @@ import {createStackNavigator} from '@react-navigation/stack';
 import ProfileScreen from './Profile';
 import EditProfile from './EditProfile';
 import FavoritesScreen from './Favorites';
-import MyOrderScreen from './myOrder';
+import MyTabs from './index';
+import AdminTabs from './adminTab';
 
 const ProfileStack = createStackNavigator();
 
-const ProfileStackScreen = ({navigation}) => (
+const ProfileStackScreen = () => (
   <ProfileStack.Navigator
     screenOptions={{
       headerStyle: {
@@ -23,7 +24,7 @@ const ProfileStackScreen = ({navigation}) => (
       name="Profile"
       component={ProfileScreen}
       options={{
-        title: 'Đơn hàng',
+        title: '',
         headerTitleAlign: 'center',
         headerShown: false,
       }}
@@ -32,10 +33,26 @@ const ProfileStackScreen = ({navigation}) => (
       name="EditProfile"
       component={EditProfile}
       options={{
-        title: 'Đơn hàng',
+        title: 'Chỉnh sửa thông tin',
         headerTitleAlign: 'center',
       }}
     />
+    <ProfileStack.Screen
+      name="MyOrder"
+      component={MyTabs}
+      options={{
+        title: 'Đơn hàng',
+        headerTitleAlign: 'center',
+      }}/>
+
+    <ProfileStack.Screen
+      name="CheckOrder"
+      component={AdminTabs}
+      options={{
+        title: 'Duyệt đơn hàng',
+        headerTitleAlign: 'center',
+      }}/>
+
     <ProfileStack.Screen
       name="Favorites"
       component={FavoritesScreen}
@@ -44,14 +61,12 @@ const ProfileStackScreen = ({navigation}) => (
         headerTitleAlign: 'center',
       }}
     />
-    <ProfileStack.Screen
-      name="MyOrder"
-      component={MyOrderScreen}
-      options={{
-        title: 'Đơn hàng',
-        headerTitleAlign: 'center',
-      }}
-    />
+    {/*
+    
+    
+     */}
+    
+
   </ProfileStack.Navigator>
 );
 export default ProfileStackScreen;

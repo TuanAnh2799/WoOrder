@@ -20,7 +20,8 @@ import { ActivityIndicator, Colors } from 'react-native-paper';
 
 
 
-export default function MyOrderScreen({navigation}) {
+export default function DeliveredScreen({navigation}) {
+
   const {user} = useContext(AuthContext);
 
   const [myOrder, setMyOrder] = useState([]);
@@ -37,7 +38,7 @@ export default function MyOrderScreen({navigation}) {
       .collection('Orders')
       // Filter results
       .where('orderBy', '==', `${user.uid}`)
-      .where('orderStatus', '==', 'Đang chờ xử lý')
+      .where('orderStatus', '==', 'Đã giao')
       .get()
       .then(querySnapshot => {
         const myorder = [];
@@ -69,7 +70,6 @@ export default function MyOrderScreen({navigation}) {
       setTimeout(resolve,time);
     });
   }
-  
 const onRefresh = React.useCallback(() => {
   setRefreshing(true)
   wait(2000).then(()=> {
@@ -269,3 +269,4 @@ const onRefresh = React.useCallback(() => {
     </SafeAreaView>
   );
 }
+

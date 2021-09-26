@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import CheckOutScreen from './Checkout';
 import MyOrderScreen from '../Profile/myOrder';
+import MyTabs from '../Profile';
 
 
 const CheckStack = createStackNavigator();
@@ -14,10 +15,16 @@ export default function CheckStackScreen() {
                 title:'Đặt hàng',
                 headerTitleAlign:'center',
             }}/>
-            <CheckStack.Screen name="MyOrder" component={MyOrderScreen} options={{
+            
+            {/*
+            <CheckStack.Screen name="Đơn hàng" component={MyTabs} options={{
                 title:'Đơn hàng',
                 headerTitleAlign:'center',
             }}/>
+             */}
+            
+             
+            
         </CheckStack.Navigator>
     )
 }

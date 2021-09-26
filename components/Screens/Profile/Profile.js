@@ -13,12 +13,16 @@ import {AuthContext} from '../../Routes/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import {resetStore, ClearFavorite} from '../../Store/action';
 import {connect} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
-function ProfileScreen({navigation, resetStore, ClearFavorite}) {
+function ProfileScreen({ resetStore, ClearFavorite}) {
 
+  const navigation = useNavigation();
   const {logout, user} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState([]);
   const [myOrder, setMyOrder] = useState(0);
+  const [checkOrder, setCheckOrder] = useState([]);
+
   console.log(user.uid);
   /*
   useEffect(() => {
@@ -43,16 +47,17 @@ function ProfileScreen({navigation, resetStore, ClearFavorite}) {
         setUserInfo(documentSnapshot.data());
       });
 
-      getData();
+    getData();
+
+    if (user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2') {
+      return adminGetData();
+    }
     // Stop listening for updates when no longer required
     return () => subscriber();
-
-    
   }, []);
 
-
-const getData = async()=> {
-  const subscriber = await firestore()
+  const getData = async () => {
+    const subscriber = await firestore()
       .collection('Orders')
       // Filter results
       .where('orderBy', '==', `${user.uid}`)
@@ -65,17 +70,45 @@ const getData = async()=> {
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
-          
         });
         setMyOrder(myorder);
       });
 
     // Unsubscribe from events when no longer in use
     return () => subscriber();
-}
+  };
 
+  const adminGetData = async () => {
+    const subscriber = await firestore()
+      .collection('Orders')
+      .onSnapshot(querySnapshot => {
+        const orders = [];
 
+        querySnapshot.forEach(documentSnapshot => {
+          orders.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+        setCheckOrder(orders);
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  };
   console.log('User Inffo: ', userInfo);
+
+  const getCount = checkOrder => {
+    let x = 0;
+    checkOrder.map((e, index) => {
+      if (e.orderStatus == 'Đang chờ xử lý') {
+        x++;
+      }
+    });
+    console.log('Số hàng chờ duyệt: ', x);
+    return x;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.userInfoSection}>
@@ -90,7 +123,11 @@ const getData = async()=> {
             <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>
               {userInfo.fullname}
             </Title>
-            <Caption style={styles.caption}>@Người dùng</Caption>
+            {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
+              <Caption style={styles.caption}>@Admin</Caption>
+            ) : (
+              <Caption style={styles.caption}>@Người dùng</Caption>
+            )}
           </View>
           <Icon
             name="account-edit-outline"
@@ -135,17 +172,48 @@ const getData = async()=> {
           <Title>0 VND</Title>
           <Caption style={{fontSize: 17}}>Ví tiền</Caption>
         </View>
-        <TouchableNativeFeedback onPress={()=>navigation.navigate('MyOrder')}>
-          <View style={styles.infoBox}>
-          {
-            myOrder.length > 1 ? (<Title>{myOrder.length}</Title>):(<Title>0</Title>)
-          }
-            <Caption style={{fontSize: 17}}>Đơn hàng</Caption>
-          </View>
-        </TouchableNativeFeedback>
+
+        {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
+          <TouchableNativeFeedback onPress={()=> navigation.navigate('CheckOrder')}>
+            <View style={styles.infoBox}>
+              {checkOrder.length > 0 ? (
+                <Title style={{color: 'red'}}>{getCount(checkOrder).toString()} *</Title>
+              ) : (
+                <Title>0</Title>
+              )}
+              <Caption style={{fontSize: 17}}>Đơn hàng chờ duyệt</Caption>
+            </View>
+          </TouchableNativeFeedback>
+        ) : (
+          <TouchableNativeFeedback
+            onPress={() => navigation.navigate('MyOrder')}>
+            <View style={styles.infoBox}>
+              {myOrder.length > 1 ? (
+                <Title style={{color: 'red'}}>{myOrder.length} *</Title>
+              ) : (
+                <Title>0</Title>
+              )}
+              <Caption style={{fontSize: 17}}>Đơn hàng</Caption>
+            </View>
+          </TouchableNativeFeedback>
+        )}
       </View>
 
       <View style={styles.menuWrapper}>
+
+      {/*
+      {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
+          <TouchableRipple onPress={() => {}}>
+            <View style={styles.menuItem}>
+              <Icon name="cart-outline" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Kiểm tra đơn hàng</Text>
+            </View>
+          </TouchableRipple>
+        ) : (
+          <View></View>
+        )}
+       */}
+        
         {/*
         <TouchableRipple onPress={() => {}}>
           <View style={styles.menuItem}>

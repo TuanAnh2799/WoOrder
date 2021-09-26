@@ -1,43 +1,25 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  FlatList,
-  Button,
-  ScrollView,
-  ImageBackground,
-  Alert,
-  ToastAndroid,
-  RefreshControl
-} from 'react-native';
-import {styles} from './styles';
+import { StyleSheet, Text, View ,ImageBackground, Image, Alert,ScrollView, SafeAreaView,Button,ToastAndroid, RefreshControl} from 'react-native'
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../../Routes/AuthProvider';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 
-
-
-export default function MyOrderScreen({navigation}) {
-  const {user} = useContext(AuthContext);
+export default function AdminShippingScreen() {
 
   const [myOrder, setMyOrder] = useState([]);
+  const [myAddress, setMyAddress] = useState([]);
   const [isLoading,setLoading] = useState(true);
   const [isRefreshing,setRefreshing] = useState(false);
 
-
   useEffect(() => {
     getData();
+    UserAddress();
   }, []);
   
   const getData= async()=>{
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${user.uid}`)
-      .where('orderStatus', '==', 'Đang chờ xử lý')
+      .where('orderStatus', '==', 'Đã duyệt')
       .get()
       .then(querySnapshot => {
         const myorder = [];
@@ -57,19 +39,33 @@ export default function MyOrderScreen({navigation}) {
     return () => subscriber();
   }
 
-  function formatCash(str) {
-    var money = ''+str;
-    return money.split('').reverse().reduce((prev, next, index) => {
-      return ((index % 3) ? next : (next + '.')) + prev
-    })
+  const  UserAddress = async()=> {
+    const subscriber = await firestore()
+    .collection('UserAddress')
+    .onSnapshot(querySnapshot => {
+      const add = [];
+
+      querySnapshot.forEach(documentSnapshot => {
+        add.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+      });
+     
+      setMyAddress(add);
+    });
+
+  // Unsubscribe from events when no longer in use
+  return () => subscriber();
   }
+
 
   function wait(time){
     return new Promise(resolve => {
       setTimeout(resolve,time);
     });
   }
-  
+
 const onRefresh = React.useCallback(() => {
   setRefreshing(true)
   wait(2000).then(()=> {
@@ -77,6 +73,13 @@ const onRefresh = React.useCallback(() => {
     getData();
   })
 },[isRefreshing])
+
+  function formatCash(str) {
+    var money = ''+str;
+    return money.split('').reverse().reduce((prev, next, index) => {
+      return ((index % 3) ? next : (next + '.')) + prev
+    })
+  }
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -86,8 +89,19 @@ const onRefresh = React.useCallback(() => {
         {myOrder.length > 0 ? (
         <ScrollView refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>
-        }>
+          }>
           {myOrder.map((item, index) => {
+                let fullname = '';
+                let phone ='';
+                let diachi = '';
+                myAddress.map((value,index)=>{
+                  if(item.addressID == value.addressID)
+                  {
+                    fullname = value.fullname;
+                    phone = value.phone;
+                    diachi = value.address;
+                  }
+                })
             return (
               <View style={styles.wrap} key={index}>
                 <View key={index} style={{marginTop: 5}}>
@@ -159,6 +173,26 @@ const onRefresh = React.useCallback(() => {
                         <Text style={{fontSize: 17}}>Ngày đặt: </Text>
                         <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB')}</Text>
                       </View>
+
+                      <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+
+                              marginLeft: '1%',
+                              marginTop: 5,
+                            }}>
+                            <View style={{width: '30%'}}>
+                              <Text style={{fontSize: 17}}>Địa chỉ nhận: </Text>
+                            </View>
+                            
+                            <View style={{width: '70%'}}>
+                              <Text style={{fontSize: 16, marginRight: 5, marginLeft: 35}}>{fullname} - {diachi} - {phone}</Text>
+                            </View>
+                            
+                        </View>
+
+
                       <View
                         style={{
                           flexDirection: 'row',
@@ -185,18 +219,19 @@ const onRefresh = React.useCallback(() => {
                     </View>
                   </View>
 
+
                   <View style={styles.WrapButton}>
                     <View
                       style={{
-                        width: '40%',
+                        width: '50%',
                         alignItems: 'flex-end',
-                        marginLeft: '55%',
+                        marginLeft: '45%',
                       }}>
                       {
                         
-                        item.orderStatus == "Đang chờ xử lý" ? (
-                        <Button title="Hủy đơn hàng" onPress={()=> {
-                            Alert.alert('Thông báo', 'Bạn muốn hủy đơn hàng?', [
+                        item.orderStatus == "Đã duyệt" ? (
+                        <Button title="Xác nhận giao hàng" onPress={()=> {
+                            Alert.alert('Thông báo', 'Xác nhận đã giao hàng?', [
                             {
                               text: 'Đồng ý',
                               onPress: () => {
@@ -204,9 +239,9 @@ const onRefresh = React.useCallback(() => {
                                 .collection('Orders')
                                 .doc(item.id)
                                 .update({
-                                  orderStatus: 'Đã hủy đơn hàng'
+                                  orderStatus: 'Đã giao hàng'
                                 }).then(
-                                  ToastAndroid.show('Hủy đơn hàng thành công.',ToastAndroid.SHORT),
+                                  ToastAndroid.show('Giao hàng thành công.',ToastAndroid.SHORT),
                                   getData()
                                 )
                               },
@@ -219,29 +254,7 @@ const onRefresh = React.useCallback(() => {
                           ]);
                         }}/>
                         ):(
-                          <Button title="Mua lại lần nữa" onPress={()=>{
-                            Alert.alert('Thông báo', 'Bạn muốn mua lại lần nữa?', [
-                              {
-                                text: 'Đồng ý',
-                                onPress: () => {
-                                  firestore()
-                                  .collection('Orders')
-                                  .doc(item.id)
-                                  .update({
-                                    orderStatus: 'Đang chờ xử lý'
-                                  }).then(
-                                    ToastAndroid.show('Đã đặt hàng lại thành công.',ToastAndroid.SHORT),
-                                    getData()
-                                  )
-                                },
-                              },
-                              {
-                                text: 'Hủy',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                              },
-                            ]);
-                          }}/>
+                          <View></View>
                         )
                       }
                       
@@ -256,7 +269,7 @@ const onRefresh = React.useCallback(() => {
       ) : (
         <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>
           <ImageBackground style={{width: '100%', height: '100%', marginRight: 10, justifyContent:'center'}} source={{uri: 'https://i.pinimg.com/474x/94/57/8b/94578b8106aae0097af26d35af55c1b2.jpg'}}>
-            <Text style={{textAlign:'center', marginTop: 170, fontSize: 18,fontWeight:'600'}}>CHƯA CÓ ĐƠN HÀNG NÀO</Text>
+            <Text style={{textAlign:'center', marginTop: 170, fontSize: 18,fontWeight:'600'}}>CHƯA CÓ ĐƠN HÀNG NÀO ĐƯỢC GIAO</Text>
           </ImageBackground>
         </View>
       )}
@@ -269,3 +282,93 @@ const onRefresh = React.useCallback(() => {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+    wrap: {
+        width:'96%',
+        backgroundColor: '#f0f0f0',
+        marginLeft: '2%',
+        padding: 5,
+        borderWidth: 0.5, 
+        marginTop: 7,
+        borderRadius: 7,
+      },
+      wrappHeaderTitle: {
+        flexDirection:'row',
+        borderWidth: 0.5,
+        height: 45, 
+        paddingLeft: 10,
+        backgroundColor:'#ffffff'
+      },
+      wrappImg: {
+        width: '12%',
+        height: 42,
+      },
+      img: {
+       width: '100%',
+       height: '100%'
+      },
+      item: {
+        backgroundColor: '#ffffff',
+        padding: 5,
+        marginVertical: 2,
+        marginHorizontal: '2.5%',
+        width: '95%',
+        height: 130,
+        borderRadius: 5,
+        marginTop: 7,
+        flexDirection: 'row',
+      },
+      wrapTitle: {
+        alignItems:'center',
+        justifyContent:'center',
+        alignContent:'center',
+      },
+      wrappIMG: {
+        width: '35%',
+        height: '96%',
+        borderRadius: 20,
+      },
+      image: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 5,
+      },
+      wrappInfo: {
+        flexDirection: 'column',
+        marginLeft: 20,
+        width: '100%',
+        //justifyContent: 'space-around',
+      },
+      textTitle: {
+        fontSize: 20,
+        textAlign: 'center',
+      },
+      wrappName: {
+        width: '100%',
+        marginTop: 10
+      },
+      wrappTitle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        right: 40,
+      },
+      title: {
+        fontSize: 14,
+        textAlign: 'center',
+        fontWeight: '400',
+        textDecorationLine: 'underline',
+      },
+      WrapOrderDetail: {
+          //width: WITDH,
+          height: 185,
+      },
+      WrapButton: {
+        height: 40,
+    }, 
+    name: {
+      fontSize: 17,
+      fontWeight:'bold'
+    }
+});

@@ -15,14 +15,13 @@ import {
 } from 'react-native';
 import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../../Routes/AuthProvider';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 
 
 
-export default function MyOrderScreen({navigation}) {
-  const {user} = useContext(AuthContext);
-
+export default function AdminDeliveredScreen({navigation}) {
+    
+  const [myAddress, setMyAddress] = useState([]);
   const [myOrder, setMyOrder] = useState([]);
   const [isLoading,setLoading] = useState(true);
   const [isRefreshing,setRefreshing] = useState(false);
@@ -30,14 +29,14 @@ export default function MyOrderScreen({navigation}) {
 
   useEffect(() => {
     getData();
+    UserAddress();
   }, []);
   
   const getData= async()=>{
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${user.uid}`)
-      .where('orderStatus', '==', 'Đang chờ xử lý')
+      .where('orderStatus', '==', 'Đã giao hàng')
       .get()
       .then(querySnapshot => {
         const myorder = [];
@@ -57,6 +56,27 @@ export default function MyOrderScreen({navigation}) {
     return () => subscriber();
   }
 
+  const  UserAddress = async()=> {
+    const subscriber = await firestore()
+    .collection('UserAddress')
+    .onSnapshot(querySnapshot => {
+      const add = [];
+
+      querySnapshot.forEach(documentSnapshot => {
+        add.push({
+          ...documentSnapshot.data(),
+          key: documentSnapshot.id,
+        });
+      });
+     
+      setMyAddress(add);
+    });
+
+  // Unsubscribe from events when no longer in use
+  return () => subscriber();
+  }
+
+
   function formatCash(str) {
     var money = ''+str;
     return money.split('').reverse().reduce((prev, next, index) => {
@@ -69,7 +89,6 @@ export default function MyOrderScreen({navigation}) {
       setTimeout(resolve,time);
     });
   }
-  
 const onRefresh = React.useCallback(() => {
   setRefreshing(true)
   wait(2000).then(()=> {
@@ -88,6 +107,17 @@ const onRefresh = React.useCallback(() => {
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>
         }>
           {myOrder.map((item, index) => {
+                let fullname = '';
+                let phone ='';
+                let diachi = '';
+                myAddress.map((value,index)=>{
+                  if(item.addressID == value.addressID)
+                  {
+                    fullname = value.fullname;
+                    phone = value.phone;
+                    diachi = value.address;
+                  }
+                })
             return (
               <View style={styles.wrap} key={index}>
                 <View key={index} style={{marginTop: 5}}>
@@ -159,6 +189,25 @@ const onRefresh = React.useCallback(() => {
                         <Text style={{fontSize: 17}}>Ngày đặt: </Text>
                         <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB')}</Text>
                       </View>
+
+                      <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+
+                              marginLeft: '1%',
+                              marginTop: 5,
+                            }}>
+                            <View style={{width: '30%'}}>
+                              <Text style={{fontSize: 17}}>Địa chỉ nhận: </Text>
+                            </View>
+                            
+                            <View style={{width: '70%'}}>
+                              <Text style={{fontSize: 16, marginRight: 5, marginLeft: 35}}>{fullname} - {diachi} - {phone}</Text>
+                            </View>
+                            
+                          </View>
+                          
                       <View
                         style={{
                           flexDirection: 'row',
@@ -184,69 +233,6 @@ const onRefresh = React.useCallback(() => {
                       </View>
                     </View>
                   </View>
-
-                  <View style={styles.WrapButton}>
-                    <View
-                      style={{
-                        width: '40%',
-                        alignItems: 'flex-end',
-                        marginLeft: '55%',
-                      }}>
-                      {
-                        
-                        item.orderStatus == "Đang chờ xử lý" ? (
-                        <Button title="Hủy đơn hàng" onPress={()=> {
-                            Alert.alert('Thông báo', 'Bạn muốn hủy đơn hàng?', [
-                            {
-                              text: 'Đồng ý',
-                              onPress: () => {
-                                firestore()
-                                .collection('Orders')
-                                .doc(item.id)
-                                .update({
-                                  orderStatus: 'Đã hủy đơn hàng'
-                                }).then(
-                                  ToastAndroid.show('Hủy đơn hàng thành công.',ToastAndroid.SHORT),
-                                  getData()
-                                )
-                              },
-                            },
-                            {
-                              text: 'Hủy',
-                              onPress: () => console.log('Cancel Pressed'),
-                              style: 'cancel',
-                            },
-                          ]);
-                        }}/>
-                        ):(
-                          <Button title="Mua lại lần nữa" onPress={()=>{
-                            Alert.alert('Thông báo', 'Bạn muốn mua lại lần nữa?', [
-                              {
-                                text: 'Đồng ý',
-                                onPress: () => {
-                                  firestore()
-                                  .collection('Orders')
-                                  .doc(item.id)
-                                  .update({
-                                    orderStatus: 'Đang chờ xử lý'
-                                  }).then(
-                                    ToastAndroid.show('Đã đặt hàng lại thành công.',ToastAndroid.SHORT),
-                                    getData()
-                                  )
-                                },
-                              },
-                              {
-                                text: 'Hủy',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                              },
-                            ]);
-                          }}/>
-                        )
-                      }
-                      
-                    </View>
-                  </View>
                 </View>
               </View>
             );
@@ -269,3 +255,4 @@ const onRefresh = React.useCallback(() => {
     </SafeAreaView>
   );
 }
+

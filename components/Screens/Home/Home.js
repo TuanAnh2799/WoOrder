@@ -11,6 +11,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    LogBox.ignoreLogs(['If you want to use Reanimated 2']);
   }, [])
 
   return (
