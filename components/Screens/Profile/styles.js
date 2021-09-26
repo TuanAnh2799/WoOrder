@@ -6,7 +6,7 @@ const HEIGHT = Dimensions.get('window').height;
 export const styles = StyleSheet.create({
     wrap: {
         width:'96%',
-        backgroundColor: '#FFD700',
+        backgroundColor: '#f0f0f0',
         marginLeft: '2%',
         padding: 5,
         borderWidth: 0.5, 
@@ -17,7 +17,8 @@ export const styles = StyleSheet.create({
         flexDirection:'row',
         borderWidth: 0.5,
         height: 45, 
-        paddingLeft: 10
+        paddingLeft: 10,
+        backgroundColor:'#ffffff'
       },
       wrappImg: {
         width: '12%',
@@ -41,7 +42,7 @@ export const styles = StyleSheet.create({
       wrapTitle: {
         alignItems:'center',
         justifyContent:'center',
-        alignContent:'center'
+        alignContent:'center',
       },
       wrappIMG: {
         width: '35%',
@@ -81,7 +82,7 @@ export const styles = StyleSheet.create({
       },
       WrapOrderDetail: {
           //width: WITDH,
-          height: 100,
+          height: 120,
       },
       WrapButton: {
         height: 40,

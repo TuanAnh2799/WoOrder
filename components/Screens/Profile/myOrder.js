@@ -9,6 +9,8 @@ import {
   Button,
   ScrollView,
   ImageBackground,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
@@ -24,7 +26,11 @@ export default function MyOrderScreen({navigation}) {
   const [isLoading,setLoading] = useState(true);
 
 
-  useEffect(async () => {
+  useEffect(() => {
+    getData();
+  }, []);
+  
+  const getData= async()=>{
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
@@ -46,8 +52,8 @@ export default function MyOrderScreen({navigation}) {
 
     // Unsubscribe from events when no longer in use
     return () => subscriber();
-  }, []);
-  
+  }
+
   function formatCash(str) {
     var money = ''+str;
     return money.split('').reverse().reduce((prev, next, index) => {
@@ -122,6 +128,18 @@ export default function MyOrderScreen({navigation}) {
 
                   <View style={styles.WrapOrderDetail}>
                     <View style={{marginLeft: 7, marginTop: 20}}>
+                    <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+
+                          marginLeft: '1%',
+                          marginTop: 2,
+                        }}>
+                        
+                        <Text style={{fontSize: 17}}>Ngày đặt: </Text>
+                        <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB')}</Text>
+                      </View>
                       <View
                         style={{
                           flexDirection: 'row',
@@ -130,6 +148,7 @@ export default function MyOrderScreen({navigation}) {
                           marginLeft: '1%',
                           marginTop: 5,
                         }}>
+
                         <Text style={{fontSize: 17}}>Tổng sản phẩm: </Text>
                         <Text style={{fontSize: 16, marginRight: 10}}>{formatCash(item.total)} VNĐ</Text>
                       </View>
@@ -154,13 +173,72 @@ export default function MyOrderScreen({navigation}) {
                         alignItems: 'flex-end',
                         marginLeft: '55%',
                       }}>
-                      <Button title="Hủy đơn hàng" />
+                      {
+                        
+                        item.orderStatus == "Đang chờ xử lý" ? (
+                        <Button title="Hủy đơn hàng" onPress={()=> {
+                            Alert.alert('Thông báo', 'Bạn muốn hủy đơn hàng?', [
+                            {
+                              text: 'Đồng ý',
+                              onPress: () => {
+                                firestore()
+                                .collection('Orders')
+                                .doc(item.id)
+                                .update({
+                                  orderStatus: 'Đã hủy đơn hàng'
+                                }).then(
+                                  ToastAndroid.show('Hủy đơn hàng thành công.',ToastAndroid.SHORT),
+                                  getData()
+                                )
+                              },
+                            },
+                            {
+                              text: 'Hủy',
+                              onPress: () => console.log('Cancel Pressed'),
+                              style: 'cancel',
+                            },
+                          ]);
+                        }}/>
+                        ):(
+                          <Button title="Mua lại lần nữa" onPress={()=>{
+                            Alert.alert('Thông báo', 'Bạn muốn mua lại lần nữa?', [
+                              {
+                                text: 'Đồng ý',
+                                onPress: () => {
+                                  firestore()
+                                  .collection('Orders')
+                                  .doc(item.id)
+                                  .update({
+                                    orderStatus: 'Đang chờ xử lý'
+                                  }).then(
+                                    ToastAndroid.show('Đã đặt hàng lại thành công.',ToastAndroid.SHORT),
+                                    getData()
+                                  )
+                                },
+                              },
+                              {
+                                text: 'Hủy',
+                                onPress: () => console.log('Cancel Pressed'),
+                                style: 'cancel',
+                              },
+                            ]);
+                          }}/>
+                        )
+                      }
+                      
                     </View>
                   </View>
                 </View>
               </View>
             );
           })}
+
+          <View>
+          <View>
+            <Text>Lịch sử</Text>
+          </View>
+        </View>
+
         </ScrollView>
       ) : (
         <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>

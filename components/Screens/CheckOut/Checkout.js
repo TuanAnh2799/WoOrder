@@ -27,8 +27,7 @@ import {
 import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Caption, Title, Colors} from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-
+import {useNavigation} from '@react-navigation/native';
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -54,7 +53,7 @@ function CheckOutScreen({
 
   const Carts = useSelector(state => state.cartStore.Carts);
   const navigation = useNavigation();
-console.log(userInfo.address);
+  console.log(userInfo.address);
   useEffect(() => {
     const subscriber = firestore()
       .collection('UserAddress')
@@ -111,9 +110,17 @@ console.log(userInfo.address);
     <SafeAreaView style={styles.WrappChat}>
       {Carts.length == 0 ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Image source={{uri:'https://rtworkspace.com/wp-content/plugins/rtworkspace-ecommerce-wp-plugin/assets/img/empty-cart.png'}}
-            style={{width:'100%',height: '100%', justifyContent: 'center', alignItems: 'center'}}/>
-           
+          <Image
+            source={{
+              uri: 'https://rtworkspace.com/wp-content/plugins/rtworkspace-ecommerce-wp-plugin/assets/img/empty-cart.png',
+            }}
+            style={{
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          />
         </View>
       ) : (
         <View>
@@ -351,7 +358,7 @@ console.log(userInfo.address);
                                 <Button
                                   title="Cập nhật"
                                   onPress={() => {
-                                    if (updateAddress !== '' ) {
+                                    if (updateAddress !== '') {
                                       try {
                                         firestore()
                                           .collection('UserAddress')
@@ -510,7 +517,14 @@ console.log(userInfo.address);
 
             {/**Close modal Phone */}
 
-            <View style={{marginLeft: 7, marginTop: 20}}>
+            <View
+              style={{
+                marginLeft: 7,
+                marginTop: 20,
+                borderWidth: 0.5,
+                borderRadius: 5,
+                width: '96%',
+              }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -529,7 +543,7 @@ console.log(userInfo.address);
                   justifyContent: 'space-between',
                   width: '96%',
                   marginLeft: '1%',
-                  marginTop: 5,
+                  marginTop: 7,
                 }}>
                 <Text style={{fontSize: 17}}>Tổng tiền sản phẩm:</Text>
                 <Text style={{fontSize: 17}}>
@@ -543,7 +557,7 @@ console.log(userInfo.address);
                   justifyContent: 'space-between',
                   width: '96%',
                   marginLeft: '1%',
-                  marginTop: 5,
+                  marginTop: 7,
                 }}>
                 <Text style={{fontSize: 17}}>Tổng cộng: </Text>
                 <Text style={{fontSize: 17}}>
@@ -587,61 +601,54 @@ console.log(userInfo.address);
                       return 'TA_' + Math.random().toString(36).substr(2, 7);
                     };
                     const Id = ID();
-console.log('id hiện tại: ', Id);
+                    console.log('id hiện tại: ', Id);
                     if (userInfo.address !== '') {
-
                       const totalCash = shipCost() + Number(TotalCart);
                       const datetime = new Date();
-console.log('lấy data to insert:', ...ListCart);
+                      console.log('lấy data to insert:', ...ListCart);
 
-                      const newOrder = ({
-                        'id': Id,
-                            
-                            orderBy: user.uid,
-                            addressID: user.uid,
-                            total: totalCash,
-                            dateTime: datetime,
-                            orderStatus: 'Đang chờ xử lý',
-                            
-                           order : ListCart
-                          })
-                          Alert.alert(
-                          'Thông báo',
-                          'Bạn muốn đặt hàng?',
-                          [  
-                            {
-                              text: 'Đồng ý', onPress: () => {
-                                try {
-                                firestore()
-                                  .collection('Orders')
-                                  .doc(Id)
-                                  .set(newOrder)
-                                  .then(() => {
-                                    ToastAndroid.show(
-                                      'Đặt hàng thành công.',
-                                      ToastAndroid.SHORT,
-                                    );
-                                    navigation.navigate('MyOrder');
-                                  });
-                              } catch(e) {
-                                ToastAndroid.show(
-                                  'Đặt hàng thất bại.',
-                                  ToastAndroid.SHORT,
-                                );
-                                console.log('erro: ',e)
-                              }
-                                }
-                              
-                            },  
-                            {  
-                              text: 'Hủy',  
-                              onPress: () => console.log('Cancel Pressed'),  
-                              style: 'cancel',  
-                            },
-                            
-                          ]  
-                        );
-                      
+                      const newOrder = {
+                        id: Id,
+
+                        orderBy: user.uid,
+                        addressID: user.uid,
+                        total: totalCash,
+                        dateTime: datetime,
+                        orderStatus: 'Đang chờ xử lý',
+
+                        order: ListCart,
+                      };
+                      Alert.alert('Thông báo', 'Bạn muốn đặt hàng?', [
+                        {
+                          text: 'Đồng ý',
+                          onPress: () => {
+                            try {
+                              firestore()
+                                .collection('Orders')
+                                .doc(Id)
+                                .set(newOrder)
+                                .then(() => {
+                                  ToastAndroid.show(
+                                    'Đặt hàng thành công.',
+                                    ToastAndroid.SHORT,
+                                  );
+                                  navigation.navigate('MyOrder');
+                                });
+                            } catch (e) {
+                              ToastAndroid.show(
+                                'Đặt hàng thất bại.',
+                                ToastAndroid.SHORT,
+                              );
+                              console.log('erro: ', e);
+                            }
+                          },
+                        },
+                        {
+                          text: 'Hủy',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                      ]);
                     } else {
                       ToastAndroid.show(
                         'Bạn chưa nhập đầy đủ thông tin.',
