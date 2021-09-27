@@ -8,6 +8,7 @@ import {
   Alert,
   Button,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import {styles} from './styles';
 import {AddCart, AddToFavorite} from '../../Store/action';
@@ -19,11 +20,34 @@ import {useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import Share from 'react-native-share';
 
+const listTab = [
+  {
+    status: 'Tất cả',
+    type: 0
+  },
+  {
+    status: 'Công nghệ',
+    type: 1
+  },
+  {
+    status: 'Thời trang',
+    type: 2
+  },
+  
+  {
+    status: 'Đồ chơi',
+    type: 3
+  },
+];
+
 function ProductScreen({AddToFavorite}) {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [heart, setHeart] = useState('heart-outline');
   const [isLoading, setIsLoading] = useState(true);
+  const [statusType, setStatusType] = useState(0);
+
+const [dataList, setDataList] = useState(products);
 
   useEffect(async () => {
     const subscriber = await firestore()
@@ -66,6 +90,17 @@ function ProductScreen({AddToFavorite}) {
       console.log(error);
     }
   };
+
+const setStatusFillter = getType => {
+  if(getType !== 0) {
+    setDataList([...products.filter(e => e.type === getType)])
+  }
+  else {
+    setDataList(products)
+  }
+  setStatusType(getType);
+}
+
   return (
     <SafeAreaView>
       {isLoading ? (
@@ -98,122 +133,108 @@ function ProductScreen({AddToFavorite}) {
               marginTop: 1,
               marginLeft: '3%',
             }}>
-            <View
-              style={{
-                width: '25%',
-                backgroundColor: 'green',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 5,
-              }}>
-              <TouchableRipple
-                onPress={() => console.log('Bạn chọn Tất cả sản phẩm')}>
-                <Text>Tất cả</Text>
-              </TouchableRipple>
-            </View>
-            <View
-              style={{
-                width: '25%',
-                backgroundColor: 'blue',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 5,
-                marginHorizontal: 2,
-              }}>
-              <TouchableRipple
-                onPress={() => console.log('Bạn chọn Công nghệ')}>
-                <Text>Công nghệ</Text>
-              </TouchableRipple>
-            </View>
-            <View
-              style={{
-                width: '25%',
-                backgroundColor: 'orange',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 5,
-                marginHorizontal: 2,
-              }}>
-              <TouchableRipple
-                onPress={() => console.log('Bạn chọn Thời trang')}>
-                <Text>Thời trang</Text>
-              </TouchableRipple>
-            </View>
-            <View
-              style={{
-                width: '25%',
-                backgroundColor: 'red',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 5,
-              }}>
-              <TouchableRipple
-                onPress={() => console.log('Bạn chọn Tieu dùng')}>
-                <Text>Tiêu dùng</Text>
-              </TouchableRipple>
-            </View>
+            
+            {listTab.map((e, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.styleBtnTab,
+                  statusType === e.type && styles.btnTabActive,
+                ]}
+                onPress={()=>
+                {
+                //console.log(e.type)
+                 setStatusFillter(e.type)}
+                 }
+                >
+                { e.type == 0 && (
+                <Text style={styles.textTab}>
+                  Tất cả
+                </Text>)
+                }
+                { e.type == 1 && (
+                <Text style={styles.textTab}>
+                  Công nghệ
+                </Text>)
+                }
+                { e.type == 2 && (
+                <Text style={styles.textTab}>
+                  Thời trang
+                </Text>)
+                }
+                { e.type == 3 && (
+                <Text style={styles.textTab}>
+                  Đồ chơi
+                </Text>)
+                }
+                  
+              </TouchableOpacity>
+            ))}
           </View>
-          <FlatList
-            data={products}
-            renderItem={({item, index}) => (
-              <TouchableNativeFeedback
-                onPress={() =>
-                  navigation.navigate('Details', {
-                    product: item,
-                  })
-                }>
-                <View style={styles.item} key={index}>
-                  <View style={styles.wrappIMG}>
-                    <Image
-                      source={{uri: item.url[0]}}
-                      style={styles.image}
-                      resizeMode={'stretch'}
-                    />
-                  </View>
-                  <View style={styles.wrappInfo}>
-                    <View>
-                      <Text style={styles.name}>{item.name}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.wrapAvaiable}>
-                    <View>
-                      <Text style={styles.price}>
-                        Giá: {formatCash(item.price)} VNĐ
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.wrappIcon}>
-                    <View style={{bottom: 2}}>
-                      <Icon
-                        name={heart}
-                        size={25}
-                        style={{color: 'red', marginRight: 10}}
-                        onPress={() => {
-                          AddToFavorite(item);
-                          setHeart('cards-heart');
-                          Alert.alert(
-                            'Thông báo',
-                            'Đã thêm vào mục yêu thích.',
-                          );
-                        }}
+
+          <View style={{marginTop: 10}}>
+            <FlatList
+              data={dataList}
+              renderItem={({item, index}) => (
+                <TouchableNativeFeedback
+                  onPress={() =>
+                    navigation.navigate('Details', {
+                      product: item,
+                    })
+                  }>
+                  <View style={styles.item} key={index}>
+                    <View style={styles.wrappIMG}>
+                      <Image
+                        source={{uri: item.url[0]}}
+                        style={styles.image}
+                        resizeMode={'stretch'}
                       />
                     </View>
-                    <View>
-                      <Icon
-                        name="share-variant"
-                        size={25}
-                        style={styles.cartIcon}
-                        color={Colors.red400}
-                        onPress={() => customShare(item.url[0])}
-                      />
+                    <View style={styles.wrappInfo}>
+                      <View>
+                        <Text style={styles.name}>{item.name}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.wrapAvaiable}>
+                      <View>
+                        <Text style={styles.price}>
+                          Giá: {formatCash(item.price)} VNĐ
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.wrappIcon}>
+                      <View style={{bottom: 2}}>
+                        <Icon
+                          name={heart}
+                          size={25}
+                          style={{color: 'red', marginRight: 10}}
+                          onPress={() => {
+                            AddToFavorite(item);
+                            setHeart('cards-heart');
+                            Alert.alert(
+                              'Thông báo',
+                              'Đã thêm vào mục yêu thích.',
+                            );
+                          }}
+                        />
+                      </View>
+                      <View>
+                        <Icon
+                          name="share-variant"
+                          size={25}
+                          style={styles.cartIcon}
+                          color={Colors.red400}
+                          onPress={() => customShare(item.url[0])}
+                        />
+                      </View>
                     </View>
                   </View>
-                </View>
-              </TouchableNativeFeedback>
-            )}
-            keyExtractor={(item, index) => index}
-            numColumns={2}
-          />
+                </TouchableNativeFeedback>
+              )}
+              keyExtractor={(item, index) => index}
+              numColumns={2}
+            />
+          </View>
         </View>
       )}
     </SafeAreaView>
