@@ -3,7 +3,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native'
 import { IconButton, Colors, Title, TouchableRipple } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch, useSelector } from 'react-redux';
+//import { useDispatch, useSelector } from 'react-redux';
 
 
 
@@ -11,7 +11,7 @@ export default function HeaderScreen() {
 
     const navigation = useNavigation();
     //const [cartItems, setCartItems] = useState(0);
-    var cartItems = useSelector(state => state.cartStore.numberCart);
+    //var cartItems = useSelector(state => state.cartStore.numberCart);
     
     return (
         <View style={styles.wrappHeader}>
@@ -21,10 +21,10 @@ export default function HeaderScreen() {
                     'Chức năng sẽ câp nhật trong thời gian tới!'
                 )} />
             </View>
-            <View style={{left: '130%'}}>
+            <View >
                 <Title style={{fontSize: 20, fontWeight: '500'}}>Trang chủ</Title>
             </View>
-            <View style={{top: 8, left: 35}}>
+            <View style={{top: 8, right: 30}}>
                 <Icon
                     name="magnify"
                     color={Colors.black}
@@ -32,23 +32,7 @@ export default function HeaderScreen() {
                     onPress={()=> navigation.navigate('Search')}
                 />
             </View>
-            <View style={{marginTop: 8}}>
-                <View style={{flexDirection:'row'}}>
-                    <Icon name="cart" size={25} color= {Colors.red400} onPress={()=> navigation.navigate('Cart')}/>
-                   {
-                    cartItems > 0 ?
-                        <View style={styles.wrappCount1}>
-                            <Text style={styles.text}>{cartItems}</Text>
-                        </View> 
-                       
-                        : <View style={styles.wrappCount2}>
-                            <Text style={styles.text}>{cartItems}</Text>
-                         </View>
-                   }
-
-                </View>
-                
-            </View>
+            
         </View>
     )
 }

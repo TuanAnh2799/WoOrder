@@ -47,7 +47,7 @@ function ProductScreen({AddToFavorite}) {
   const [isLoading, setIsLoading] = useState(true);
   const [statusType, setStatusType] = useState(0);
 
-const [dataList, setDataList] = useState(products);
+const [dataList, setDataList] = useState([]);
 
   useEffect(async () => {
     const subscriber = await firestore()
@@ -61,11 +61,13 @@ const [dataList, setDataList] = useState(products);
             key: documentSnapshot.id,
           });
         });
+        
+        
         setIsLoading(false);
         setProducts(productss);
+        setDataList(productss)
       });
-
-    // Unsubscribe from events when no longer in use
+      console.log('datalist:',dataList);
     return () => subscriber();
   }, []);
 
@@ -92,11 +94,11 @@ const [dataList, setDataList] = useState(products);
   };
 
 const setStatusFillter = getType => {
-  if(getType !== 0) {
-    setDataList([...products.filter(e => e.type === getType)])
+  if(getType === 0) {
+    setDataList(products)
   }
   else {
-    setDataList(products)
+    setDataList([...products.filter(e => e.type === getType)])
   }
   setStatusType(getType);
 }
@@ -143,7 +145,7 @@ const setStatusFillter = getType => {
                 ]}
                 onPress={()=>
                 {
-                //console.log(e.type)
+                console.log(e.type)
                  setStatusFillter(e.type)}
                  }
                 >

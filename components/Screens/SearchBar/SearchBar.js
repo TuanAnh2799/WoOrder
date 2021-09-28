@@ -35,7 +35,7 @@ export default function SearchScreen({navigation}) {
   }, []);
     
     return (
-    <View>
+    <View style={{flex: 1}}>
         <View style={styles.search}>
             <Searchbar 
                 placeholder="Bạn muốn tìm gì?"
@@ -43,33 +43,47 @@ export default function SearchScreen({navigation}) {
                     Search(text);
                 }}/>
         </View>
-        <View style={{flexDirection:'column', marginLeft: '4%'}}>
-            {searchFillter.map((item, index) => (
-                <ScrollView>
-                    <TouchableWithoutFeedback onPress={()=>navigation.navigate('Details', {
-                        product:item
-                    })}>
-                        <View style={styles.wrapProduct} key={index}>
-                            <Avatar.Image source = {{
-                                    uri: item.url[1]
-                                }} 
-                                size = {60} />
-                                <View style={{marginLeft: 20}}>
-                                    <Title style = {[styles.title, {marginTop: 2, marginBottom: 5}]}>
-                                        {item.name}
-                                    </Title>
-                                    {item.type ===1 ? (
-                                        <Caption style={styles.caption}> @Đồ công nghệ</Caption>
-                                    ):(
-                                        <Caption style={styles.caption}> @Thời trang</Caption>
-                                    )}
-                                    
-                                </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                    
-                </ScrollView>
-            ))}
+        <View style={{flexDirection:'column', marginLeft: '4%', flex: 9}}>
+            {
+                searchFillter.length === 0 ? (
+                    <View style={{alignContent:'center', alignItems:'center',flex:1, justifyContent:'center'}}>
+                        <Text style={{textAlign:'center', fontSize:17, fontStyle:'italic', fontWeight:'300'}}>Chưa có kết quả hiển thị </Text>
+                    </View>
+                ) : (
+                    <View>
+                    {searchFillter.map((item, index) => (
+                    <ScrollView>
+                        <TouchableWithoutFeedback onPress={()=>navigation.navigate('Details', {
+                            product:item
+                        })}>
+                            <View style={styles.wrapProduct} key={index}>
+                                <Avatar.Image source = {{
+                                        uri: item.url[1]
+                                    }} 
+                                    size = {60} />
+                                    <View style={{marginLeft: 20}}>
+                                        <Title style = {[styles.title, {marginTop: 2, marginBottom: 5}]}>
+                                            {item.name}
+                                        </Title>
+                                        {item.type ===1 ? (
+                                            <Caption style={styles.caption}> @Đồ công nghệ</Caption>
+                                        ):(
+                                            <Caption style={styles.caption}> @Thời trang</Caption>
+                                        )}
+                                        {
+                                            item.type === 3 && <Caption style={styles.caption}> @Đồ chơi</Caption>
+                                        }
+                                        
+                                    </View>
+                            </View>
+                        </TouchableWithoutFeedback>
+                        
+                    </ScrollView>
+                ))} 
+                </View>
+                )
+            }
+            
         </View>
     </View>
 
@@ -79,6 +93,7 @@ export default function SearchScreen({navigation}) {
 const styles = StyleSheet.create({
     search:{
         padding: 15,
+        flex: 1,
     },
     title: {
         fontSize: 18,

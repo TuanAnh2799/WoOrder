@@ -298,7 +298,7 @@ function DetailsScreen({route, navigation, AddCart}) {
                         };
                         AddCart(_item);
                         //console.log('Thong tin hàng mua: ',_item);
-                        navigation.navigate('Cart');
+                        navigation.navigate('Đặt hàng');
                       } else {
                         let _item1 = {
                           id: id,
@@ -313,7 +313,7 @@ function DetailsScreen({route, navigation, AddCart}) {
                         };
                         AddCart(_item1);
                         //console.log('Thong tin hàng mua loại 1 3: ',_item1);
-                        navigation.navigate('Cart');
+                        navigation.navigate('Đặt hàng');
                       }
                     }}
                   />

@@ -5,10 +5,15 @@ import AppScreen from './AppStack';
 import ProfileStackScreen from '../Screens/Profile/ProfileStack';
 import CheckOutScreen from '../Screens/CheckOut/Checkout';
 import CheckStackScreen from '../Screens/CheckOut/CheckoutStack';
+import { useSelector } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
 export default function TabScreen() {
+
+    const cartItems = useSelector(state => state.cartStore.numberCart);
+    console.log("length",cartItems)
+
     return (
         <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -39,7 +44,7 @@ export default function TabScreen() {
     }}
     >
       <Tab.Screen name="Trang chủ" component={AppScreen}/>
-      <Tab.Screen name="Đặt hàng" component={CheckStackScreen} />
+      <Tab.Screen name="Đặt hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems }}/>
       <Tab.Screen name="Tôi" component={ProfileStackScreen} />
     </Tab.Navigator>  
     )

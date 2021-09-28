@@ -36,7 +36,7 @@ export const AuthProvider = ({children}) => {
               );
                  */
               }
-              ToastAndroid.show('Sai tên tài khoản hoặc mật khẩu.',ToastAndroid.SHORT);
+              ToastAndroid.show('Tên tài khoản hoặc mật khẩu không chính xác.',ToastAndroid.SHORT);
             }
           },
           register: async (fullname,email, phonenumber, password) => {

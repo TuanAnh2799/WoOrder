@@ -164,7 +164,7 @@ function CheckOutScreen({
                               VNĐ
                             </Caption>
                           </View>
-                          <View style={{marginRight: '10%'}}>
+                          <View style={{marginRight: '10%', marginTop: 15}}>
                             <Icon
                               name="trash-can-outline"
                               size={27}
