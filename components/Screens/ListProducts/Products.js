@@ -193,23 +193,23 @@ const setStatusFillter = getType => {
                       />
                     </View>
                     <View style={styles.wrappInfo}>
-                      <View>
+                      <View style={{justifyContent:'center', alignItems:'center',width:'100%'}}>
                         <Text style={styles.name}>{item.name}</Text>
                       </View>
                     </View>
                     <View style={styles.wrapAvaiable}>
-                      <View>
+                      <View style={{justifyContent:'center', alignItems:'center',width:'100%'}}>
                         <Text style={styles.price}>
                           Giá: {formatCash(item.price)} VNĐ
                         </Text>
                       </View>
                     </View>
                     <View style={styles.wrappIcon}>
-                      <View style={{bottom: 2}}>
+                      <View style={{bottom: 0, width: 31, height: 30, borderWidth: 1, justifyContent:'center', alignItems:'center', marginRight: 5, borderColor:'#fff'}}>
                         <Icon
                           name={heart}
                           size={25}
-                          style={{color: 'red', marginRight: 10}}
+                          style={{color: 'red', marginRight: 0}}
                           onPress={() => {
                             AddToFavorite(item);
                             setHeart('cards-heart');
@@ -220,7 +220,7 @@ const setStatusFillter = getType => {
                           }}
                         />
                       </View>
-                      <View>
+                      <View style={{width: 31, height: 30, borderWidth: 1, justifyContent:'center', alignItems:'center', marginRight:5, borderColor:'#fff'}}>
                         <Icon
                           name="share-variant"
                           size={25}

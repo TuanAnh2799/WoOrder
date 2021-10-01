@@ -44,7 +44,7 @@ export default function TabScreen() {
     }}
     >
       <Tab.Screen name="Trang chủ" component={AppScreen}/>
-      <Tab.Screen name="Đặt hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems }}/>
+      <Tab.Screen name="Đặt hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems}}/>
       <Tab.Screen name="Tôi" component={ProfileStackScreen} />
     </Tab.Navigator>  
     )

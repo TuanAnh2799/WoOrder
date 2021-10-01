@@ -49,7 +49,7 @@ const ProfileStackScreen = () => (
       name="CheckOrder"
       component={AdminTabs}
       options={{
-        title: 'Duyệt đơn hàng',
+        title: 'Quản lý đơn hàng',
         headerTitleAlign: 'center',
       }}/>
 

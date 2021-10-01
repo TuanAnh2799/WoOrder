@@ -635,7 +635,7 @@ function CheckOutScreen({
                                     'Đặt hàng thành công.',
                                     ToastAndroid.SHORT,
                                   );
-                                  navigation.navigate('Profile');
+                                  navigation.navigate('Tôi');
                                 });
                             } catch (e) {
                               ToastAndroid.show(

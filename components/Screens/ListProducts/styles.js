@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 5,
     width: '47%',
-    height: 270,
+    height: 275,
     borderRadius: 5,
     marginTop: 5,
   },
