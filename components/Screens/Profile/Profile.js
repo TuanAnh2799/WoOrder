@@ -177,11 +177,11 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
           <TouchableNativeFeedback onPress={()=> navigation.navigate('CheckOrder')}>
             <View style={styles.infoBox}>
               {checkOrder.length > 0 ? (
-                <Title style={{color: 'red'}}>{getCount(checkOrder).toString()} *</Title>
+                <Title style={{color: 'red'}}>{getCount(checkOrder).toString()} chờ duyệt</Title>
               ) : (
                 <Title>0</Title>
               )}
-              <Caption style={{fontSize: 17}}>Đơn hàng chờ duyệt</Caption>
+              <Caption style={{fontSize: 17}}>Quản lý đơn hàng</Caption>
             </View>
           </TouchableNativeFeedback>
         ) : (

@@ -4,10 +4,10 @@ import { styles } from './styles';
 import Swiper from 'react-native-swiper';
 
 const images = [
-    'https://fandom.vn/wp-content/uploads/2019/06/mcu-bruce-banner-the-hulk-1.jpg',
-    'https://www.w88pro.org/wp-content/uploads/2020/05/anh-nude-gai-xinh-5-min.jpg',
-    'https://menback.com/wp-content/uploads/2020/02/t%E1%BA%A1i-sao-g%C3%A1i-h%C6%B0-l%E1%BA%A1i-h%E1%BA%A5p-d%E1%BA%ABn.jpg',
-    'https://nhathuoc115.vn/UserFiles/image/anh-khoa-than-gai-xinh-viet-nam-nude-100_anh-khoa-than-gai-xinh-1.jpg'
+    'https://www.goteso.com/products/assets/images/clone-scripts/saucey/saucey-app-clone-banner.png',
+    'https://www.kindpng.com/picc/m/623-6231082_drizly-app-clone-banner-laundry-online-hd-png.png',
+    'https://img0.baidu.com/it/u=3035675779,2495350440&fm=26&fmt=auto',
+    'https://img0.baidu.com/it/u=1442847403,2881362523&fm=26&fmt=auto'
   ];
 
   

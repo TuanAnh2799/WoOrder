@@ -52,11 +52,11 @@ export default function SearchScreen({navigation}) {
                 ) : (
                     <View>
                     {searchFillter.map((item, index) => (
-                    <ScrollView>
+                    //<ScrollView>
                         <TouchableWithoutFeedback onPress={()=>navigation.navigate('Details', {
                             product:item
-                        })}>
-                            <View style={styles.wrapProduct} key={index}>
+                        })} key={index.toString()}>
+                            <View style={styles.wrapProduct} key={index.toString()} >
                                 <Avatar.Image source = {{
                                         uri: item.url[1]
                                     }} 
@@ -78,7 +78,7 @@ export default function SearchScreen({navigation}) {
                             </View>
                         </TouchableWithoutFeedback>
                         
-                    </ScrollView>
+                    //</ScrollView>
                 ))} 
                 </View>
                 )

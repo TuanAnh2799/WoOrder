@@ -40,6 +40,7 @@ export default function RegisterScreen({navigation}) {
       .required('Bạn chưa nhập địa chỉ email.'),
     password: Yup.string()
       .min(6, ({min}) => `Mật khẩu phải lớn hơn ${min - 1} ký tự`)
+      .max(10,({ max }) => `Mật khẩu tối đa ${max} ký tự` )
       .required('Bạn chưa nhập mật khẩu.')
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,

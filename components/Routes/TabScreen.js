@@ -42,6 +42,7 @@ export default function TabScreen() {
       showLabel: true,
       labelStyle: {fontSize: 15}
     }}
+    initialRouteName="Trang chủ"
     >
       <Tab.Screen name="Trang chủ" component={AppScreen}/>
       <Tab.Screen name="Đặt hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems}}/>

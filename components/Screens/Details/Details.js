@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Text,
   View,
@@ -14,11 +14,15 @@ import {connect} from 'react-redux';
 import {AddCart} from '../../Store/action';
 import {Picker} from '@react-native-picker/picker';
 import {styles} from './styles';
+import { AuthContext } from '../../Routes/AuthProvider';
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
 function DetailsScreen({route, navigation, AddCart}) {
+
+  const {user} = useContext(AuthContext);
+
   const id = route.params.product.id;
   const name = route.params.product.name;
   const color = route.params.product.color;
@@ -168,12 +172,18 @@ function DetailsScreen({route, navigation, AddCart}) {
 
             <View style={{marginTop: 30}}>
               <View style={{width: '60%', marginLeft: '20%'}}>
-                <Button
-                  title="Mua ngay"
-                  onPress={() => {
-                    openModal();
-                  }}
-                />
+              {
+                user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2'? (
+                  <View></View>) : (
+                    <Button
+                    title="Mua ngay"
+                    onPress={() => {
+                      openModal();
+                    }}
+                  />
+                  )
+              }
+                
               </View>
             </View>
           </View>
