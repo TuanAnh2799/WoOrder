@@ -187,7 +187,7 @@ const onRefresh = React.useCallback(() => {
                         }}>
                         
                         <Text style={{fontSize: 17}}>Ngày đặt: </Text>
-                        <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB')}</Text>
+                        <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}</Text>
                       </View>
 
                       <View
@@ -203,7 +203,7 @@ const onRefresh = React.useCallback(() => {
                             </View>
                             
                             <View style={{width: '70%'}}>
-                              <Text style={{fontSize: 16, marginRight: 5, marginLeft: 35}}>{fullname} - {diachi} - {phone}</Text>
+                              <Text style={{fontSize: 16, marginRight: 10, marginLeft: 35, textAlign:'right'}}>{fullname} - {diachi} - {phone}</Text>
                             </View>
                             
                           </View>

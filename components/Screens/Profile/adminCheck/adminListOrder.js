@@ -227,7 +227,7 @@ export default function AdminOrderScreen({navigation}) {
                             <Text style={{fontSize: 16, marginRight: 10}}>
                               {item.dateTime
                                 .toDate()
-                                .toLocaleDateString('en-GB')}
+                                .toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}
                             </Text>
                           </View>
 
@@ -244,7 +244,7 @@ export default function AdminOrderScreen({navigation}) {
                             </View>
                             
                             <View style={{width: '70%'}}>
-                              <Text style={{fontSize: 16, marginRight: 5, marginLeft: 35}}>{fullname} - {diachi} - {phone}</Text>
+                              <Text style={{fontSize: 16, marginRight: 10, marginLeft: 35, textAlign:'right'}}>{fullname} - {diachi} - {phone}</Text>
                             </View>
                             
                           </View>
@@ -273,9 +273,9 @@ export default function AdminOrderScreen({navigation}) {
                             <Text style={{fontSize: 17}}>
                               Trạng thái đơn hàng:
                             </Text>
-                            <Text style={{fontSize: 16, marginRight: 10,color: 'green', fontWeight:'700'}}>
-                              {item.orderStatus}
-                            </Text>
+                            <View style={{width: '50%', height: 30, alignItems:'stretch'}}>
+                          <Text style={{fontSize: 16, color: 'green', fontWeight:'bold', height: 40, textAlign:'right', marginRight: 10}}>{item.orderStatus}</Text>
+                        </View>
                           </View>
                         </View>
                       </View>

@@ -1,27 +1,25 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {
   Button,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
-  Image,
   TextInput,
-  Alert,
   ScrollView,
-  Dimensions,
-  KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
+  StatusBar,
+  LogBox,
 } from 'react-native';
-import Banner from '../../../img/banner.jpg';
+import * as Animatable from 'react-native-animatable';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {AuthContext} from '../../Routes/AuthProvider';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
+import Feather from 'react-native-vector-icons/Feather';
+import PasswordInputText from 'react-native-hide-show-password-input';
 
-const deviceWitdh = Dimensions.get('window').width;
-const deviceHeight = Dimensions.get('window').height;
+
+LogBox.ignoreLogs(['Animated: `useNativeDriver` was not specified.']);
 
 export default function RegisterScreen({navigation}) {
   const {register} = useContext(AuthContext);
@@ -29,7 +27,8 @@ export default function RegisterScreen({navigation}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const registerValidSchema = Yup.object().shape({
-    fullname: Yup.string().max(25, ()=>`Tên tối đa 25 ký tự.`)
+    fullname: Yup.string()
+      .max(25, () => `Tên tối đa 25 ký tự.`)
       .matches(/(\w.+\s).+/, 'Vui lòng nhập họ và tên')
       .required('Bạn chưa nhập họ tên.'),
     phoneNumber: Yup.string()
@@ -40,219 +39,255 @@ export default function RegisterScreen({navigation}) {
       .required('Bạn chưa nhập địa chỉ email.'),
     password: Yup.string()
       .min(6, ({min}) => `Mật khẩu phải lớn hơn ${min - 1} ký tự`)
-      .max(10,({ max }) => `Mật khẩu tối đa ${max} ký tự` )
+      .max(10, ({max}) => `Mật khẩu tối đa ${max} ký tự`)
       .required('Bạn chưa nhập mật khẩu.')
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,
-        'Mật khẩu phải lớn hơn 5 ký tự, bao gồm viết hoa, viết thường, chữ số và ký tự.', //(?=.*[!@#\$%\^&\*]) bỏ nhập ký tự
+        'Mật khẩu phải lớn hơn 5 ký tự, bao gồm viết hoa, viết thường và chữ số.', //(?=.*[!@#\$%\^&\*]) bỏ nhập ký tự
       ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password')], 'Mật khẩu không khớp')
       .required('Bạn chưa nhập lại mật khẩu'),
   });
   return (
-    <SafeAreaView style={{flex: 1, width: deviceWitdh, height: deviceHeight}}>
-    <ScrollView snapToEnd={false}>
-      <Formik
-        validationSchema={registerValidSchema}
-        initialValues={{
-          fullname: '',
-          phoneNumber: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        }}
-        validateOnMount={true}
-        onSubmit={values => console.log(values)}>
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-        }) => (
-          
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "padding"}
-      style={styles.container}>
-              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={{flex: 1, flexDirection: 'column'}}>
-                  <View style={styles.wrappTitles}>
-                    <Text style={{fontSize: 23, fontWeight: '600'}}>
-                      Đăng ký
-                    </Text>
-                  </View>
-                  <View style={{flex: 0.5, backgroundColor:'red', height: 200}}>
-                        <Image source={Banner} style={styles.banner}/>
-                  </View>
-                  <View style={styles.Input}>
-                    <View style={{marginTop: 35}}>
-                      <Text style={styles.text}>Tên tài khoản</Text>
-                      <TextInput
-                        style={styles.input}
-                        onChangeText={handleChange('fullname')}
-                        onBlur={handleBlur('fullname')}
-                        value={values.fullname}
-                        placeholder="Tên tài khoản..."
-                      />
-                      {errors.fullname && touched.fullname && (
-                        <Text style={styles.textErr}>{errors.fullname}</Text>
-                      )}
-                    </View>
+    <View style={styles.container}>
+      <StatusBar backgroundColor="#009387" barStyle="light-content" />
+      <View style={styles.header}>
+        <Text style={styles.text_header}>Đăng ký ngay!</Text>
+      </View>
+      <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+        <Formik
+          validationSchema={registerValidSchema}
+          initialValues={{
+            fullname: '',
+            phoneNumber: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+          }}
+          validateOnMount={true}
+          onSubmit={values => console.log(values)}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            isValid,
+          }) => (
+            <ScrollView>
+              <Text style={styles.text_footer}>Họ tên</Text>
+              <View style={styles.action}>
+                <FontAwesome name="user-o" color="#05375a" size={20} />
+                <TextInput
+                  placeholder="Nhập họ và tên ..."
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  onChangeText={handleChange('fullname')}
+                  onBlur={handleBlur('fullname')}
+                  value={values.fullname}
+                />
+              </View>
+              {errors.fullname && touched.fullname && (
+                <Text style={styles.text_err}>{errors.fullname}</Text>
+              )}
 
-                    <View style={styles.input1}>
-                      <Text style={styles.text}>Email</Text>
-                      <TextInput
-                        style={styles.input}
-                        onChangeText={handleChange('email')}
-                        onBlur={handleBlur('email')}
-                        value={values.email}
-                        placeholder="Nhập email..."
-                        keyboardType="email-address"
-                      />
-                      {errors.email && touched.email && (
-                        <Text style={styles.textErr}>{errors.email}</Text>
-                      )}
-                    </View>
-                    <View style={styles.input1}>
-                      <Text style={styles.text}>Số điện thoại</Text>
-                      <TextInput
-                        style={styles.input}
-                        onChangeText={handleChange('phoneNumber')}
-                        onBlur={handleBlur('phoneNumber')}
-                        value={values.phoneNumber}
-                        placeholder="Nhập số điện thoại..."
-                        keyboardType="phone-pad"
-                      />
-                      {errors.phoneNumber && touched.phoneNumber && (
-                        <Text style={styles.textErr}>{errors.phoneNumber}</Text>
-                      )}
-                    </View>
+              <Text style={[styles.text_footer, {marginTop: 15}]}>Email</Text>
+              <View style={styles.action}>
+                <FontAwesome name="envelope" color="#05375a" size={20} />
+                <TextInput
+                  placeholder="Nhập email ..."
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  placeholder="Nhập email..."
+                  keyboardType="email-address"
+                />
+              </View>
+              {errors.email && touched.email && (
+                <Text style={styles.text_err}>{errors.email}</Text>
+              )}
 
-                    <View>
-                      <Text style={styles.text}>Mật khẩu</Text>
-                      <TextInput
-                        style={styles.input}
-                        onChangeText={handleChange('password')}
-                        onBlur={handleBlur('password')}
-                        value={values.password}
-                        placeholder="Nhập mật khẩu..."
-                        secureTextEntry={true}
-                      />
-                      {errors.password && touched.password && (
-                        <Text style={styles.textErr}>{errors.password}</Text>
-                      )}
-                    </View>
+              <Text style={[styles.text_footer, {marginTop: 15}]}>
+                Số điện thoại
+              </Text>
+              <View style={styles.action}>
+                <FontAwesome name="phone" color="#05375a" size={20} />
+                <TextInput
+                  placeholder="Nhập số điện thoại ..."
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                  onChangeText={handleChange('phoneNumber')}
+                  onBlur={handleBlur('phoneNumber')}
+                  value={values.phoneNumber}
+                  placeholder="Nhập số điện thoại..."
+                  keyboardType="phone-pad"
+                />
+              </View>
+              {errors.phoneNumber && touched.phoneNumber && (
+                <Text style={styles.text_err}>{errors.phoneNumber}</Text>
+              )}
 
-                    <View>
-                      <Text style={styles.text}>Nhập lại mật khẩu</Text>
-                      <TextInput
-                        style={styles.input}
-                        onChangeText={handleChange('confirmPassword')}
-                        onBlur={handleBlur('confirmPassword')}
-                        value={values.confirmPassword}
-                        placeholder="Nhập lại mật khẩu..."
-                        secureTextEntry={true}
-                      />
-                      {errors.confirmPassword && touched.confirmPassword && (
-                        <Text style={styles.textErr}>
-                          {errors.confirmPassword}
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-                  <View style={styles.wrapButton}>
-                    <View style={styles.button}>
-                      <Button
-                        title="Đăng ký"
-                        disabled={!isValid}
-                        onPress={() => {
-                          setIsLoading(true);
-                          register(
-                            values.fullname,
-                            values.email,
-                            values.phoneNumber,
-                            values.password,
-                          );
-                        }}
-                      />
-                      <Text
-                        style={{
-                          padding: 15,
-                          fontSize: 17,
-                          textAlign: 'center',
-                        }}>
-                        Đã có tài khoản?
-                      </Text>
-                      <Button
-                        title="Đăng nhập"
-                        onPress={() => navigation.navigate('Login')}
-                      />
-                    </View>
-                  </View>
+              <Text
+                style={[
+                  styles.text_footer,
+                  {
+                    marginTop: 15,
+                  },
+                ]}>
+                Mật khẩu
+              </Text>
+              <View style={styles.actionPass}>
+                <View style={{marginTop: 20}}>
+                  <Feather name="lock" color="#05375a" size={20} />
                 </View>
-              </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
-          
-        )}
-      </Formik></ScrollView>
-    </SafeAreaView>
+
+                <PasswordInputText
+                  placeholder="Nhập mật khẩu ..."
+                  style={styles.textInputPass}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                  label=""
+                  secureTextEntry={true}
+                />
+              </View>
+              {errors.password && touched.password && (
+                <Text style={styles.text_err}>{errors.password}</Text>
+              )}
+
+              <Text
+                style={[
+                  styles.text_footer,
+                  {
+                    marginTop: 15,
+                  },
+                ]}>
+                Nhập lại mật khẩu
+              </Text>
+              <View style={styles.action}>
+                <View style={{marginTop: 20}}>
+                  <Feather name="lock" color="#05375a" size={20} />
+                </View>
+
+                <PasswordInputText
+                  placeholder="Nhập lại mật khẩu ..."
+                  style={styles.textInputPass}
+                  onChangeText={handleChange('confirmPassword')}
+                  onBlur={handleBlur('confirmPassword')}
+                  value={values.confirmPassword}
+                  placeholder="Nhập lại mật khẩu..."
+                  secureTextEntry={true}
+                  label=""
+                />
+              </View>
+              {errors.confirmPassword && touched.confirmPassword && (
+                <Text style={styles.text_err}>{errors.confirmPassword}</Text>
+              )}
+
+              <View style={styles.button}>
+              <View style={{width: '100%', top: -10}}>
+                <Button
+                  disabled={!isValid}
+                  title="Đăng ký"
+                  onPress={() => {
+                    setIsLoading(true);
+                    register(
+                      values.fullname,
+                      values.email,
+                      values.phoneNumber,
+                      values.password,
+                    );
+                  }}/>
+              </View>
+                <Text style={{marginTop: 5, fontSize: 16}}>Đã có tài khoản?</Text>
+                  <View style={{width: '100%', marginTop: 10}}>
+                  <Button
+                    title="Đăng nhập"
+                    onPress={() => navigation.navigate("Login")
+                    }/>
+                </View>
+              </View>
+            </ScrollView>
+          )}
+        </Formik>
+      </Animatable.View>
+    </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#009387',
   },
-  wrappTitles: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 0.5,
-    borderWidth: 1,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-    backgroundColor: '#b2c7de',
-  },
-  Input: {
-    width: deviceWitdh,
-    flex: 7,
-    marginTop: 10,
-  },
-  wrapButton: {
+  header: {
     flex: 1,
-    top: 20,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 20,
+    paddingBottom: 50,
+  },
+  footer: {
+    flex: 6,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+  },
+  text_header: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 30,
+  },
+  text_footer: {
+    color: '#05375a',
+    fontSize: 16,
+  },
+  text_err: {
+    color: 'red',
+    fontSize: 14,
+  },
+  action: {
+    flexDirection: 'row',
+    marginTop: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f2f2f2',
+    paddingBottom: 5,
+  },
+  actionPass :{
+    flexDirection: 'row',
+    marginTop: 5,
+
+  },
+  textInput: {
+    flex: 1,
+    marginTop: Platform.OS === 'ios' ? 0 : -12,
+    paddingLeft: 10,
+    color: '#05375a'
   },
   button: {
-    width: '90%',
-    marginLeft: '5%',
+    alignItems: 'center',
+    marginTop: 50,
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 0.5,
-    padding: 10,
-    borderRadius: 5,
+
+  textSign: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-  input1: {
-    paddingTop: 4,
+  textPrivate: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 20,
   },
-  text: {
-    fontSize: 16,
-    left: 10,
-    marginTop: 2,
+  color_textPrivate: {
+    color: 'grey',
   },
-  textErr: {
-    fontSize: 12,
-    color: 'red',
-    marginLeft: '4%',
+  textInputPass: {
+    marginTop: Platform.OS === 'ios' ? 0 : -12,
+    paddingLeft: 10,
+    width: '92%',
   },
-  bannerWrapp: {
-    width: '100%',
-    flex: 2,
-  },
-  banner: {
-    width: '100%',
-    height: '100%',
-},
 });

@@ -175,7 +175,7 @@ const onRefresh = React.useCallback(() => {
                         }}>
                         
                         <Text style={{fontSize: 17}}>Ngày đặt: </Text>
-                        <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB')}</Text>
+                        <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}</Text>
                       </View>
                       <View
                         style={{
@@ -198,7 +198,7 @@ const onRefresh = React.useCallback(() => {
                           marginTop: 5,
                         }}>
                         <Text style={{fontSize: 17}}>Trạng thái đơn hàng:</Text>
-                        <Text style={{fontSize: 16, marginRight: 10,color: 'red', fontWeight:'700'}}>{item.orderStatus}</Text>
+                        <Text style={{fontSize: 16, color: 'red', fontWeight:'700', textAlign:'right', marginRight: 10}}>{item.orderStatus}</Text>
                       </View>
                     </View>
                   </View>

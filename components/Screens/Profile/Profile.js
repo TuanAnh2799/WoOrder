@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   TouchableNativeFeedback,
+  ToastAndroid,
 } from 'react-native';
 import {Avatar, Title, Caption, TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -21,6 +22,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
   const {logout, user} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState([]);
   const [myOrder, setMyOrder] = useState(0);
+  const [myOrder2, setMyOrder2] = useState(0);
   const [checkOrder, setCheckOrder] = useState([]);
 
   console.log(user.uid);
@@ -48,7 +50,8 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
       });
 
     getData();
-
+    getDataDaDuyet();
+    
     if (user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2') {
       return adminGetData();
     }
@@ -61,6 +64,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
       .collection('Orders')
       // Filter results
       .where('orderBy', '==', `${user.uid}`)
+      .where('orderStatus', '==', 'Đang chờ xử lý')
       .get()
       .then(querySnapshot => {
         const myorder = [];
@@ -72,6 +76,28 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
           });
         });
         setMyOrder(myorder);
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  };
+  const getDataDaDuyet = async () => {
+    const subscriber = await firestore()
+      .collection('Orders')
+      // Filter results
+      .where('orderBy', '==', `${user.uid}`)
+      .where('orderStatus', '==','Đã duyệt')
+      .get()
+      .then(querySnapshot => {
+        const myorder = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          myorder.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+        setMyOrder2(myorder);
       });
 
     // Unsubscribe from events when no longer in use
@@ -96,7 +122,10 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
     // Unsubscribe from events when no longer in use
     return () => subscriber();
   };
-  console.log('User Inffo: ', userInfo);
+  let a = myOrder.length;
+  let b = myOrder2.length;
+  
+  console.log('ĐƠN HÀNG NG DÙNG: ', (a+b));
 
   const getCount = checkOrder => {
     let x = 0;
@@ -188,8 +217,8 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
           <TouchableNativeFeedback
             onPress={() => navigation.navigate('MyOrder')}>
             <View style={styles.infoBox}>
-              {myOrder.length > 1 ? (
-                <Title style={{color: 'red'}}>{myOrder.length} *</Title>
+              {myOrder.length > 1 || myOrder2.length > 1 ? (
+                <Title style={{color: 'red'}}>{myOrder.length + myOrder2.length} *</Title>
               ) : (
                 <Title>0</Title>
               )}
@@ -229,19 +258,19 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
             <Text style={styles.menuItemText}>Yêu thích</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={() => {ToastAndroid.show("Chức năng sẽ cập nhật trong thời gian tới.", ToastAndroid.SHORT)}}>
           <View style={styles.menuItem}>
             <Icon name="credit-card" color="#FF6347" size={25} />
             <Text style={styles.menuItemText}>Thanh toán</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={() => navigation.navigate('Help')}>
           <View style={styles.menuItem}>
             <Icon name="account-question-outline" color="#FF6347" size={25} />
             <Text style={styles.menuItemText}>Hỗ trợ</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={() => {ToastAndroid.show("Chức năng sẽ cập nhật trong thời gian tới.", ToastAndroid.SHORT)}}>
           <View style={styles.menuItem}>
             <Icon name="cog" color="#FF6347" size={25} />
             <Text style={styles.menuItemText}>Cài đặt</Text>

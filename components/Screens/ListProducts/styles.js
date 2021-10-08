@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   item: {
-    backgroundColor: '#f9c2ff',
+    backgroundColor: '#fff',
     padding: 5,
     marginVertical: 8,
     marginHorizontal: 5,
@@ -10,6 +10,8 @@ export const styles = StyleSheet.create({
     height: 275,
     borderRadius: 5,
     marginTop: 5,
+    borderColor:'#009387',
+    borderWidth: 1
   },
   name: {
     fontSize: 16,
@@ -100,7 +102,7 @@ export const styles = StyleSheet.create({
     borderColor: 'green'
   },
   btnTabActive: {
-    backgroundColor: '#E6838D'
+    backgroundColor: '#009387', 
   },
   textTab: {
     fontSize: 16,

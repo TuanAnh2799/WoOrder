@@ -38,7 +38,7 @@ export default function DeliveredScreen({navigation}) {
       .collection('Orders')
       // Filter results
       .where('orderBy', '==', `${user.uid}`)
-      .where('orderStatus', '==', 'Đã giao')
+      .where('orderStatus', '==', 'Đã giao hàng')
       .get()
       .then(querySnapshot => {
         const myorder = [];
@@ -185,68 +185,7 @@ const onRefresh = React.useCallback(() => {
                     </View>
                   </View>
 
-                  <View style={styles.WrapButton}>
-                    <View
-                      style={{
-                        width: '40%',
-                        alignItems: 'flex-end',
-                        marginLeft: '55%',
-                      }}>
-                      {
-                        
-                        item.orderStatus == "Đang chờ xử lý" ? (
-                        <Button title="Hủy đơn hàng" onPress={()=> {
-                            Alert.alert('Thông báo', 'Bạn muốn hủy đơn hàng?', [
-                            {
-                              text: 'Đồng ý',
-                              onPress: () => {
-                                firestore()
-                                .collection('Orders')
-                                .doc(item.id)
-                                .update({
-                                  orderStatus: 'Đã hủy đơn hàng'
-                                }).then(
-                                  ToastAndroid.show('Hủy đơn hàng thành công.',ToastAndroid.SHORT),
-                                  getData()
-                                )
-                              },
-                            },
-                            {
-                              text: 'Hủy',
-                              onPress: () => console.log('Cancel Pressed'),
-                              style: 'cancel',
-                            },
-                          ]);
-                        }}/>
-                        ):(
-                          <Button title="Mua lại lần nữa" onPress={()=>{
-                            Alert.alert('Thông báo', 'Bạn muốn mua lại hàng?', [
-                              {
-                                text: 'Đồng ý',
-                                onPress: () => {
-                                  firestore()
-                                  .collection('Orders')
-                                  .doc(item.id)
-                                  .update({
-                                    orderStatus: 'Đang chờ xử lý'
-                                  }).then(
-                                    ToastAndroid.show('Đã đặt lại hàng thành công.',ToastAndroid.SHORT),
-                                    getData()
-                                  )
-                                },
-                              },
-                              {
-                                text: 'Hủy',
-                                onPress: () => console.log('Cancel Pressed'),
-                                style: 'cancel',
-                              },
-                            ]);
-                          }}/>
-                        )
-                      }
-                      
-                    </View>
-                  </View>
+                  
                 </View>
               </View>
             );

@@ -5,6 +5,7 @@ import EditProfile from './EditProfile';
 import FavoritesScreen from './Favorites';
 import MyTabs from './index';
 import AdminTabs from './adminTab';
+import HelpScreen from './help';
 
 const ProfileStack = createStackNavigator();
 
@@ -37,6 +38,15 @@ const ProfileStackScreen = () => (
         headerTitleAlign: 'center',
       }}
     />
+    <ProfileStack.Screen
+      name="Help"
+      component={HelpScreen}
+      options={{
+        title: 'Hỗ trợ',
+        headerTitleAlign: 'center',
+      }}
+    />
+
     <ProfileStack.Screen
       name="MyOrder"
       component={MyTabs}
