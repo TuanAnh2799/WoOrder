@@ -19,35 +19,38 @@ import {connect} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import Share from 'react-native-share';
+import {useDispatch, useSelector} from 'react-redux';
 
 const listTab = [
   {
     status: 'Tất cả',
-    type: 0
+    type: 0,
   },
   {
     status: 'Công nghệ',
-    type: 1
+    type: 1,
   },
   {
     status: 'Thời trang',
-    type: 2
+    type: 2,
   },
-  
+
   {
     status: 'Đồ chơi',
-    type: 3
+    type: 3,
   },
 ];
 
 function ProductScreen({AddToFavorite}) {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
-  const [heart, setHeart] = useState('heart-outline');
+  //const [heart, setHeart] = useState('heart-outline');
   const [isLoading, setIsLoading] = useState(true);
   const [statusType, setStatusType] = useState(0);
 
-const [dataList, setDataList] = useState([]);
+  const Favorites = useSelector(state => state.favourites.favoriteProduct);
+  console.log('yêu thích:', Favorites.length);
+  const [dataList, setDataList] = useState([]);
 
   useEffect(async () => {
     const subscriber = await firestore()
@@ -61,13 +64,12 @@ const [dataList, setDataList] = useState([]);
             key: documentSnapshot.id,
           });
         });
-        
-        
+
         setIsLoading(false);
         setProducts(productss);
-        setDataList(productss)
+        setDataList(productss);
       });
-      console.log('datalist:',dataList);
+    console.log('datalist:', dataList);
     return () => subscriber();
   }, []);
 
@@ -93,15 +95,14 @@ const [dataList, setDataList] = useState([]);
     }
   };
 
-const setStatusFillter = getType => {
-  if(getType === 0) {
-    setDataList(products)
-  }
-  else {
-    setDataList([...products.filter(e => e.type === getType)])
-  }
-  setStatusType(getType);
-}
+  const setStatusFillter = getType => {
+    if (getType === 0) {
+      setDataList(products);
+    } else {
+      setDataList([...products.filter(e => e.type === getType)]);
+    }
+    setStatusType(getType);
+  };
 
   return (
     <SafeAreaView>
@@ -135,7 +136,6 @@ const setStatusFillter = getType => {
               marginTop: 1,
               marginLeft: '3%',
             }}>
-            
             {listTab.map((e, index) => (
               <TouchableOpacity
                 key={index}
@@ -143,33 +143,14 @@ const setStatusFillter = getType => {
                   styles.styleBtnTab,
                   statusType === e.type && styles.btnTabActive,
                 ]}
-                onPress={()=>
-                {
-                console.log(e.type)
-                 setStatusFillter(e.type)}
-                 }
-                >
-                { e.type == 0 && (
-                <Text style={styles.textTab}>
-                  Tất cả
-                </Text>)
-                }
-                { e.type == 1 && (
-                <Text style={styles.textTab}>
-                  Công nghệ
-                </Text>)
-                }
-                { e.type == 2 && (
-                <Text style={styles.textTab}>
-                  Thời trang
-                </Text>)
-                }
-                { e.type == 3 && (
-                <Text style={styles.textTab}>
-                  Đồ chơi
-                </Text>)
-                }
-                  
+                onPress={() => {
+                  console.log(e.type);
+                  setStatusFillter(e.type);
+                }}>
+                {e.type == 0 && <Text style={styles.textTab}>Tất cả</Text>}
+                {e.type == 1 && <Text style={styles.textTab}>Công nghệ</Text>}
+                {e.type == 2 && <Text style={styles.textTab}>Thời trang</Text>}
+                {e.type == 3 && <Text style={styles.textTab}>Đồ chơi</Text>}
               </TouchableOpacity>
             ))}
           </View>
@@ -193,34 +174,98 @@ const setStatusFillter = getType => {
                       />
                     </View>
                     <View style={styles.wrappInfo}>
-                      <View style={{justifyContent:'center', alignItems:'center',width:'100%'}}>
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                        }}>
                         <Text style={styles.name}>{item.name}</Text>
                       </View>
                     </View>
                     <View style={styles.wrapAvaiable}>
-                      <View style={{justifyContent:'center', alignItems:'center',width:'100%'}}>
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: '100%',
+                        }}>
                         <Text style={styles.price}>
                           Giá: {formatCash(item.price)} VNĐ
                         </Text>
                       </View>
                     </View>
                     <View style={styles.wrappIcon}>
-                      <View style={{bottom: 0, width: 31, height: 30, borderWidth: 1, justifyContent:'center', alignItems:'center', marginRight: 5, borderColor:'#fff'}}>
-                        <Icon
-                          name={heart}
-                          size={25}
-                          style={{color: 'red', marginRight: 0}}
-                          onPress={() => {
-                            AddToFavorite(item);
-                            setHeart('cards-heart');
-                            Alert.alert(
-                              'Thông báo',
-                              'Đã thêm vào mục yêu thích.',
-                            );
-                          }}
-                        />
+                      <View
+                        style={{
+                          bottom: 0,
+                          width: 31,
+                          height: 30,
+                          borderWidth: 1,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          marginRight: 5,
+                          borderColor: '#fff',
+                        }}>
+                          {
+                            Favorites.length === 0 && (
+                              <Icon
+                              name="heart-outline"
+                              size={25}
+                              style={{color: 'red', marginRight: 0}}
+                              onPress={() => {
+                                AddToFavorite(item);
+                                //setHeart('cards-heart');
+                              
+                              }}
+                            />)
+
+                          }
+                          {
+                            Favorites.length !== 0 && 
+                            Favorites.map(e=> {
+                              if(e.id === item.id)
+                              {
+                                return (
+                                  <Icon
+                                  name="cards-heart"
+                                  size={25}
+                                  style={{color: 'red', marginRight: 0}}
+                                  onPress={() => {
+                                    AddToFavorite(item);
+                                    //setHeart('cards-heart');
+                                  
+                                  }}
+                                />
+                                )
+                              } else {
+                                return(
+                                  <Icon
+                                  name="heart-outline"
+                                  size={25}
+                                  style={{color: 'red', marginRight: 0}}
+                                  onPress={() => {
+                                    AddToFavorite(item);
+                                    //setHeart('cards-heart');
+                                  
+                                  }}
+                                  />)
+                              }
+                          })
+                          }  
+                      
+                        
                       </View>
-                      <View style={{width: 31, height: 30, borderWidth: 1, justifyContent:'center', alignItems:'center', marginRight:5, borderColor:'#fff'}}>
+                      <View
+                        style={{
+                          width: 31,
+                          height: 30,
+                          borderWidth: 1,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          marginRight: 5,
+                          borderColor: '#fff',
+                        }}>
                         <Icon
                           name="share-variant"
                           size={25}

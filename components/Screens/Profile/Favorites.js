@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,8 +13,6 @@ import {useDispatch, useSelector} from 'react-redux';
 export default function FavoritesScreen({navigation}) {
   
   const Favorites = useSelector(state => state.favourites.favoriteProduct);
-
-  console.log('List favorites: ', Favorites);
 
   return (
     <SafeAreaView>

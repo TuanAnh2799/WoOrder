@@ -64,7 +64,7 @@ const LoginScreen = ({navigation}) => {
                                 <View style={styles.button}>
                                     <Button title="Đăng nhập"  disabled={!isValid}
                                     onPress={() => login(values.email,values.password)}/>
-                                    <Text style={{padding: 15, fontSize: 17, textAlign:'center'}}>Need an account?</Text>
+                                    <Text style={{padding: 15, fontSize: 17, textAlign:'center'}}>Chưa có tài khoản?</Text>
                                     <Button title="Đăng ký" onPress={()=>navigation.navigate('Register')} />
                                 </View>
                             </View>

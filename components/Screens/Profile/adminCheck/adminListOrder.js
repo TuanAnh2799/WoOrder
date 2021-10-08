@@ -273,7 +273,7 @@ export default function AdminOrderScreen({navigation}) {
                             <Text style={{fontSize: 17}}>
                               Trạng thái đơn hàng:
                             </Text>
-                            <Text style={{fontSize: 16, marginRight: 10}}>
+                            <Text style={{fontSize: 16, marginRight: 10,color: 'green', fontWeight:'700'}}>
                               {item.orderStatus}
                             </Text>
                           </View>

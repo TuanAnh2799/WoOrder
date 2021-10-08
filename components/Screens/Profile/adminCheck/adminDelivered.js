@@ -229,7 +229,7 @@ const onRefresh = React.useCallback(() => {
                           marginTop: 5,
                         }}>
                         <Text style={{fontSize: 17}}>Trạng thái đơn hàng:</Text>
-                        <Text style={{fontSize: 16, marginRight: 10}}>{item.orderStatus}</Text>
+                        <Text style={{fontSize: 16, marginRight: 10,color: 'green', fontWeight:'700'}}>{item.orderStatus}</Text>
                       </View>
                     </View>
                   </View>
