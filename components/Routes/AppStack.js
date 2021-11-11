@@ -17,7 +17,6 @@ export default function AppScreen() {
         <AppStack.Navigator>
             <AppStack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
             <AppStack.Screen name="Products" component={ProductsScreen}/>
-            <AppStack.Screen name="Header" component={HeaderScreen}/>
             <AppStack.Screen name="Details" component={DetailsScreen} options={{
                 title:'Chi tiết',
                 headerTitleAlign:'center',

@@ -25,7 +25,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
   const [myOrder2, setMyOrder2] = useState(0);
   const [checkOrder, setCheckOrder] = useState([]);
 
-  console.log(user.uid);
+  //console.log(user.uid);
   /*
   useEffect(() => {
     const getData = async() => {
@@ -122,10 +122,6 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
     // Unsubscribe from events when no longer in use
     return () => subscriber();
   };
-  let a = myOrder.length;
-  let b = myOrder2.length;
-  
-  console.log('ĐƠN HÀNG NG DÙNG: ', (a+b));
 
   const getCount = checkOrder => {
     let x = 0;
@@ -230,19 +226,26 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
 
       <View style={styles.menuWrapper}>
 
-      {/*
-      {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
-          <TouchableRipple onPress={() => {}}>
+      {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
+          <TouchableRipple onPress={() => navigation.navigate("ProductManager")}>
             <View style={styles.menuItem}>
-              <Icon name="cart-outline" color="#FF6347" size={25} />
-              <Text style={styles.menuItemText}>Kiểm tra đơn hàng</Text>
+              <Icon name="database-plus" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Quản lý sản phẩm</Text>
             </View>
           </TouchableRipple>
-        ) : (
-          <View></View>
-        )}
-       */}
-        
+        )
+      }
+
+      {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
+          <TouchableRipple onPress={() => navigation.navigate("UserManager")}>
+            <View style={styles.menuItem}>
+              <Icon name="account-details" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Quản lý người dùng</Text>
+            </View>
+          </TouchableRipple>
+        )
+      }
+
         {/*
         <TouchableRipple onPress={() => {}}>
           <View style={styles.menuItem}>
@@ -363,6 +366,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 15,
     paddingHorizontal: 30,
+    //borderBottomWidth: 1,
+    //borderBottomColor: '#dddddd'
   },
   menuItemText: {
     color: '#777777',

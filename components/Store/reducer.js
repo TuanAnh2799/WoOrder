@@ -126,11 +126,6 @@ function reducerCart( state = initProduct, action){
                 }
             case DELETE_CART:
                 let quantity_ = state.Carts[action.payload].quantity;
-
-                //saveCart({...state,numberCart: state.numberCart - quantity_,Carts: state.Carts.filter(item =>{
-                    //return item.id !== state.Carts[action.payload].id
-                //})});
-                
                 return{
                     ...state,
                     numberCart: state.numberCart - quantity_,

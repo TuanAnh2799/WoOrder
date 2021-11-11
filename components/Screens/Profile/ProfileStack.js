@@ -6,6 +6,12 @@ import FavoritesScreen from './Favorites';
 import MyTabs from './index';
 import AdminTabs from './adminTab';
 import HelpScreen from './help';
+import UserManagerScreen from './admManager/UserManager';
+import ProductManagerScreen from './admManager/ProductManager';
+import IconAddProductScreen from './admManager/IconAddProductScreen';
+import AddProductStack from './admManager/AddProductStack';
+import AddProduct from './admManager/AddProduct';
+
 
 const ProfileStack = createStackNavigator();
 
@@ -71,11 +77,40 @@ const ProfileStackScreen = () => (
         headerTitleAlign: 'center',
       }}
     />
-    {/*
+
+    <ProfileStack.Screen
+      name="ProductManager"
+      component={ProductManagerScreen}
+      options={{
+        headerRight: ()=> <IconAddProductScreen/>,
+        title: 'Quản lý sản phẩm',
+        headerTitleAlign: 'center',
+    }}/>
+
+  <ProfileStack.Screen
+        name="UserManager"
+        component={UserManagerScreen}
+        options={{
+          title: 'Quản lý người dùng',
+          headerTitleAlign: 'center',
+      }}/>
     
-    
-     */}
-    
+    <ProfileStack.Screen
+        name="AddProductStack"
+        component={AddProductStack}
+        options={{
+          headerTitleAlign: 'center',
+          headerShown: false,
+      }}/>
+
+    <ProfileStack.Screen
+        name="Add"
+        component={AddProduct}
+        options={{
+          title:'Thêm sản phẩm',
+          headerTitleAlign: 'center',
+          headerShown: true,
+      }}/>
 
   </ProfileStack.Navigator>
 );

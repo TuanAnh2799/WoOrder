@@ -106,7 +106,7 @@ const LoginScreen = ({navigation}) => {
                 </View>
 
                 {errors.password && touched.password && (
-                  <Text style={{fontSize: 17, color: 'red', marginLeft: '5%'}}>
+                  <Text style={{fontSize: 14, color: 'red', marginLeft: '5%'}}>
                     {errors.password}
                   </Text>
                 )}

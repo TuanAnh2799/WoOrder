@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {styles} from './styles';
-import {AddCart, AddToFavorite} from '../../Store/action';
+import {AddCart, AddToFavorite} from '../../../Store/action';
 import firestore, {firebase} from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors, TouchableRipple, ActivityIndicator} from 'react-native-paper';
@@ -41,7 +41,7 @@ const listTab = [
   },
 ];
 
-function ProductScreen({AddToFavorite}) {
+function ListProduct({AddToFavorite}) {
   
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
@@ -115,9 +115,6 @@ function ProductScreen({AddToFavorite}) {
         </View>
       ) : (
         <View style={styles.listProduct}>
-          <Text style={{textAlign: 'center', fontSize: 22, fontWeight: 'bold'}}>
-            Sản phẩm
-          </Text>
           <View
             style={{
               height: 10,
@@ -294,4 +291,4 @@ const mapDispatchToProps = dispatch => ({
   AddToFavorite: item => dispatch(AddToFavorite(item)),
 });
 
-export default connect(mapDispatchToProps, {AddToFavorite})(ProductScreen);
+export default connect(mapDispatchToProps, {AddToFavorite})(ListProduct);

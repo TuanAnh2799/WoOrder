@@ -168,7 +168,7 @@ export default function RegisterScreen({navigation}) {
                 ]}>
                 Nhập lại mật khẩu
               </Text>
-              <View style={styles.action}>
+              <View style={styles.actionPass}>
                 <View style={{marginTop: 20}}>
                   <Feather name="lock" color="#05375a" size={20} />
                 </View>
