@@ -5,11 +5,10 @@ import {
   View,
   Image,
   TouchableNativeFeedback,
-  Alert,
-  Button,
-  RefreshControl,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
+import {Searchbar} from 'react-native-paper';
 import {styles} from './styles';
 import {AddCart, AddToFavorite} from '../../../Store/action';
 import firestore, {firebase} from '@react-native-firebase/firestore';
@@ -20,6 +19,12 @@ import {useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import Share from 'react-native-share';
 import {useDispatch, useSelector} from 'react-redux';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 
 const listTab = [
   {
@@ -42,7 +47,6 @@ const listTab = [
 ];
 
 function ListProduct({AddToFavorite}) {
-  
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   //const [heart, setHeart] = useState('heart-outline');
@@ -50,7 +54,7 @@ function ListProduct({AddToFavorite}) {
   const [statusType, setStatusType] = useState(0);
 
   const Favorites = useSelector(state => state.favourites.favoriteProduct);
-  console.log('yêu thích:', Favorites.length);
+  //console.log('yêu thích:', Favorites.length);
   const [dataList, setDataList] = useState([]);
 
   useEffect(async () => {
@@ -70,7 +74,7 @@ function ListProduct({AddToFavorite}) {
         setProducts(productss);
         setDataList(productss);
       });
-    
+
     return () => subscriber();
   }, []);
 
@@ -97,7 +101,6 @@ function ListProduct({AddToFavorite}) {
   };
   //console.log('data:', products);
 
-  
   const setStatusFillter = getType => {
     if (getType === 0) {
       setDataList(products);
@@ -107,6 +110,72 @@ function ListProduct({AddToFavorite}) {
     setStatusType(getType);
   };
 
+  const search = textSearch => {
+    const fillter = User.filter(e =>
+      e.name.toLowerCase().includes(textSearch.toLowerCase()),
+    );
+    setSearchFillter(fillter);
+  };
+
+  const Search = () => (
+    <View style={{paddingTop: 5,paddingLeft: 10, paddingRight:10}}>
+      <Searchbar
+        placeholder="Nhập tên sản phẩm ..."
+        onChangeText={text => {
+          search(text);
+        }}
+      />
+    </View>
+  );
+
+  const headerFillter = () => {
+    return(
+      <View style={{height: 10,
+        width: '100%',
+        height: 40,
+        marginTop: 2,
+        borderTopWidth: 0.5,
+        borderRightWidth: 0.5,
+        borderLeftWidth: 0.5,
+        borderLeftColor: '#009387',
+        borderTopColor: '#009387',
+        borderRightColor:'#009387',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        marginVertical: 10,
+        marginBottom: 10}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '93%',
+            height: 30,
+            marginTop: 12,
+            marginLeft: '3%',
+            marginVertical: 2,
+          }}>
+          {listTab.map((e, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.styleBtnTab,
+                statusType === e.type && styles.btnTabActive,
+              ]}
+              onPress={() => {
+                console.log(e.type);
+                setStatusFillter(e.type);
+              }}>
+              {e.type == 0 && <Text style={styles.textTab}>Tất cả</Text>}
+              {e.type == 1 && <Text style={styles.textTab}>Công nghệ</Text>}
+              {e.type == 2 && <Text style={styles.textTab}>Thời trang</Text>}
+              {e.type == 3 && <Text style={styles.textTab}>Đồ chơi</Text>}
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+      
+    )
+  }
+
   return (
     <SafeAreaView>
       {isLoading ? (
@@ -114,175 +183,72 @@ function ListProduct({AddToFavorite}) {
           <ActivityIndicator size="large" color={Colors.blue500} />
         </View>
       ) : (
-        <View style={styles.listProduct}>
-          <View
-            style={{
-              height: 10,
-              width: '100%',
-              marginTop: 15,
-              borderTopWidth: 0.5,
-              borderRightWidth: 0.5,
-              borderLeftWidth: 0.5,
-              borderLeftColor: 'red',
-              borderTopColor: 'black',
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-            }}></View>
-          <View
-            style={{
-              flexDirection: 'row',
-              height: 30,
-              width: '93%',
-              marginTop: 1,
-              marginLeft: '3%',
-            }}>
-            {listTab.map((e, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.styleBtnTab,
-                  statusType === e.type && styles.btnTabActive,
-                ]}
-                onPress={() => {
-                  console.log(e.type);
-                  setStatusFillter(e.type);
-                }}>
-                {e.type == 0 && <Text style={styles.textTab}>Tất cả</Text>}
-                {e.type == 1 && <Text style={styles.textTab}>Công nghệ</Text>}
-                {e.type == 2 && <Text style={styles.textTab}>Thời trang</Text>}
-                {e.type == 3 && <Text style={styles.textTab}>Đồ chơi</Text>}
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={{marginTop: 10}}>
-            <FlatList
-              data={dataList}
-              renderItem={({item, index}) => (
-                <TouchableNativeFeedback
-                  onPress={() =>
-                    navigation.navigate('Details', {
-                      product: item,
-                    })
-                  }>
-                  <View style={styles.item} key={index}>
-                    <View style={styles.wrappIMG}>
-                      <Image
-                        source={{uri: item.url[0]}}
-                        style={styles.image}
-                        resizeMode={'stretch'}
-                      />
-                    </View>
-                    <View style={styles.wrappInfo}>
-                      <View
-                        style={{
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: '100%',
-                        }}>
-                        <Text style={styles.name}>{item.name}</Text>
-                      </View>
-                    </View>
-                    <View style={styles.wrapAvaiable}>
-                      <View
-                        style={{
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: '100%',
-                        }}>
-                        <Text style={styles.price}>
-                          Giá: {formatCash(item.price)} VNĐ
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={styles.wrappIcon}>
-                      <View
-                        style={{
-                          bottom: 0,
-                          width: 31,
-                          height: 30,
-                          borderWidth: 1,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          marginRight: 5,
-                          borderColor: '#fff',
-                        }}>
-                          {
-                            Favorites.length === 0 && (
-                              <Icon
-                              name="heart-outline"
-                              size={25}
-                              style={{color: 'red', marginRight: 0}}
-                              onPress={() => {
-                                AddToFavorite(item);
-                                //setHeart('cards-heart');
-                              
-                              }}
-                            />)
-
-                          }
-                          {
-                            Favorites.length !== 0 && 
-                            Favorites.map(e=> {
-                              if(e.id === item.id)
-                              {
-                                return (
-                                  <Icon
-                                  name="cards-heart"
-                                  size={25}
-                                  style={{color: 'red', marginRight: 0}}
-                                  onPress={() => {
-                                    AddToFavorite(item);
-                                    //setHeart('cards-heart');
-                                  
-                                  }}
-                                />
-                                )
-                              } else {
-                                return(
-                                  <Icon
-                                  name="heart-outline"
-                                  size={25}
-                                  style={{color: 'red', marginRight: 0}}
-                                  onPress={() => {
-                                    AddToFavorite(item);
-                                    //setHeart('cards-heart');
-                                  
-                                  }}
-                                  />)
-                              }
-                          })
-                          }  
-                      
-                        
-                      </View>
-                      <View
-                        style={{
-                          width: 31,
-                          height: 30,
-                          borderWidth: 1,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          marginRight: 5,
-                          borderColor: '#fff',
-                        }}>
-                        <Icon
-                          name="share-variant"
-                          size={25}
-                          style={styles.cartIcon}
-                          color={Colors.red400}
-                          onPress={() => customShare(item.url[0])}
+        <ScrollView>
+          <View style={styles.listProduct}>
+            <Search />
+            <View style={{marginTop: 10}}>
+              <FlatList
+                data={dataList}
+                ListHeaderComponent={headerFillter}
+                renderItem={({item, index}) => (
+                  <TouchableNativeFeedback>
+                    <View style={styles.item} key={index}>
+                      <View style={styles.wrappIMG}>
+                        <Image
+                          source={{uri: item.url[0]}}
+                          style={styles.image}
+                          resizeMode={'stretch'}
                         />
                       </View>
+
+                      <View style={{width: '50%'}}>
+                        <View style={styles.wrappInfo}>
+                          <View
+                            style={{
+                              //justifyContent: 'flex-start',
+                              alignItems: 'flex-start',
+                              width: '100%',
+                            }}>
+                            <Text style={styles.name}>{item.name}</Text>
+                          </View>
+                        </View>
+
+                        <View style={styles.wrapPrice}>
+                          <View
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'flex-start',
+                              width: '100%',
+                            }}>
+                            <Text style={styles.price}>
+                              Giá: {formatCash(item.price)} VNĐ
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+
+                      <View style={{width: '10%', justifyContent: 'center'}}>
+                        <Menu>
+                          <MenuTrigger text="Sửa" />
+                          <MenuOptions>
+                            <MenuOption
+                              onSelect={() => alert(`Save`)}
+                              text="Save"
+                            />
+                            <MenuOption onSelect={() => alert(`Delete`)}>
+                              <Text style={{color: 'red'}}>Delete</Text>
+                            </MenuOption>
+                          </MenuOptions>
+                        </Menu>
+                      </View>
                     </View>
-                  </View>
-                </TouchableNativeFeedback>
-              )}
-              keyExtractor={(item, index) => index}
-              numColumns={2}
-            />
+                  </TouchableNativeFeedback>
+                )}
+                keyExtractor={(item, index) => item.id}
+              />
+            </View>
           </View>
-        </View>
+        </ScrollView>
       )}
     </SafeAreaView>
   );

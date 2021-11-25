@@ -50,7 +50,7 @@ function ProductScreen({AddToFavorite}) {
   const [statusType, setStatusType] = useState(0);
 
   const Favorites = useSelector(state => state.favourites.favoriteProduct);
-  console.log('yêu thích:', Favorites.length);
+  //console.log('yêu thích:', Favorites.length);
   const [dataList, setDataList] = useState([]);
 
   useEffect(async () => {

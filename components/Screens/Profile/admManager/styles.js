@@ -4,26 +4,32 @@ export const styles = StyleSheet.create({
   item: {
     backgroundColor: '#fff',
     padding: 5,
-    marginVertical: 8,
+    marginVertical: 7,
     marginHorizontal: 5,
-    width: '47%',
-    height: 275,
+    width: '96%',
+    height: 150,
     borderRadius: 5,
-    marginTop: 5,
+    marginTop: 1,
     borderColor:'#009387',
-    borderWidth: 1
+    borderWidth: 1,
+    marginLeft: '2%',
+    flexDirection:'row'
   },
   name: {
     fontSize: 16,
     marginTop: 4,
+    marginLeft: 10
   },
   price: {
     fontSize: 15,
+    marginLeft: 10
   },
   wrappIMG: {
-    width: '100%',
-    height: '70%',
-    borderRadius: 20,
+    width: '40%',
+    height: '100%',
+    borderRadius: 0,
+    borderRightColor: '#009387',
+    borderRightWidth: 1,
   },
   image: {
     width: '100%',
@@ -31,13 +37,11 @@ export const styles = StyleSheet.create({
     borderRadius: 5,
   },
   wrappInfo: {
-    flexDirection: 'row',
     marginLeft: 3,
   },
-  wrapAvaiable: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
+  wrapPrice: {
     marginLeft: 3,
+    marginTop: 5,
   },
   textAvaiable: {
     fontSize: 13,
@@ -79,7 +83,7 @@ export const styles = StyleSheet.create({
 
   //list product
   listProduct: {
-    //flex: 8,
+    marginTop: 5,
   },
   cartIcon: {
     alignItems: 'flex-start',

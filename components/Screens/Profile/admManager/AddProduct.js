@@ -1,11 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 const AddProduct = () => {
     return (
-        <View>
-            <Text>Màn hình thêm sản phẩm</Text>
-        </View>
+        <SafeAreaView>
+            <View>
+                <Text>
+                    Tên sản phẩm
+                </Text>
+            </View>
+        </SafeAreaView>
     )
 }
 
