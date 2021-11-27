@@ -177,9 +177,9 @@ function ListProduct({AddToFavorite}) {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView >
       {isLoading ? (
-        <View style={{flex: 1, justifyContent: 'center'}}>
+        <View style={{flex:1,justifyContent:'center', marginTop:'90%'}}>
           <ActivityIndicator size="large" color={Colors.blue500} />
         </View>
       ) : (

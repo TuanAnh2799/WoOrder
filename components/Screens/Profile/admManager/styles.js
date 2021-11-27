@@ -83,6 +83,7 @@ export const styles = StyleSheet.create({
 
   //list product
   listProduct: {
+    flex: 1,
     marginTop: 5,
   },
   cartIcon: {
