@@ -85,6 +85,7 @@ export default function EditProfile({navigation}) {
                       size={35}
                       color="#fff"
                       style={styles.iconCamera}
+                      onPress={()=>console.log("Choose image")}
                     />
                   </View>
                 </ImageBackground>
