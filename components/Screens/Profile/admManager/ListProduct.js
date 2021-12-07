@@ -23,6 +23,7 @@ import {useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import Share from 'react-native-share';
 import {useDispatch, useSelector} from 'react-redux';
+import Textarea from 'react-native-textarea';
 import {
   Menu,
   MenuOptions,
@@ -50,10 +51,37 @@ const listTab = [
   },
 ];
 
+import deleteIcon from '../../../../img/Delete.png';
+
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
 function ListProduct({AddToFavorite}) {
+
+  const IMG = [
+    {
+      id: '1',
+      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyK7V1AdfXQbdMX8zXx-aM85Q0YFAfimD_8OYLWQWrc5rrFpeXAv9aJe9bs3SG7y7vgHM&usqp=CAU',
+    },
+    {
+      id: '2',
+      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
+    },
+    {
+      id: '3',
+      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
+    },
+    {
+      id: '4',
+      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyK7V1AdfXQbdMX8zXx-aM85Q0YFAfimD_8OYLWQWrc5rrFpeXAv9aJe9bs3SG7y7vgHM&usqp=CAU',
+    },
+    {
+      id: '5',
+      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
+    },
+    
+  ];
+
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   //const [heart, setHeart] = useState('heart-outline');
@@ -62,15 +90,14 @@ function ListProduct({AddToFavorite}) {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [arrIndex, setIndex] = useState(null);
-  const [dataModal,setDataModal] = useState([]);
+  const [size, setSize] = useState([]);
+  const [type, setType] = useState('');
+  const [color,setColor] = useState([]);
+  const [url, setUrl] = useState([]);
   const [name,setName] = useState('');
   const [price,setPrice] = useState('');
   const [info,setInfo] = useState('');
 
-
-  const Favorites = useSelector(state => state.favourites.favoriteProduct);
-  //console.log('yêu thích:', Favorites.length);
   const [dataList, setDataList] = useState([]);
 
   useEffect(async () => {
@@ -115,7 +142,7 @@ function ListProduct({AddToFavorite}) {
       console.log(error);
     }
   };
-  //console.log('data:', products);
+  //console.log('info:', info);
 
   const setStatusFillter = getType => {
     if (getType === 0) {
@@ -219,6 +246,7 @@ function ListProduct({AddToFavorite}) {
                     backgroundColor: '#000000AA',
                     justifyContent: 'center',
                   }}>
+                  <TouchableNativeFeedback>
                   <View
                     style={{
                       backgroundColor: '#fff',
@@ -234,17 +262,16 @@ function ListProduct({AddToFavorite}) {
                           width: '100%',
                           justifyContent: 'center',
                           alignItems: 'center',
-                          backgroundColor:'green'
                         }}>
                         <Text style={{fontSize: 18, fontWeight: 'bold'}}>
                           Sửa thông tin sản phẩm
                         </Text>
                       </View>
 
-                      <View style={{flex: 7,backgroundColor:'yellow'}}>
+                      <View style={{flex: 9}}>
                         
-                        <View style={{height:'50%', backgroundColor:'pink'}}>
-                          <View style={{flexDirection:'row', marginTop: 10, height: 35, backgroundColor:'blue'}}>
+                        <View style={{height:'60%'}}>
+                          <View style={{flexDirection:'row', marginTop: 10, height: 35}}>
                             <View style={{width: '30%', justifyContent:'center'}}>
                               <Text>Tên sản phẩm:</Text>
                             </View>
@@ -253,40 +280,113 @@ function ListProduct({AddToFavorite}) {
                             </View>
                           </View>
 
-                          <View style={{flexDirection:'row', marginTop: 10, height: 35, backgroundColor:'orange'}}>
+                          <View style={{flexDirection:'row', marginTop: 7, height: 35}}>
                             <View style={{width: '30%', justifyContent:'center'}}>
                               <Text>Giá sản phẩm:</Text>
                             </View>
                             <View style={{width: '70%'}}>
-                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} Forw value={price.toString()}/>
+                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={price.toString()}/>
+                            </View>
+                          </View>
+                          
+                          {
+                            type == '2' ? (
+                              <View style={{flexDirection:'row', marginTop: 7, height: 35}}>
+                                <View style={{width: '30%', justifyContent:'center'}}>
+                                  <Text>Kích cỡ</Text>
+                                </View>
+                                <View style={{width: '70%'}}>
+                                <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={size.toString()}/>
+                                </View>
+                              </View>
+                            ):(null)
+                          }
+
+                          <View style={{flexDirection:'row', marginTop: 7, height: 35}}>
+                            <View style={{width: '30%', justifyContent:'center'}}>
+                              <Text>Màu sắc:</Text>
+                            </View>
+                            <View style={{width: '70%'}}>
+                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={color.toString()}/>
+                            </View>
+                          </View>
+
+                            <View style={type == '2' ? styles.labelMota1 : styles.labelMota2 }>
+                              <Text>Mô tả</Text>
+                            </View>
+                          <View style={styles.container}>
+                            
+                            <View style={{width: '100%', borderWidth: 1, borderRadius: 10}}>
+                              <Textarea
+                                containerStyle={styles.textareaContainer}
+                                style={styles.textarea}
+                                onChangeText={text => setInfo(text)}
+                                value={info}
+                                maxLength={300}
+                                placeholderTextColor={'#c7c7c7'}
+                                underlineColorAndroid={'transparent'}
+                              />
                             </View>
                           </View>
 
                         </View>
 
-                        <View style={{height:'50%', backgroundColor:'magenta'}}>
-                          <Text>Arnh ở đây</Text>
-                        </View>
+                        <View style={{height:'40%'}}>
+                          <Text style={{textAlign:'center'}}>Ảnh sản phẩm</Text>
+                          
+                            { IMG.length == 6 ? (
+                              <View style={{flexDirection:'row', height: '90%',flexWrap:'wrap'}}>
+                              {
+                                IMG.map((e,index) =>(
+                                <View style={{width: '30%', marginLeft: 10, marginTop: 3}} key={index}>
+                                  <Image source={{uri: e.url}} style={{width: 120, height: 105}} key={index}/>
+                                  <Image style={{position:'absolute',width:20, height: 25, marginLeft:'78%',marginTop: 5}} source={deleteIcon}/>
+                                </View>
+                                ))
+                              }
+                              </View>
+                            ): (
+                              <View style={{flexDirection:'row', height: "90%", flexWrap:'wrap',}}>
+                              {
+                                IMG.map((e,index) =>(
+                                <View style={{width: '30%', marginLeft: 10, marginTop: 3}} key={index}>
+                                  <Image source={{uri: e.url}} style={{width: 120, height: 105}} key={index}/>
+                                  <Image style={{position:'absolute',width:20, height: 25, marginLeft:'78%',marginTop: 5}} source={deleteIcon}/>
+                                </View>
+                                
+                                ))
+                              }
+                                <View style={{width: '23%', height: 95, marginLeft: 20, marginTop: 10, borderWidth: 1, borderColor: 'green', justifyContent:'center', alignItems:'center', borderRadius: 20}}>
+                                  <Text style={{fontSize: 30}}> + </Text>
+                                </View>
+                              </View>
+                            )
+                              
+                            }
+                          </View>
+                        
 
                       </View>
                       <View
                         style={{
+                          flex: 0.6,
                           flexDirection: 'row',
                           justifyContent: 'space-around',
-                          backgroundColor:'green'
+                          //backgroundColor: 'red'
                         }}>
-                        <View style={{width: '40%', marginTop: 5}}>
+                        <View style={{width: '40%', marginTop: 0}}>
                           <Button
                             title="Hủy"
                             onPress={() => setModalVisible(!modalVisible)}
                           />
                         </View>
-                        <View style={{width: '40%', marginTop: 5}}>
+                        <View style={{width: '40%', marginTop: 0}}>
                           <Button title="Lưu" />
                         </View>
                       </View>
                     </View>
                   </View>
+                  </TouchableNativeFeedback>
                 </View>
               </TouchableNativeFeedback>
             </Modal>
@@ -343,6 +443,10 @@ function ListProduct({AddToFavorite}) {
                                 setName(item.name);
                                 setPrice(item.price);
                                 setInfo(item.info);
+                                setUrl(item.url);
+                                setSize(item.size);
+                                setType(item.type);
+                                setColor(item.color);
                                 setModalVisible(!modalVisible);
                               }}
                               text="Chỉnh sửa"

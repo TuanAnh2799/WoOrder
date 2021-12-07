@@ -115,5 +115,31 @@ export const styles = StyleSheet.create({
   },
   textTabActive: {
     color:'#fff',
+  },
+  container: {
+    flex: 1,
+    padding: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textareaContainer: {
+    height: 160,
+    padding: 5,
+    backgroundColor: '#F5FCFF',
+    borderRadius: 10,
+  },
+  textarea: {
+    textAlignVertical: 'top',  // hack android
+    height: 170,
+    fontSize: 14,
+    color: '#333',
+  },
+  labelMota1: {
+    marginLeft: 40,
+    top: 4,
+  },
+  labelMota2: {
+    marginLeft: 40,
+    top: 20,
   }
 });

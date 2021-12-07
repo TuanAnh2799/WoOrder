@@ -41,6 +41,7 @@
     "react-native-share": "^7.1.0",
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^2.x",
+    "react-native-textarea": "^1.0.4",
     "react-native-vector-icons": "^8.1.0",
     "react-redux": "^7.2.5",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
