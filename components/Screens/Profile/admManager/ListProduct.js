@@ -7,6 +7,10 @@ import {
   TouchableNativeFeedback,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
+  Modal,
+  Button,
+  TextInput,
 } from 'react-native';
 import {Searchbar} from 'react-native-paper';
 import {styles} from './styles';
@@ -46,12 +50,24 @@ const listTab = [
   },
 ];
 
+const deviceWitdh = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
+
 function ListProduct({AddToFavorite}) {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   //const [heart, setHeart] = useState('heart-outline');
   const [isLoading, setIsLoading] = useState(true);
   const [statusType, setStatusType] = useState(0);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [arrIndex, setIndex] = useState(null);
+  const [dataModal,setDataModal] = useState([]);
+  const [name,setName] = useState('');
+  const [price,setPrice] = useState('');
+  const [info,setInfo] = useState('');
+
 
   const Favorites = useSelector(state => state.favourites.favoriteProduct);
   //console.log('yêu thích:', Favorites.length);
@@ -118,7 +134,7 @@ function ListProduct({AddToFavorite}) {
   };
 
   const Search = () => (
-    <View style={{paddingTop: 5,paddingLeft: 10, paddingRight:10}}>
+    <View style={{paddingTop: 5, paddingLeft: 10, paddingRight: 10}}>
       <Searchbar
         placeholder="Nhập tên sản phẩm ..."
         onChangeText={text => {
@@ -129,21 +145,24 @@ function ListProduct({AddToFavorite}) {
   );
 
   const headerFillter = () => {
-    return(
-      <View style={{height: 10,
-        width: '100%',
-        height: 40,
-        marginTop: 2,
-        borderTopWidth: 0.5,
-        borderRightWidth: 0.5,
-        borderLeftWidth: 0.5,
-        borderLeftColor: '#009387',
-        borderTopColor: '#009387',
-        borderRightColor:'#009387',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        marginVertical: 10,
-        marginBottom: 10}}>
+    return (
+      <View
+        style={{
+          height: 10,
+          width: '100%',
+          height: 40,
+          marginTop: 2,
+          borderTopWidth: 0.5,
+          borderRightWidth: 0.5,
+          borderLeftWidth: 0.5,
+          borderLeftColor: '#009387',
+          borderTopColor: '#009387',
+          borderRightColor: '#009387',
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          marginVertical: 10,
+          marginBottom: 10,
+        }}>
         <View
           style={{
             flexDirection: 'row',
@@ -172,20 +191,106 @@ function ListProduct({AddToFavorite}) {
           ))}
         </View>
       </View>
-      
-    )
-  }
+    );
+  };
 
   return (
-    <SafeAreaView >
+    <SafeAreaView>
       {isLoading ? (
-        <View style={{flex:1,justifyContent:'center', marginTop:'90%'}}>
+        <View style={{flex: 1, justifyContent: 'center', marginTop: '90%'}}>
           <ActivityIndicator size="large" color={Colors.blue500} />
         </View>
       ) : (
         <ScrollView>
           <View style={styles.listProduct}>
             <Search />
+            {/*modal chỉnh sửa sản phẩm */}
+
+            <Modal
+              visible={modalVisible}
+              animationType={'slide'}
+              transparent={true}
+              onRequestClose={() => setModalVisible(!modalVisible)}>
+              <TouchableNativeFeedback
+                onPress={() => setModalVisible(!modalVisible)}>
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#000000AA',
+                    justifyContent: 'center',
+                  }}>
+                  <View
+                    style={{
+                      backgroundColor: '#fff',
+                      width: '100%',
+                      height: deviceHeight * 0.9,
+                      borderRadius: 20,
+                      //borderTopLeftRadius: 20,
+                    }}>
+                    <View style={{flex: 2}}>
+                      <View
+                        style={{
+                          flex: 0.4,
+                          width: '100%',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          backgroundColor:'green'
+                        }}>
+                        <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+                          Sửa thông tin sản phẩm
+                        </Text>
+                      </View>
+
+                      <View style={{flex: 7,backgroundColor:'yellow'}}>
+                        
+                        <View style={{height:'50%', backgroundColor:'pink'}}>
+                          <View style={{flexDirection:'row', marginTop: 10, height: 35, backgroundColor:'blue'}}>
+                            <View style={{width: '30%', justifyContent:'center'}}>
+                              <Text>Tên sản phẩm:</Text>
+                            </View>
+                            <View style={{width: '70%'}}>
+                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={name}/>
+                            </View>
+                          </View>
+
+                          <View style={{flexDirection:'row', marginTop: 10, height: 35, backgroundColor:'orange'}}>
+                            <View style={{width: '30%', justifyContent:'center'}}>
+                              <Text>Giá sản phẩm:</Text>
+                            </View>
+                            <View style={{width: '70%'}}>
+                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} Forw value={price.toString()}/>
+                            </View>
+                          </View>
+
+                        </View>
+
+                        <View style={{height:'50%', backgroundColor:'magenta'}}>
+                          <Text>Arnh ở đây</Text>
+                        </View>
+
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-around',
+                          backgroundColor:'green'
+                        }}>
+                        <View style={{width: '40%', marginTop: 5}}>
+                          <Button
+                            title="Hủy"
+                            onPress={() => setModalVisible(!modalVisible)}
+                          />
+                        </View>
+                        <View style={{width: '40%', marginTop: 5}}>
+                          <Button title="Lưu" />
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </TouchableNativeFeedback>
+            </Modal>
+
             <View style={{marginTop: 10}}>
               <FlatList
                 data={dataList}
@@ -232,11 +337,18 @@ function ListProduct({AddToFavorite}) {
                           <MenuTrigger text="Sửa" />
                           <MenuOptions>
                             <MenuOption
-                              onSelect={() => alert(`Save`)}
-                              text="Save"
+                              onSelect={() => {
+                                //setIndex(index);
+                                //setDataModal(products[index]);
+                                setName(item.name);
+                                setPrice(item.price);
+                                setInfo(item.info);
+                                setModalVisible(!modalVisible);
+                              }}
+                              text="Chỉnh sửa"
                             />
                             <MenuOption onSelect={() => alert(`Delete`)}>
-                              <Text style={{color: 'red'}}>Delete</Text>
+                              <Text style={{color: 'red'}}>Xóa</Text>
                             </MenuOption>
                           </MenuOptions>
                         </Menu>

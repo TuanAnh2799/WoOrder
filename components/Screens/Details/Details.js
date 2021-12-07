@@ -50,6 +50,7 @@ function DetailsScreen({route, navigation, AddCart}) {
   const openModal = () => {
     setOpenModal(true);
   };
+  
   const onchange = nativeEvent => {
     if (nativeEvent) {
       const slide = Math.ceil(

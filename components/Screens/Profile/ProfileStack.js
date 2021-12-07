@@ -11,6 +11,7 @@ import ProductManagerScreen from './admManager/ProductManager';
 import IconAddProductScreen from './admManager/IconAddProductScreen';
 import AddProductStack from './admManager/AddProductStack';
 import AddProduct from './admManager/AddProduct';
+import ViewPhotoScreen from './ViewPhoto';
 
 
 const ProfileStack = createStackNavigator();
@@ -109,6 +110,13 @@ const ProfileStackScreen = () => (
         options={{
           title:'Thêm sản phẩm',
           headerTitleAlign: 'center',
+          headerShown: true,
+      }}/>
+      <ProfileStack.Screen
+        name="ViewPhoto"
+        component={ViewPhotoScreen}
+        options={{
+          title: '',
           headerShown: true,
       }}/>
 
