@@ -55,8 +55,8 @@ const EditProfile =({navigation})=> {
 
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
-      compressImageMaxWidth: 300,
-      compressImageMaxHeight: 300,
+      compressImageMaxWidth: 400,
+      compressImageMaxHeight: 400,
       cropping: true,
       compressImageQuality: 1,
       multiple: false,
@@ -71,8 +71,8 @@ const EditProfile =({navigation})=> {
 
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 300,
+      width: 400,
+      height: 400,
       cropping: true,
       compressImageQuality: 1,
       multiple: false,
