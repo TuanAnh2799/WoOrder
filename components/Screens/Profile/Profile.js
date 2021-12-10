@@ -140,7 +140,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
         <View style={{flexDirection: 'row', marginTop: 15}}>
           <Avatar.Image
             source={{
-              uri: 'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg',
+              uri: userInfo.avatar,
             }}
             size={85}
           />
