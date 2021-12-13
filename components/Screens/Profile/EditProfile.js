@@ -285,8 +285,6 @@ const EditProfile = ({navigation}) => {
                     name="upload"
                     size={25}
                     color="tomato"
-                    //style={styles.iconEdit}
-                    onPress={() => navigation.navigate('EditProfile')}
                   />
                   </View>
                 </TouchableOpacity>
