@@ -57,7 +57,6 @@ const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
 function ListProduct({AddToFavorite}) {
-
   const IMG = [
     {
       id: '1',
@@ -80,8 +79,9 @@ function ListProduct({AddToFavorite}) {
       url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
     },
     
-  ];
 
+  ];
+console.log(IMG.length);
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   //const [heart, setHeart] = useState('heart-outline');
@@ -92,11 +92,11 @@ function ListProduct({AddToFavorite}) {
 
   const [size, setSize] = useState([]);
   const [type, setType] = useState('');
-  const [color,setColor] = useState([]);
+  const [color, setColor] = useState([]);
   const [url, setUrl] = useState([]);
-  const [name,setName] = useState('');
-  const [price,setPrice] = useState('');
-  const [info,setInfo] = useState('');
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [info, setInfo] = useState('');
 
   const [dataList, setDataList] = useState([]);
 
@@ -220,7 +220,102 @@ function ListProduct({AddToFavorite}) {
       </View>
     );
   };
-
+  const ViewPhoto = () => {
+    if (IMG.length === 0) {
+      return (
+        <View
+          style={{
+            width: '23%',
+            height: 95,
+            marginLeft: 20,
+            marginTop: 10,
+            borderWidth: 1,
+            borderColor: '#000000AA',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 20,
+            backgroundColor: '#ffff'
+          }}>
+          <Icon name='camera' size={28} color='black'/>
+        </View>
+      );
+    } else if (IMG.length >= 1 && IMG.length <= 5) {
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+            height: '90%',
+            flexWrap: 'wrap',
+          }}>
+          {IMG.map((e, index) => (
+            <View
+              style={styles.wrappImgEDIT} key={index}>
+              <Image
+                source={{uri: e.url}}
+                style={{width:'100%', height: '100%',borderRadius: 7}}
+                key={index}
+              />
+              <Image
+                style={{
+                  position: 'absolute',
+                  width: 20,
+                  height: 25,
+                  marginLeft: '78%',
+                  marginTop: 5,
+                }}
+                source={deleteIcon}
+              />
+            </View>
+          ))}
+          <View
+          style={{
+            width: '25%',
+            height: 95,
+            marginLeft: 15,
+            marginTop: 10,
+            borderWidth: 1,
+            borderColor: '#000000AA',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 20,
+            backgroundColor: '#ffff'
+          }}>
+          <Icon name='camera' size={28} color='black'/>
+        </View>
+        </View>
+      );
+    } else if(IMG.length == 6){
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+            height: '90%',
+            flexWrap: 'wrap',
+          }}>
+          {IMG.map((e, index) => (
+            <View
+              style={styles.wrappImgEDIT} key={index}>
+              <Image
+                source={{uri: e.url}}
+                style={{width:'100%', height: '100%',borderRadius: 7}}
+                key={index}
+              />
+              <Image
+                style={{
+                  position: 'absolute',
+                  width: 20,
+                  height: 25,
+                  marginLeft: '78%',
+                  marginTop: 5,
+                }}
+                source={deleteIcon}
+              />
+            </View>
+          ))}
+        </View>
+      );
+    }
+  };
   return (
     <SafeAreaView>
       {isLoading ? (
@@ -247,145 +342,183 @@ function ListProduct({AddToFavorite}) {
                     justifyContent: 'center',
                   }}>
                   <TouchableNativeFeedback>
-                  <View
-                    style={{
-                      backgroundColor: '#fff',
-                      width: '100%',
-                      height: deviceHeight * 0.9,
-                      borderRadius: 20,
-                      //borderTopLeftRadius: 20,
-                    }}>
-                    <View style={{flex: 2}}>
-                      <View
-                        style={{
-                          flex: 0.4,
-                          width: '100%',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        <Text style={{fontSize: 18, fontWeight: 'bold'}}>
-                          Sửa thông tin sản phẩm
-                        </Text>
-                      </View>
+                    <View
+                      style={{
+                        backgroundColor: '#fff',
+                        width: '100%',
+                        height: deviceHeight * 0.9,
+                        borderRadius: 20,
+                        //borderTopLeftRadius: 20,
+                      }}>
+                      <View style={{flex: 2}}>
+                        <View
+                          style={{
+                            flex: 0.4,
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+                            Sửa thông tin sản phẩm
+                          </Text>
+                        </View>
 
-                      <View style={{flex: 9}}>
-                        
-                        <View style={{height:'60%'}}>
-                          <View style={{flexDirection:'row', marginTop: 10, height: 35}}>
-                            <View style={{width: '30%', justifyContent:'center'}}>
-                              <Text>Tên sản phẩm:</Text>
+                        <View style={{flex: 9}}>
+                          <View style={{height: '60%'}}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginTop: 10,
+                                height: 35,
+                              }}>
+                              <View
+                                style={{
+                                  width: '30%',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text>Tên sản phẩm:</Text>
+                              </View>
+                              <View style={{width: '70%'}}>
+                                <TextInput
+                                  style={{
+                                    width: '80%',
+                                    height: 35,
+                                    borderWidth: 1,
+                                  }}
+                                  value={name}
+                                />
+                              </View>
                             </View>
-                            <View style={{width: '70%'}}>
-                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={name}/>
-                            </View>
-                          </View>
 
-                          <View style={{flexDirection:'row', marginTop: 7, height: 35}}>
-                            <View style={{width: '30%', justifyContent:'center'}}>
-                              <Text>Giá sản phẩm:</Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginTop: 7,
+                                height: 35,
+                              }}>
+                              <View
+                                style={{
+                                  width: '30%',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text>Giá sản phẩm:</Text>
+                              </View>
+                              <View style={{width: '70%'}}>
+                                <TextInput
+                                  style={{
+                                    width: '80%',
+                                    height: 35,
+                                    borderWidth: 1,
+                                  }}
+                                  value={price.toString()}
+                                />
+                              </View>
                             </View>
-                            <View style={{width: '70%'}}>
-                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={price.toString()}/>
-                            </View>
-                          </View>
-                          
-                          {
-                            type == '2' ? (
-                              <View style={{flexDirection:'row', marginTop: 7, height: 35}}>
-                                <View style={{width: '30%', justifyContent:'center'}}>
+
+                            {type == '2' ? (
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  marginTop: 7,
+                                  height: 35,
+                                }}>
+                                <View
+                                  style={{
+                                    width: '30%',
+                                    justifyContent: 'center',
+                                  }}>
                                   <Text>Kích cỡ</Text>
                                 </View>
                                 <View style={{width: '70%'}}>
-                                <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={size.toString()}/>
+                                  <TextInput
+                                    style={{
+                                      width: '80%',
+                                      height: 35,
+                                      borderWidth: 1,
+                                    }}
+                                    value={size.toString()}
+                                  />
                                 </View>
                               </View>
-                            ):(null)
-                          }
+                            ) : null}
 
-                          <View style={{flexDirection:'row', marginTop: 7, height: 35}}>
-                            <View style={{width: '30%', justifyContent:'center'}}>
-                              <Text>Màu sắc:</Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginTop: 7,
+                                height: 35,
+                              }}>
+                              <View
+                                style={{
+                                  width: '30%',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text>Màu sắc:</Text>
+                              </View>
+                              <View style={{width: '70%'}}>
+                                <TextInput
+                                  style={{
+                                    width: '80%',
+                                    height: 35,
+                                    borderWidth: 1,
+                                  }}
+                                  value={color.toString()}
+                                />
+                              </View>
                             </View>
-                            <View style={{width: '70%'}}>
-                              <TextInput style={{width: '80%', height: 35, borderWidth: 1}} value={color.toString()}/>
-                            </View>
-                          </View>
 
-                            <View style={type == '2' ? styles.labelMota1 : styles.labelMota2 }>
+                            <View
+                              style={
+                                type == '2'
+                                  ? styles.labelMota1
+                                  : styles.labelMota2
+                              }>
                               <Text>Mô tả</Text>
                             </View>
-                          <View style={styles.container}>
-                            
-                            <View style={{width: '100%', borderWidth: 1, borderRadius: 10}}>
-                              <Textarea
-                                containerStyle={styles.textareaContainer}
-                                style={styles.textarea}
-                                onChangeText={text => setInfo(text)}
-                                value={info}
-                                maxLength={300}
-                                placeholderTextColor={'#c7c7c7'}
-                                underlineColorAndroid={'transparent'}
-                              />
+                            <View style={styles.container}>
+                              <View
+                                style={{
+                                  width: '100%',
+                                  borderWidth: 1,
+                                  borderRadius: 10,
+                                }}>
+                                <Textarea
+                                  containerStyle={styles.textareaContainer}
+                                  style={styles.textarea}
+                                  onChangeText={text => setInfo(text)}
+                                  value={info}
+                                  maxLength={300}
+                                  placeholderTextColor={'#c7c7c7'}
+                                  underlineColorAndroid={'transparent'}
+                                />
+                              </View>
                             </View>
                           </View>
 
-                        </View>
-
-                        <View style={{height:'40%'}}>
-                          <Text style={{textAlign:'center'}}>Ảnh sản phẩm</Text>
-                          
-                            { IMG.length == 6 ? (
-                              <View style={{flexDirection:'row', height: '90%',flexWrap:'wrap'}}>
-                              {
-                                IMG.map((e,index) =>(
-                                <View style={{width: '30%', marginLeft: 10, marginTop: 3}} key={index}>
-                                  <Image source={{uri: e.url}} style={{width: 120, height: 105}} key={index}/>
-                                  <Image style={{position:'absolute',width:20, height: 25, marginLeft:'78%',marginTop: 5}} source={deleteIcon}/>
-                                </View>
-                                ))
-                              }
-                              </View>
-                            ): (
-                              <View style={{flexDirection:'row', height: "90%", flexWrap:'wrap',}}>
-                              {
-                                IMG.map((e,index) =>(
-                                <View style={{width: '30%', marginLeft: 10, marginTop: 3}} key={index}>
-                                  <Image source={{uri: e.url}} style={{width: 120, height: 105}} key={index}/>
-                                  <Image style={{position:'absolute',width:20, height: 25, marginLeft:'78%',marginTop: 5}} source={deleteIcon}/>
-                                </View>
-                                
-                                ))
-                              }
-                                <View style={{width: '23%', height: 95, marginLeft: 20, marginTop: 10, borderWidth: 1, borderColor: 'green', justifyContent:'center', alignItems:'center', borderRadius: 20}}>
-                                  <Text style={{fontSize: 30}}> + </Text>
-                                </View>
-                              </View>
-                            )
-                              
-                            }
+                          <View style={{height: '40%', top: -5}}>
+                            <Text style={{textAlign: 'center'}}>Ảnh sản phẩm</Text>
+                            <ViewPhoto/>
                           </View>
-                        
-
-                      </View>
-                      <View
-                        style={{
-                          flex: 0.6,
-                          flexDirection: 'row',
-                          justifyContent: 'space-around',
-                          //backgroundColor: 'red'
-                        }}>
-                        <View style={{width: '40%', marginTop: 0}}>
-                          <Button
-                            title="Hủy"
-                            onPress={() => setModalVisible(!modalVisible)}
-                          />
                         </View>
-                        <View style={{width: '40%', marginTop: 0}}>
-                          <Button title="Lưu" />
+                        <View
+                          style={{
+                            flex: 0.6,
+                            flexDirection: 'row',
+                            justifyContent: 'space-around',
+                            //backgroundColor: 'red'
+                          }}>
+                          <View style={{width: '40%', marginTop: 0}}>
+                            <Button
+                              title="Hủy"
+                              onPress={() => setModalVisible(!modalVisible)}
+                            />
+                          </View>
+                          <View style={{width: '40%', marginTop: 0}}>
+                            <Button title="Lưu" />
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
                   </TouchableNativeFeedback>
                 </View>
               </TouchableNativeFeedback>

@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import {RadioButton, Checkbox} from 'react-native-paper';
 import deleteIcon from '../../../../img/Delete.png';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 const AddProduct = () => {
   const [checked, setChecked] = React.useState('1'); //type
@@ -47,8 +49,110 @@ const AddProduct = () => {
       id: '5',
       url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
     },
-    
+    {
+      id: '5',
+      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
+    },
+
   ];
+  const ViewPhoto = () => {
+    if (IMG.length === 0) {
+      return (
+        <View
+          style={{
+            width: '25%',
+            height: 95,
+            marginLeft: 20,
+            marginTop: 10,
+            borderWidth: 1,
+            borderColor: '#000000AA',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 20,
+            backgroundColor: '#ffff'
+          }}>
+          <Icon name='camera' size={28} color='black'/>
+        </View>
+      );
+    } else if (IMG.length >= 1 && IMG.length <= 5) {
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+            height: '90%',
+            flexWrap: 'wrap',
+          }}>
+          {IMG.map((e, index) => (
+            <View
+              style={styles.wrappIMG}>
+              <Image
+                source={{uri: e.url}}
+                style={{width:'100%', height: '100%'}}
+                key={index}
+              />
+              <Image
+                style={{
+                  position: 'absolute',
+                  width: 20,
+                  height: 25,
+                  marginLeft: '78%',
+                  marginTop: 5,
+                }}
+                source={deleteIcon}
+              />
+            </View>
+          ))}
+          <View
+          style={{
+            width: '25%',
+            height: 95,
+            marginLeft: 15,
+            marginTop: 10,
+            borderWidth: 1,
+            borderColor: '#000000AA',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 20,
+            backgroundColor: '#ffff'
+          }}>
+          <Icon name='camera' size={28} color='black'/>
+        </View>
+        </View>
+      );
+    } else if(IMG.length == 6){
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+            height: '90%',
+            flexWrap: 'wrap',
+          }}>
+          {IMG.map((e, index) => (
+            <View
+              style={styles.wrappIMG} key={index}>
+              <Image
+                source={{uri: e.url}}
+                style={{width:'100%', height: '100%',}}
+                key={index}
+              />
+              <Image
+                style={{
+                  position: 'absolute',
+                  width: 20,
+                  height: 25,
+                  marginLeft: '78%',
+                  marginTop: 5,
+                }}
+                source={deleteIcon}
+              />
+            </View>
+          ))}
+        </View>
+      );
+    }
+  };
+
+ 
   return (
     <SafeAreaView style={{flex: 1}}>
 
@@ -178,28 +282,8 @@ const AddProduct = () => {
           <View style={styles.wrappUpload}>
             <Text style={{textAlign: 'center', fontSize: 17, fontWeight: '700', marginTop: 10}}>Ảnh sản phẩm </Text>
             <Text style={{fontSize: 14, fontStyle:'italic', textDecorationLine:'underline', textAlign:'center'}}>(Tối đa 6 ảnh)</Text>
-              <View style={{marginTop: 10}}>
-              <FlatList
-                data={IMG}
-                renderItem={({item,index}) => (
-                  <View style={styles.wrappIMG} key={index}>
-                    <View>
-                      <Image style={{width:'100%', height: '100%',}} source={{uri: item.url}}/>
-                      <Image style={{position:'absolute',width:23, height: 26, marginLeft:'75%',marginTop: 2}} source={deleteIcon}/>
-                    </View>
-                      
-                  </View>
-                )}
-                //Setting the number of column
-                keyExtractor={(item, index) => index}
-                numColumns={3}
-              />
-            </View>
-            
-            <View style={{width: '100%', alignItems: 'center'}}>
-              <View style={{width: '40%'}}>
-                <Button title="Tải lên" />
-              </View>
+              <View style={{marginTop: 10,}}>
+                <ViewPhoto/>
             </View>
           </View>
 

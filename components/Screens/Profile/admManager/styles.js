@@ -31,6 +31,16 @@ export const styles = StyleSheet.create({
     borderRightColor: '#009387',
     borderRightWidth: 1,
   },
+  wrappImgEDIT: {
+    width: '30%',
+    height: '49%',
+    borderRadius: 10,
+    borderColor: '#009387',
+    borderWidth: 1,
+    marginTop: 2,
+    marginLeft: 10,
+    padding: 1
+  },
   image: {
     width: '100%',
     height: '100%',
