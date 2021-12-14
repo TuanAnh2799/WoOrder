@@ -346,7 +346,7 @@ console.log(IMG.length);
                       style={{
                         backgroundColor: '#fff',
                         width: '100%',
-                        height: deviceHeight * 0.9,
+                        height: deviceHeight * 0.95,
                         borderRadius: 20,
                         //borderTopLeftRadius: 20,
                       }}>

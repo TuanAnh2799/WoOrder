@@ -246,18 +246,18 @@ const EditProfile = ({navigation}) => {
                   avatar: image !== null ? image : userInfo.avatar,
                 });
               }}
-              style={{flex: 2.1, backgroundColor: '#fff'}}>
+              style={{flex: 2.5, backgroundColor: '#fff'}}>
               <View style={styles.wrapPhoto}>
                 <ImageBackground
                   source={{
                     uri: image == null ? userInfo.avatar : image,
                   }}
                   style={styles.AvatarUser}
-                  imageStyle={{borderRadius: 100, borderColor:'green', borderWidth: 0.5}}>
+                  imageStyle={{borderRadius: 100, borderColor:'green', borderWidth: 1}}>
                   <View style={styles.wrappIcon}>
                     <Icon
                       name="camera"
-                      size={35}
+                      size={30}
                       color="green"
                       style={styles.iconCamera}
                       onPress={() => bs.current.snapTo(0)}
@@ -324,7 +324,7 @@ const EditProfile = ({navigation}) => {
                   />
                 </View>
               ) : null}
-              <View style={{marginTop: 25}}>
+              <View style={{marginTop: 10}}>
                 <View style={styles.Input}>
                   <Text style={styles.text}>Họ và tên</Text>
                   <TextInput
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconCamera: {
-    opacity: 0.7,
+    opacity: 0.8,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
   wrappButton: {
     width: '90%',
     marginLeft: '5%',
-    marginTop: '10%',
+    marginTop: '5%',
   },
   textErr: {
     fontSize: 12,
