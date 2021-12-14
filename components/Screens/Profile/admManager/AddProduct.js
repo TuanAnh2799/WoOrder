@@ -8,12 +8,17 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableNativeFeedback,
   View,
 } from 'react-native';
-import {RadioButton, Checkbox} from 'react-native-paper';
+import {RadioButton, Checkbox, TouchableRipple} from 'react-native-paper';
 import deleteIcon from '../../../../img/Delete.png';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ImagePicker from 'react-native-image-crop-picker';
+import storage from '@react-native-firebase/storage';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
 
 
 const AddProduct = () => {
@@ -26,132 +31,53 @@ const AddProduct = () => {
   const [sizeXXL, setSizeXXLChecked] = React.useState(false);
   const [info, setInfo] = React.useState('');
   const [color, setColor] = React.useState([]);
+  const [images, setImages] = React.useState([]);
 
 
-  const IMG = [
-    {
-      id: '1',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyK7V1AdfXQbdMX8zXx-aM85Q0YFAfimD_8OYLWQWrc5rrFpeXAv9aJe9bs3SG7y7vgHM&usqp=CAU',
-    },
-    {
-      id: '2',
-      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
-    },
-    {
-      id: '3',
-      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
-    },
-    {
-      id: '4',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyK7V1AdfXQbdMX8zXx-aM85Q0YFAfimD_8OYLWQWrc5rrFpeXAv9aJe9bs3SG7y7vgHM&usqp=CAU',
-    },
-    {
-      id: '5',
-      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
-    },
-    {
-      id: '5',
-      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
-    },
+    //console.log(listIMG);
+images?.length > 6 && setImages([]);
+let listIMG = [];
+images?.map(e =>listIMG.push(e));
+listIMG?.map(e=> console.log("link copy:", e))
 
-  ];
-  const ViewPhoto = () => {
-    if (IMG.length === 0) {
-      return (
-        <View
-          style={{
-            width: '25%',
-            height: 95,
-            marginLeft: 20,
-            marginTop: 10,
-            borderWidth: 1,
-            borderColor: '#000000AA',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 20,
-            backgroundColor: '#ffff'
-          }}>
-          <Icon name='camera' size={28} color='black'/>
-        </View>
-      );
-    } else if (IMG.length >= 1 && IMG.length <= 5) {
-      return (
-        <View
-          style={{
-            flexDirection: 'row',
-            height: '90%',
-            flexWrap: 'wrap',
-          }}>
-          {IMG.map((e, index) => (
-            <View
-              style={styles.wrappIMG}>
-              <Image
-                source={{uri: e.url}}
-                style={{width:'100%', height: '100%'}}
-                key={index}
-              />
-              <Image
-                style={{
-                  position: 'absolute',
-                  width: 20,
-                  height: 25,
-                  marginLeft: '78%',
-                  marginTop: 5,
-                }}
-                source={deleteIcon}
-              />
-            </View>
-          ))}
-          <View
-          style={{
-            width: '25%',
-            height: 95,
-            marginLeft: 15,
-            marginTop: 10,
-            borderWidth: 1,
-            borderColor: '#000000AA',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 20,
-            backgroundColor: '#ffff'
-          }}>
-          <Icon name='camera' size={28} color='black'/>
-        </View>
-        </View>
-      );
-    } else if(IMG.length == 6){
-      return (
-        <View
-          style={{
-            flexDirection: 'row',
-            height: '90%',
-            flexWrap: 'wrap',
-          }}>
-          {IMG.map((e, index) => (
-            <View
-              style={styles.wrappIMG} key={index}>
-              <Image
-                source={{uri: e.url}}
-                style={{width:'100%', height: '100%',}}
-                key={index}
-              />
-              <Image
-                style={{
-                  position: 'absolute',
-                  width: 20,
-                  height: 25,
-                  marginLeft: '78%',
-                  marginTop: 5,
-                }}
-                source={deleteIcon}
-              />
-            </View>
-          ))}
-        </View>
-      );
-    }
+  const choosePhotoFromLibrary = async () => {
+    ImagePicker.openPicker({
+      multiple: true,
+      waitAnimationEnd: false,
+      includeExif: true,
+      forceJpg: true,
+      maxFiles: 6, //ios only :(
+      compressImageQuality: 0.8,
+      mediaType: 'photo',
+      includeBase64: true,
+    })
+      .then(image => {
+        let x = [];
+        image.map(e => {
+          x.push(e.path);
+        })
+        setImages(x);
+        listIMG.push(x);
+      })
+      .catch(err => {
+        console.log('openCamera catch' + err.toString());
+        ToastAndroid.show('Tải ảnh lên thất bại!.', ToastAndroid.SHORT);
+      });
   };
 
+const deletePhoto =(urlPhoto)=> {
+  listIMG.filter((e,index)=> {
+    return e !== urlPhoto;
+  })
+  return setImages(listIMG);
+}
+
+const onDelete = (value) => {
+  const data = listIMG.filter(
+    (item) => item !== value
+  );
+  setImages(data);
+};
  
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -283,7 +209,108 @@ const AddProduct = () => {
             <Text style={{textAlign: 'center', fontSize: 17, fontWeight: '700', marginTop: 10}}>Ảnh sản phẩm </Text>
             <Text style={{fontSize: 14, fontStyle:'italic', textDecorationLine:'underline', textAlign:'center'}}>(Tối đa 6 ảnh)</Text>
               <View style={{marginTop: 10,}}>
-                <ViewPhoto/>
+                {/** <ViewPhoto/>*/}
+              {  (listIMG.length === 0) &&
+                <TouchableNativeFeedback onPress={choosePhotoFromLibrary}>
+                  <View
+                    style={{
+                      width: '25%',
+                      height: 95,
+                      marginLeft: 20,
+                      marginTop: 10,
+                      borderWidth: 1,
+                      borderColor: '#000000AA',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: 20,
+                      backgroundColor: '#ffff'
+                    }}>
+                    <Icon name='camera' size={28} color='black'/>
+                  </View>
+                </TouchableNativeFeedback>
+                }
+
+              {  (listIMG.length >= 1 && listIMG.length <= 5) &&
+              <View
+                style={{
+                  flexDirection: 'row',
+                  height: '90%',
+                  flexWrap: 'wrap',
+                }}>
+                {listIMG.map((e, index) => (
+                  <View
+                    style={styles.wrappIMG} key={index}>
+                    <Image
+                      source={{uri: e}}
+                      style={{width:'100%', height: '100%'}}
+                      key={index}
+                    />
+                    <TouchableNativeFeedback onPress={()=>onDelete(e)}>
+                    <Image
+                      style={{
+                        position: 'absolute',
+                        width: 20,
+                        height: 25,
+                        marginLeft: '78%',
+                        marginTop: 5,
+                      }}
+                      source={deleteIcon}
+                    /></TouchableNativeFeedback>
+                  </View>
+                ))}
+                <TouchableNativeFeedback onPress={choosePhotoFromLibrary}>
+                  <View
+                  style={{
+                    width: '25%',
+                    height: 95,
+                    marginLeft: 15,
+                    marginTop: 10,
+                    borderWidth: 1,
+                    borderColor: '#000000AA',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 20,
+                    backgroundColor: '#ffff'
+                  }}>
+                  <Icon name='camera' size={28} color='black'/>
+                </View>
+              </TouchableNativeFeedback>
+              </View>
+              }
+
+            {  (listIMG.length == 6)&&
+              <View
+                style={{
+                  flexDirection: 'row',
+                  height: '90%',
+                  flexWrap: 'wrap',
+                }}>
+                {listIMG.map((e, index) => (
+                  <View
+                    style={styles.wrappIMG} key={e}>
+                    <Image
+                      source={{uri: e}}
+                      style={{width:'100%', height: '100%',}}
+                      key={index}
+                    />
+                    <TouchableNativeFeedback onPress={()=>onDelete(e)}>
+                    <Image
+                      style={{
+                        position: 'absolute',
+                        width: 20,
+                        height: 25,
+                        marginLeft: '78%',
+                        marginTop: 5,
+                      }}
+                      source={deleteIcon}
+                    /></TouchableNativeFeedback>
+                  </View>
+                ))}
+              </View>
+            }
+
+            { (listIMG.length > 6) && (Alert.alert('Thông báo!','Chỉ chọn tối đa 6 ảnh.'))}
+
             </View>
           </View>
 

@@ -22,7 +22,6 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import {ActivityIndicator} from 'react-native-paper';
-import {TouchableHighlight} from 'react-native-gesture-handler';
 
 const EditProfile = ({navigation}) => {
   const {user} = useContext(AuthContext);

@@ -15,6 +15,7 @@ import firestore from '@react-native-firebase/firestore';
 import {resetStore, ClearFavorite} from '../../Store/action';
 import {connect} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 function ProfileScreen({ resetStore, ClearFavorite}) {
 
@@ -136,6 +137,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
 
   return (
     <SafeAreaView style={styles.container}>
+    <ScrollView >
       <View style={styles.userInfoSection}>
         <View style={{flexDirection: 'row', marginTop: 15}}>
           <Avatar.Image
@@ -225,7 +227,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
       </View>
 
       <View style={styles.menuWrapper}>
-
+      
       {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
           <TouchableRipple onPress={() => navigation.navigate("ProductManager")}>
             <View style={styles.menuItem}>
@@ -302,7 +304,8 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
             <Text style={styles.menuItemText}>Đăng xuất</Text>
           </View>
         </TouchableRipple>
-      </View>
+        
+      </View></ScrollView>
     </SafeAreaView>
   );
 }
