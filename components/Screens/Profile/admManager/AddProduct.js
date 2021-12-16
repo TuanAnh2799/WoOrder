@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,8 +19,9 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import {Formik} from 'formik';
+import * as Yup from 'yup';
+import Textarea from 'react-native-textarea';
 
 
 const AddProduct = () => {
@@ -49,6 +51,22 @@ const AddProduct = () => {
     })
 console.log(listIMG);
 
+const uploadProducts = Yup.object().shape({
+  name: Yup.string()
+    .max(30, () => `Tên tối đa 30 ký tự.`)
+    .matches(/(\w.+\s).+/, 'Vui lòng nhập tên sản phẩm.')
+    .required('Bạn chưa nhập tên sản phẩm.'),
+  price: Yup.string()
+    .matches(/^(\d)(?=.{8,})(?=.*[0-9])/, 'Số tiền không hợp lệ.')
+    .required('Bạn chưa nhập giá sản phẩm'),
+  color: Yup.string()
+    .required('Bạn chưa nhập màu sắc.'),
+  info: Yup.string()
+    .max(300, () => `Tên tối đa 300 ký tự.`)
+    .matches(/(\w.+\s).+/, 'Vui lòng nhập mô tả.')
+    .required('Bạn chưa mô tả sản phẩm.'),
+});
+
 const resetState =()=> {
   setChecked('1');
   setName('');
@@ -77,9 +95,6 @@ const resetState =()=> {
     }
     
 
-
-
-console.log("list file name:"+filename);
 
   const choosePhotoFromLibrary = async () => {
     ImagePicker.openPicker({
@@ -189,22 +204,26 @@ const onDelete = (value) => {
     <SafeAreaView style={{flex: 1}}>
 
       <View style={{flex: 9.4}}>
+      <ScrollView>
         <View style={{height:'100%'}}>
 
           <View style={styles.wrappItem}>
-            <View style={{width: '30%'}}>
+            <View style={{width: '30%', justifyContent:'center'}}>
               <Text style={styles.label}>Tên sản phẩm</Text>
             </View>
             <View style={{width: '70%', height: 35}}>
-              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10}} />
+              <TextInput 
+                style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}}
+                autoFocus={true}
+               />
             </View>
           </View>
 
           {/*Loại sản phẩm */}
 
           <View style={styles.wrappItem}>
-            <View style={{width: '20%'}}>
-              <Text style={styles.label}>Loại:</Text>
+            <View style={{width: '20%', justifyContent:'center'}}>
+              <Text style={styles.label}>Loại</Text>
             </View>
             <View>
               <View style={{width: '80%', height: 35, flexDirection: 'row'}}>
@@ -233,32 +252,59 @@ const onDelete = (value) => {
           </View>
 
           <View style={styles.wrappItem}>
-            <View style={{width: '30%'}}>
+            <View style={{width: '30%', justifyContent:'center'}}>
               <Text style={styles.label}>Giá sản phẩm</Text>
             </View>
             <View style={{width: '70%', height: 35}}>
-              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10}} />
+              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} />
             </View>
           </View>
 
+
           <View style={styles.wrappItem}>
-            <View style={{width: '30%'}}>
+            <View style={{width: '30%',justifyContent:'center'}}>
               <Text style={styles.label}>Màu sắc</Text>
             </View>
-            <View style={{width: '70%', height: 35}}>
-              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10}} />
+            <View style={{width: '70%', height: 36}}>
+              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} placeholder='Đỏ , Xanh, Vàng ...' />
             </View>
           </View>
 
-          <View style={styles.wrappItem}>
-            <View style={{width: '30%'}}>
-              <Text style={styles.label}>Thông tin</Text>
-            </View>
-            <View style={{width: '70%', height: 35}}>
-              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10}} />
+                {/* Mô tả sản phẩm */}
+          <View style={[styles.wrappItem,{marginLeft: 5}]}>
+            <View style={{width: '50%'}}>
+              <Text style={styles.label}>Mô tả sản phẩm</Text>
             </View>
           </View>
-
+          <View style={{width: '100%',alignItems:'center', justifyContent:'center' }}>
+                <View
+                    style={{
+                    width: '95%',
+                    borderWidth: 1,
+                    borderRadius: 10,
+                  }}>
+                <Textarea
+                  containerStyle={{height: 150,
+                  padding: 5,
+                  backgroundColor: '#F5FCFF',
+                  borderRadius: 10,}}
+                  style={styles.textarea}
+                  onChangeText={text => setInfo(text)}
+                  value={info}
+                  maxLength={300}
+                  placeholderTextColor={'#c7c7c7'}
+                  underlineColorAndroid={'transparent'}
+                />
+              </View>
+            </View>
+          
+          <View style={{width: '100%', flexDirection:'row'}}>
+            <View style={{width: '30%', backgroundColor:'blue'}}></View>
+            <View style={{width: '70%', backgroundColor:'green'}}>
+              <Text style={{fontSize: 12, color:'red', textAlign:'left'}}>Không được bỏ trống</Text> 
+            </View>
+          </View>
+          
           {/*Size */}
           {checked == '2' ? (
             <View style={styles.wrappItem}>
@@ -298,17 +344,6 @@ const onDelete = (value) => {
               </View>
             </View>
           ) : null}
-
-          {/*Màu sắc */}
-
-          <View style={styles.wrappItem}>
-            <View style={{width: '30%'}}>
-              <Text style={styles.label}>Màu sắc</Text>
-            </View>
-            <View style={{width: '70%', height: 35}}>
-              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10}} />
-            </View>
-          </View>
 
           {/*Ảnh sản phẩm*/}
 
@@ -385,7 +420,7 @@ const onDelete = (value) => {
               </View>
               }
 
-            {  (listIMG.length == 6)&&
+            {  (listIMG.length == 6) &&
               <View
                 style={{
                   flexDirection: 'row',
@@ -424,13 +459,14 @@ const onDelete = (value) => {
           {/*Màu sắc */}
 
         </View>
+        </ScrollView>
       </View>
 
       <View style={{flex: 0.6}}>
         <View style={styles.wrappButton}>
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
-              <Button title="Nhập mới" />
+              <Button title="Nhập mới" onPress={resetState}/>
             </View>
           </View>
 
