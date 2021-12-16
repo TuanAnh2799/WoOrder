@@ -16,6 +16,7 @@ import {RadioButton, Checkbox, TouchableRipple} from 'react-native-paper';
 import deleteIcon from '../../../../img/Delete.png';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
+import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -32,13 +33,39 @@ const AddProduct = () => {
   const [info, setInfo] = React.useState('');
   const [color, setColor] = React.useState([]);
   const [images, setImages] = React.useState([]);
-
+  const [idSP,setIdSP] = React.useState('');
 
     //console.log(listIMG);
-images?.length > 6 && setImages([]);
-let listIMG = [];
-images?.map(e =>listIMG.push(e));
-listIMG?.map(e=> console.log("link copy:", e))
+  images?.length > 6 && setImages([]);
+  let listIMG = [];
+  images?.map(e =>listIMG.push(e));
+
+  let uploadUri = listIMG;
+    //let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+    let filename = [];
+    uploadUri.map(e => {
+      filename.push(e.substring(e.lastIndexOf('/') + 1));
+      
+    })
+
+    {
+      /*
+      // Add timestamp to File Name
+    let extension = [];
+    //const extension = filename.split('.').pop();
+    filename.map(e => extension.push(e.split('.').pop()));
+    //const name = filename.split('.').slice(0, -1).join('.');
+    let name = [];
+    filename.map(ex => name.push(ex.split('.').slice(0, -1).join('.')));
+
+    //filename = name + Date.now() + '.' + extension;
+      */
+    }
+    
+
+
+
+console.log("list file name:"+filename);
 
   const choosePhotoFromLibrary = async () => {
     ImagePicker.openPicker({
@@ -65,6 +92,145 @@ listIMG?.map(e=> console.log("link copy:", e))
       });
   };
 
+  const submitImg = async () => {
+    let imageUrl = await uploadImage();
+    console.log('Image Url: ', imageUrl);
+
+    firestore()
+      .collection('Products')
+      .doc(idSP)
+      .set({
+        id: idSP,
+        url: imageUrl,
+
+      })
+      .then(() => {
+        console.log('Product Added!');
+        ToastAndroid.show(
+          'Thêm sản phẩm thành công!.',
+          ToastAndroid.SHORT,
+        );
+      })
+      .catch(error => {
+        console.log(
+          'Something went wrong with added post to firestore.',
+          error,
+        );
+        ToastAndroid.show('Thêm thất bại!.', ToastAndroid.SHORT);
+      });
+  };
+
+  var ID = function () {
+    return 'SP_' + Math.random().toString(36).substr(2, 5);
+  };
+  
+
+  const uploadImage = async () => {
+    if (listIMG == null) {
+      return null;
+    }
+    let Id = await ID();  //tạo id cho sản phẩm
+    setIdSP(Id);
+
+    let uploadUri = listIMG;
+    
+    //let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+    let filename = [];
+    uploadUri.map(e => {
+      filename.push(e.substring(e.lastIndexOf('/') + 1));
+    })
+
+    {
+      /*
+      // Add timestamp to File Name
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+       */
+    }
+    
+
+    //setUploading(true);
+    //setTransferred(0);
+
+    {
+      /*
+      const storageRef = storage().ref(`Products/${idSP}/${filename}`);
+    let task;
+    let url = [];
+    uploadUri.map(e =>{
+     task = storageRef.putFile(e);
+      try {
+        //await task;
+        url.push(storageRef.getDownloadURL());
+        //const url = await storageRef.getDownloadURL();
+  
+        
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
+    });
+    return url;
+      */
+    }
+    let url = [];
+    let i = 1;
+    {
+      /*
+      filename.map(e => {
+      let storageRef = storage().ref(`Products/${idSP}/${e}`);
+      storageRef.putFile(uploadUri[i]);
+      i++;
+      try {
+        let x = storageRef.getDownloadURL()
+        url.push(x);
+      }catch(e){
+        console.log(''+e);
+      }
+    })
+    return url;
+
+    //const task = storageRef.putFile(uploadUri);
+    
+    task.on('state_changed', taskSnapshot => {
+      console.log(
+        `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+        );
+        
+        setTransferred(
+          Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
+          100,
+          );
+        });
+        
+        //setUploading(false);
+
+        uploadUri.map(e =>{
+      let storageRef = storage().ref(`Products/${idSP}/${filename[i]}`);
+      i++;
+      storageRef.putFile(e);
+      url.push(storageRef.getDownloadURL());
+    })
+      */
+
+    }
+    let storageRef = storage().ref(`Products/${idSP}/${filename[0]}`);
+      let task = storageRef.putFile(uploadUri[0]);
+      try{
+        await task;
+        let link = await storageRef.getDownloadURL();
+        url.push(link);
+      }
+      catch(e){
+
+      }
+
+    console.log('list url:'+url);
+    return url;
+  };
+
+
 const deletePhoto =(urlPhoto)=> {
   listIMG.filter((e,index)=> {
     return e !== urlPhoto;
@@ -84,6 +250,7 @@ const onDelete = (value) => {
 
       <View style={{flex: 9.4}}>
         <View style={{height:'100%'}}>
+
           <View style={styles.wrappItem}>
             <View style={{width: '30%'}}>
               <Text style={styles.label}>Tên sản phẩm</Text>
@@ -242,7 +409,7 @@ const onDelete = (value) => {
                     style={styles.wrappIMG} key={index}>
                     <Image
                       source={{uri: e}}
-                      style={{width:'100%', height: '100%'}}
+                      style={{width:'100%', height: '100%', resizeMode: 'cover'}}
                       key={index}
                     />
                     <TouchableNativeFeedback onPress={()=>onDelete(e)}>
@@ -290,7 +457,7 @@ const onDelete = (value) => {
                     style={styles.wrappIMG} key={e}>
                     <Image
                       source={{uri: e}}
-                      style={{width:'100%', height: '100%',}}
+                      style={{width:'100%', height: '100%', resizeMode: 'cover'}}
                       key={index}
                     />
                     <TouchableNativeFeedback onPress={()=>onDelete(e)}>
@@ -329,7 +496,7 @@ const onDelete = (value) => {
 
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
-              <Button title="Lưu" />
+              <Button title="Lưu" onPress={submitImg}/>
             </View>
           </View>
         </View>

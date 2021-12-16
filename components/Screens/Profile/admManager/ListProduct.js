@@ -11,11 +11,14 @@ import {
   Modal,
   Button,
   TextInput,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import {Searchbar} from 'react-native-paper';
 import {styles} from './styles';
 import {AddCart, AddToFavorite} from '../../../Store/action';
 import firestore, {firebase} from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors, TouchableRipple, ActivityIndicator} from 'react-native-paper';
 import {connect} from 'react-redux';
@@ -57,31 +60,7 @@ const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
 function ListProduct({AddToFavorite}) {
-  const IMG = [
-    {
-      id: '1',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyK7V1AdfXQbdMX8zXx-aM85Q0YFAfimD_8OYLWQWrc5rrFpeXAv9aJe9bs3SG7y7vgHM&usqp=CAU',
-    },
-    {
-      id: '2',
-      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
-    },
-    {
-      id: '3',
-      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
-    },
-    {
-      id: '4',
-      url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyK7V1AdfXQbdMX8zXx-aM85Q0YFAfimD_8OYLWQWrc5rrFpeXAv9aJe9bs3SG7y7vgHM&usqp=CAU',
-    },
-    {
-      id: '5',
-      url: 'https://anhgaisexy.com/wp-content/uploads/2021/05/20210425-le-bong-2-600x800.jpg',
-    },
-    
 
-  ];
-console.log(IMG.length);
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   //const [heart, setHeart] = useState('heart-outline');
@@ -130,7 +109,30 @@ console.log(IMG.length);
         return (index % 3 ? next : next + '.') + prev;
       });
   }
+  const deleteProduct = async(id)=> {
+    firestore()
+    .collection('Products')
+    .doc(id)
+    .delete()
+    .then(() => {
+      console.log('Product deleted!');
+      ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
+    });
 
+    const storageRef = storage().ref();
+
+    // [START storage_delete_file]
+    // Create a reference to the file to delete
+    var desertRef = storageRef.child(`Products/${id}`);
+  
+    // Delete the file
+    desertRef.delete().then(() => {
+      console.log('image deleted');
+    }).catch((error) => {
+      // Uh-oh, an error occurred!
+    });
+
+  }
   const customShare = async url => {
     const shareOptions = {
       message: 'Tải ngay app để order nhé!',
@@ -584,7 +586,21 @@ console.log(IMG.length);
                               }}
                               text="Chỉnh sửa"
                             />
-                            <MenuOption onSelect={() => alert(`Delete`)}>
+                            <MenuOption onSelect={() => {
+                              Alert.alert('Xác nhận', 'Bạn muốn xóa sản phẩm?', [
+                                {
+                                  text: 'Đồng ý',
+                                  onPress: () => {
+                                    deleteProduct(item.id);
+                                  },
+                                },
+                                {
+                                  text: 'Hủy',
+                                  onPress: () => console.log('Cancel Pressed'),
+                                  style: 'cancel',
+                                },
+                              ]);
+                            }}>
                               <Text style={{color: 'red'}}>Xóa</Text>
                             </MenuOption>
                           </MenuOptions>
