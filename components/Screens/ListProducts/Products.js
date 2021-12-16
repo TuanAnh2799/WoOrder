@@ -173,7 +173,7 @@ function ProductScreen({AddToFavorite}) {
                       <Image
                         source={{uri: item.url[0]}}
                         style={styles.image}
-                        resizeMode={'stretch'}
+                        resizeMode={'cover'}
                       />
                     </View>
                     <View style={styles.wrappInfo}>

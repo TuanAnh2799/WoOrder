@@ -33,7 +33,7 @@ const AddProduct = () => {
   const [info, setInfo] = React.useState('');
   const [color, setColor] = React.useState([]);
   const [images, setImages] = React.useState([]);
-  const [idSP,setIdSP] = React.useState('');
+  const [idSP,setIdSP] = React.useState(null);
 
     //console.log(listIMG);
   images?.length > 6 && setImages([]);
@@ -47,7 +47,21 @@ const AddProduct = () => {
       filename.push(e.substring(e.lastIndexOf('/') + 1));
       
     })
+console.log(listIMG);
 
+const resetState =()=> {
+  setChecked('1');
+  setName('');
+  setPrice(0);
+  setSizeMChecked(false);
+  setSizeLChecked(false);
+  setSizeXLChecked(false);
+  setSizeXXLChecked(false);
+  setInfo('');
+  setColor([]);
+  setImages([]);
+  setIdSP(null);
+}
     {
       /*
       // Add timestamp to File Name
@@ -106,6 +120,7 @@ console.log("list file name:"+filename);
       })
       .then(() => {
         console.log('Product Added!');
+        resetState();
         ToastAndroid.show(
           'Thêm sản phẩm thành công!.',
           ToastAndroid.SHORT,
@@ -120,18 +135,18 @@ console.log("list file name:"+filename);
       });
   };
 
-  var ID = function () {
-    return 'SP_' + Math.random().toString(36).substr(2, 5);
-  };
   
 
   const uploadImage = async () => {
     if (listIMG == null) {
       return null;
     }
-    let Id = await ID();  //tạo id cho sản phẩm
-    setIdSP(Id);
+    var ID = function () {
+      return 'SP_' + Math.random().toString(36).substr(2, 5);
+    };
 
+    setIdSP(ID);
+    console.log("id sản phẩm: ",+idSP);
     let uploadUri = listIMG;
     
     //let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
@@ -140,83 +155,16 @@ console.log("list file name:"+filename);
       filename.push(e.substring(e.lastIndexOf('/') + 1));
     })
 
-    {
-      /*
-      // Add timestamp to File Name
-    const extension = filename.split('.').pop();
-    const name = filename.split('.').slice(0, -1).join('.');
-    filename = name + Date.now() + '.' + extension;
-       */
-    }
-    
-
-    //setUploading(true);
-    //setTransferred(0);
-
-    {
-      /*
-      const storageRef = storage().ref(`Products/${idSP}/${filename}`);
-    let task;
     let url = [];
-    uploadUri.map(e =>{
-     task = storageRef.putFile(e);
-      try {
-        //await task;
-        url.push(storageRef.getDownloadURL());
-        //const url = await storageRef.getDownloadURL();
-  
-        
-      } catch (e) {
-        console.log(e);
-        return null;
-      }
-    });
-    return url;
-      */
-    }
-    let url = [];
-    let i = 1;
-    {
-      /*
-      filename.map(e => {
-      let storageRef = storage().ref(`Products/${idSP}/${e}`);
-      storageRef.putFile(uploadUri[i]);
-      i++;
-      try {
-        let x = storageRef.getDownloadURL()
-        url.push(x);
-      }catch(e){
-        console.log(''+e);
-      }
-    })
-    return url;
-
-    //const task = storageRef.putFile(uploadUri);
+    let i = 0;
+    let j = 0;
     
-    task.on('state_changed', taskSnapshot => {
-      console.log(
-        `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
-        );
-        
-        setTransferred(
-          Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
-          100,
-          );
-        });
-        
-        //setUploading(false);
-
-        uploadUri.map(e =>{
+    while(i < filename.length)
+    {
       let storageRef = storage().ref(`Products/${idSP}/${filename[i]}`);
+      let task = storageRef.putFile(uploadUri[j]);
       i++;
-      storageRef.putFile(e);
-      url.push(storageRef.getDownloadURL());
-    })
-      */
-
-    }
-    let storageRef = storage().ref(`Products/${idSP}/${filename[0]}`);
-      let task = storageRef.putFile(uploadUri[0]);
+      j++;
       try{
         await task;
         let link = await storageRef.getDownloadURL();
@@ -225,18 +173,10 @@ console.log("list file name:"+filename);
       catch(e){
 
       }
-
+    }
     console.log('list url:'+url);
     return url;
   };
-
-
-const deletePhoto =(urlPhoto)=> {
-  listIMG.filter((e,index)=> {
-    return e !== urlPhoto;
-  })
-  return setImages(listIMG);
-}
 
 const onDelete = (value) => {
   const data = listIMG.filter(

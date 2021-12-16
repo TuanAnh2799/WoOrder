@@ -84,7 +84,7 @@ function DetailsScreen({route, navigation, AddCart}) {
           {url.map((e, index) => (
             <Image
               key={index}
-              resizeMode="stretch"
+              resizeMode="contain"
               style={styles.wrap}
               source={{uri: e}}
             />
