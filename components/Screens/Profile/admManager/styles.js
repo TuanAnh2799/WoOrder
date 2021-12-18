@@ -151,5 +151,6 @@ export const styles = StyleSheet.create({
   labelMota2: {
     marginLeft: 40,
     top: 20,
-  }
+  },
+  
 });

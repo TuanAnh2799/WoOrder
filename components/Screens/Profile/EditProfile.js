@@ -22,6 +22,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import {ActivityIndicator} from 'react-native-paper';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const EditProfile = ({navigation}) => {
   const {user} = useContext(AuthContext);
@@ -89,6 +90,7 @@ const EditProfile = ({navigation}) => {
       multiple: false,
       mediaType: 'photo',
       includeBase64: true,
+      forceJpg:true,
     })
       .then(image => {
         //console.log(image);
@@ -96,6 +98,13 @@ const EditProfile = ({navigation}) => {
         console.log('link anh: ' + imageUri);
         bs.current.snapTo(1);
         setImage(imageUri);
+
+        ImagePicker.clean().then(() => {
+          console.log('removed all tmp images from tmp directory');
+        }).catch(e => {
+          alert(e);
+        });
+
       })
       .catch(err => {
         console.log('openCamera catch' + err.toString());
@@ -219,7 +228,6 @@ const EditProfile = ({navigation}) => {
         callbackNode={fall}
         enabledGestureInteraction={true} // kéo xuống để tắt
       />
-
       <Formik
         validationSchema={registerValidSchema}
         initialValues={{
@@ -239,6 +247,7 @@ const EditProfile = ({navigation}) => {
           isValid,
         }) => (
           <View style={{flex: 1}}>
+          
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('ViewPhoto', {
@@ -252,7 +261,7 @@ const EditProfile = ({navigation}) => {
                     uri: image == null ? userInfo.avatar : image,
                   }}
                   style={styles.AvatarUser}
-                  imageStyle={{borderRadius: 100, borderColor:'green', borderWidth: 1}}>
+                  imageStyle={{borderRadius: 100, borderColor:'green', borderWidth: 1, resizeMode:'cover'}}>
                   <View style={styles.wrappIcon}>
                     <Icon
                       name="camera"

@@ -26,14 +26,10 @@ import Textarea from 'react-native-textarea';
 
 const AddProduct = () => {
   const [checked, setChecked] = React.useState('1'); //type
-  const [name, setName] = React.useState('');
-  const [price, setPrice] = React.useState(0);
   const [sizeM, setSizeMChecked] = React.useState(false);
   const [sizeL, setSizeLChecked] = React.useState(false);
   const [sizeXL, setSizeXLChecked] = React.useState(false);
   const [sizeXXL, setSizeXXLChecked] = React.useState(false);
-  const [info, setInfo] = React.useState('');
-  const [color, setColor] = React.useState([]);
   const [images, setImages] = React.useState([]);
   const [idSP,setIdSP] = React.useState(null);
 
@@ -57,7 +53,7 @@ const uploadProducts = Yup.object().shape({
     .matches(/(\w.+\s).+/, 'Vui lòng nhập tên sản phẩm.')
     .required('Bạn chưa nhập tên sản phẩm.'),
   price: Yup.string()
-    .matches(/^(\d)(?=.{8,})(?=.*[0-9])/, 'Số tiền không hợp lệ.')
+    .matches(/^(\d)(?=.{4,})(?=.*[0-9])/, 'Số tiền không hợp lệ.')
     .required('Bạn chưa nhập giá sản phẩm'),
   color: Yup.string()
     .required('Bạn chưa nhập màu sắc.'),
@@ -122,6 +118,8 @@ const resetState =()=> {
   };
 
   const submitImg = async () => {
+
+    //if(typecheck == 2)
     let imageUrl = await uploadImage();
     console.log('Image Url: ', imageUrl);
 
@@ -202,8 +200,28 @@ const onDelete = (value) => {
  
   return (
     <SafeAreaView style={{flex: 1}}>
-
+  <Formik
+          validationSchema={uploadProducts}
+          initialValues={{
+            name: '',
+            price: '',
+            color: '',
+            info: '',
+          }}
+          validateOnMount={true}
+          onSubmit={values => console.log(values)}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            isValid,
+          }) => (
+      <View style={{flex:1}}>
       <View style={{flex: 9.4}}>
+      
       <ScrollView>
         <View style={{height:'100%'}}>
 
@@ -215,9 +233,22 @@ const onDelete = (value) => {
               <TextInput 
                 style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}}
                 autoFocus={true}
+                autoCapitalize="none"
+                onChangeText={handleChange('name')}
+                onBlur={handleBlur('name')}
+                value={values.name}
                />
             </View>
           </View>
+
+            {errors.name && touched.name && (
+              <View style={{width: '100%', flexDirection:'row'}}>
+                <View style={{width: '30%'}}></View>
+                <View style={{width: '70%'}}>
+                  <Text style={styles.text_err}>{errors.name}</Text> 
+                </View>
+              </View>
+            )}
 
           {/*Loại sản phẩm */}
 
@@ -256,19 +287,46 @@ const onDelete = (value) => {
               <Text style={styles.label}>Giá sản phẩm</Text>
             </View>
             <View style={{width: '70%', height: 35}}>
-              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} />
+              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} 
+                autoCapitalize="none"
+                onChangeText={handleChange('price')}
+                onBlur={handleBlur('price')}
+                value={values.price}
+              />
             </View>
           </View>
 
+          {errors.price && touched.price && (
+              <View style={{width: '100%', flexDirection:'row'}}>
+                <View style={{width: '30%'}}></View>
+                <View style={{width: '70%'}}>
+                  <Text style={styles.text_err}>{errors.price}</Text> 
+                </View>
+              </View>
+            )}
 
           <View style={styles.wrappItem}>
             <View style={{width: '30%',justifyContent:'center'}}>
               <Text style={styles.label}>Màu sắc</Text>
             </View>
             <View style={{width: '70%', height: 36}}>
-              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} placeholder='Đỏ , Xanh, Vàng ...' />
+              <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} placeholder='Đỏ , Xanh, Vàng ...' 
+                autoCapitalize="none"
+                onChangeText={handleChange('color')}
+                onBlur={handleBlur('color')}
+                value={values.color}
+              />
             </View>
           </View>
+
+          {errors.color && touched.color && (
+              <View style={{width: '100%', flexDirection:'row'}}>
+                <View style={{width: '30%'}}></View>
+                <View style={{width: '70%'}}>
+                  <Text style={styles.text_err}>{errors.color}</Text> 
+                </View>
+              </View>
+            )}
 
                 {/* Mô tả sản phẩm */}
           <View style={[styles.wrappItem,{marginLeft: 5}]}>
@@ -284,26 +342,34 @@ const onDelete = (value) => {
                     borderRadius: 10,
                   }}>
                 <Textarea
-                  containerStyle={{height: 150,
+                  containerStyle={{
+                  height: 150,
                   padding: 5,
                   backgroundColor: '#F5FCFF',
-                  borderRadius: 10,}}
+                  borderRadius: 10,
+                  }}
                   style={styles.textarea}
-                  onChangeText={text => setInfo(text)}
-                  value={info}
+                  //onChangeText={text => setInfo(text)}
+                  //value={info}
                   maxLength={300}
                   placeholderTextColor={'#c7c7c7'}
                   underlineColorAndroid={'transparent'}
+                  autoCapitalize="none"
+                  onChangeText={handleChange('info')}
+                  onBlur={handleBlur('info')}
+                  value={values.info}
                 />
               </View>
             </View>
           
-          <View style={{width: '100%', flexDirection:'row'}}>
-            <View style={{width: '30%', backgroundColor:'blue'}}></View>
-            <View style={{width: '70%', backgroundColor:'green'}}>
-              <Text style={{fontSize: 12, color:'red', textAlign:'left'}}>Không được bỏ trống</Text> 
-            </View>
-          </View>
+            {errors.info && touched.info && (
+              <View style={{width: '100%', flexDirection:'row'}}>
+                <View style={{width: '30%'}}></View>
+                <View style={{width: '70%'}}>
+                  <Text style={styles.text_err}>{errors.info}</Text> 
+                </View>
+              </View>
+            )}
           
           {/*Size */}
           {checked == '2' ? (
@@ -460,24 +526,28 @@ const onDelete = (value) => {
 
         </View>
         </ScrollView>
+        
       </View>
+      
 
       <View style={{flex: 0.6}}>
         <View style={styles.wrappButton}>
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
-              <Button title="Nhập mới" onPress={resetState}/>
+              <Button title="Nhập mới"/>
             </View>
           </View>
 
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
-              <Button title="Lưu" onPress={submitImg}/>
+              <Button title="Lưu" disabled={!isValid} onPress={submitImg}/>
             </View>
           </View>
         </View>
       </View>
-
+      </View>
+      )}
+        </Formik>
     </SafeAreaView>
   );
 };
@@ -532,4 +602,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginTop: 7,
   },
+  text_err: {
+    color:'red',
+    fontSize: 13,
+  }
 });
