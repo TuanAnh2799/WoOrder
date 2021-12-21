@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Alert,
   Button,
@@ -31,23 +31,21 @@ const AddProduct = () => {
   const [sizeXL, setSizeXLChecked] = React.useState(false);
   const [sizeXXL, setSizeXXLChecked] = React.useState(false);
   const [images, setImages] = React.useState([]);
-  const [idSP,setIdSP] = React.useState(null);
+  const [idSP,setIdSP] = React.useState('');
 
     //console.log(listIMG);
   images?.length > 6 && setImages([]);
+
+
   let listIMG = [];
-  images?.map(e =>listIMG.push(e));
+    images?.map(e =>{
+    listIMG.push(e)
+  });
 
-  let uploadUri = listIMG;
-    //let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-    let filename = [];
-    uploadUri.map(e => {
-      filename.push(e.substring(e.lastIndexOf('/') + 1));
-      
-    })
-console.log(listIMG);
 
-const uploadProducts = Yup.object().shape({
+  console.log('list img',listIMG.length);
+
+  const uploadProducts = Yup.object().shape({
   name: Yup.string()
     .max(30, () => `Tên tối đa 30 ký tự.`)
     .matches(/(\w.+\s).+/, 'Vui lòng nhập tên sản phẩm.')
@@ -109,7 +107,9 @@ const resetState =()=> {
           x.push(e.path);
         })
         setImages(x);
-        listIMG.push(x);
+        //x.map(e => listIMG+= listIMG.push(e));
+        //listIMG.push(x);
+        //console.log('Lsst img:'+listIMG)
       })
       .catch(err => {
         console.log('openCamera catch' + err.toString());
@@ -117,19 +117,20 @@ const resetState =()=> {
       });
   };
 
-  const submitImg = async () => {
 
-    //if(typecheck == 2)
-    let imageUrl = await uploadImage();
-    console.log('Image Url: ', imageUrl);
-
+  const submitImg = async ({id,name,price,color,info}) => {
+    console.log("id sản phẩm: ",+id);
+    let imageUrl = await uploadImage(id);
     firestore()
       .collection('Products')
-      .doc(idSP)
+      .doc(id)
       .set({
-        id: idSP,
+        id: id,
+        name: name,
         url: imageUrl,
-
+        price: price,
+        info: info
+        
       })
       .then(() => {
         console.log('Product Added!');
@@ -150,16 +151,11 @@ const resetState =()=> {
 
   
 
-  const uploadImage = async () => {
+  const uploadImage = async (id) => {
     if (listIMG == null) {
       return null;
     }
-    var ID = function () {
-      return 'SP_' + Math.random().toString(36).substr(2, 5);
-    };
-
-    setIdSP(ID);
-    console.log("id sản phẩm: ",+idSP);
+    console.log("id nhận đc storage: ",+id);
     let uploadUri = listIMG;
     
     //let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
@@ -174,7 +170,7 @@ const resetState =()=> {
     
     while(i < filename.length)
     {
-      let storageRef = storage().ref(`Products/${idSP}/${filename[i]}`);
+      let storageRef = storage().ref(`Products/${id}/${filename[i]}`);
       let task = storageRef.putFile(uploadUri[j]);
       i++;
       j++;
@@ -220,9 +216,9 @@ const onDelete = (value) => {
             isValid,
           }) => (
       <View style={{flex:1}}>
-      <View style={{flex: 9.4}}>
-      
       <ScrollView>
+      <View style={{flex: 8.5}}>
+      
         <View style={{height:'100%'}}>
 
           <View style={styles.wrappItem}>
@@ -374,7 +370,7 @@ const onDelete = (value) => {
           {/*Size */}
           {checked == '2' ? (
             <View style={styles.wrappItem}>
-              <View style={{width: '30%'}}>
+              <View style={{width: '30%', justifyContent:'center'}}>
                 <Text style={styles.label}>Kích cỡ</Text>
               </View>
 
@@ -518,19 +514,17 @@ const onDelete = (value) => {
             }
 
             { (listIMG.length > 6) && (Alert.alert('Thông báo!','Chỉ chọn tối đa 6 ảnh.'))}
-
             </View>
           </View>
 
           {/*Màu sắc */}
 
         </View>
-        </ScrollView>
         
       </View>
       
 
-      <View style={{flex: 0.6}}>
+      <View style={{flex: 1.5, marginVertical: 15, marginBottom: 15}}>
         <View style={styles.wrappButton}>
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
@@ -540,11 +534,47 @@ const onDelete = (value) => {
 
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
-              <Button title="Lưu" disabled={!isValid} onPress={submitImg}/>
+              <Button title="Lưu" disabled={!isValid} onPress={()=> {
+                var ID = function () {
+                      return 'TA_' + Math.random().toString(36).substr(2, 7);
+                    };
+                    const Id = ID();
+                    console.log("tạo id: "+Id);
+                if(listIMG.length == 0){
+                  Alert.alert('Thông báo!', 'Bạn chưa chọn ảnh cho sản phẩm.');
+                }
+                else if(listIMG.length > 0 && checked === '2' && (sizeM !== false || sizeL !== false || sizeXL !== false || sizeXXL !== false)) {
+                  submitImg(
+                    Id,
+                    values.name,
+                    values.price,
+                    values.color,
+                    values.info
+                  );
+                  console.log('checked: '+checked);
+                }
+                else if(listIMG.length > 0 && checked === '2' && (sizeM == false || sizeL == false || sizeXL == false || sizeXXL == false))
+                {
+                  console.log('checked: '+checked);
+                  Alert.alert('Thông báo!', 'Bạn chưa chọn kích cỡ sản phẩm.');
+                }
+                else if(listIMG.length > 0  )
+                {
+                  console.log('checked: '+checked);
+                  submitImg(
+                    Id,
+                    values.name,
+                    values.price,
+                    values.color,
+                    values.info
+                  );
+                }
+              }}/>
             </View>
           </View>
         </View>
       </View>
+        </ScrollView>
       </View>
       )}
         </Formik>
