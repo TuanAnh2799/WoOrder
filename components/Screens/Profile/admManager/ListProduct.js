@@ -109,30 +109,25 @@ function ListProduct({AddToFavorite}) {
         return (index % 3 ? next : next + '.') + prev;
       });
   }
-  const deleteProduct = async(id)=> {
+  const deleteProduct = (id,urlIMG)=> {
+    
+    console.log("Xóa ID", id);
+
+    urlIMG.map(e => {
+      let ref = storage().refFromURL(e);
+      storage().ref(ref.fullPath).delete().catch(err => console.log(err));
+    });
     firestore()
     .collection('Products')
     .doc(id)
     .delete()
     .then(() => {
-      console.log('Product deleted!');
+      console.log(id,'Product deleted!');
       ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
     });
 
-    const storageRef = storage().ref();
-
-    // [START storage_delete_file]
-    // Create a reference to the file to delete
-    var desertRef = storageRef.child(`Products/${id}`);
-  
-    // Delete the file
-    desertRef.delete().then(() => {
-      console.log('image deleted');
-    }).catch((error) => {
-      // Uh-oh, an error occurred!
-    });
-
   }
+  
   const customShare = async url => {
     const shareOptions = {
       message: 'Tải ngay app để order nhé!',
@@ -223,7 +218,7 @@ function ListProduct({AddToFavorite}) {
     );
   };
   const ViewPhoto = () => {
-    if (IMG.length === 0) {
+    if (url?.length === 0) {
       return (
         <View
           style={{
@@ -241,7 +236,7 @@ function ListProduct({AddToFavorite}) {
           <Icon name='camera' size={28} color='black'/>
         </View>
       );
-    } else if (IMG.length >= 1 && IMG.length <= 5) {
+    } else if (url?.length >= 1 && url?.length <= 5) {
       return (
         <View
           style={{
@@ -249,11 +244,11 @@ function ListProduct({AddToFavorite}) {
             height: '90%',
             flexWrap: 'wrap',
           }}>
-          {IMG.map((e, index) => (
+          {url.map((e, index) => (
             <View
               style={styles.wrappImgEDIT} key={index}>
               <Image
-                source={{uri: e.url}}
+                source={{uri: e}}
                 style={{width:'100%', height: '100%',borderRadius: 7}}
                 key={index}
               />
@@ -286,7 +281,7 @@ function ListProduct({AddToFavorite}) {
         </View>
         </View>
       );
-    } else if(IMG.length == 6){
+    } else if(url?.length == 6){
       return (
         <View
           style={{
@@ -294,11 +289,11 @@ function ListProduct({AddToFavorite}) {
             height: '90%',
             flexWrap: 'wrap',
           }}>
-          {IMG.map((e, index) => (
+          {url.map((e, index) => (
             <View
               style={styles.wrappImgEDIT} key={index}>
               <Image
-                source={{uri: e.url}}
+                source={{uri: e}}
                 style={{width:'100%', height: '100%',borderRadius: 7}}
                 key={index}
               />
@@ -591,7 +586,7 @@ function ListProduct({AddToFavorite}) {
                                 {
                                   text: 'Đồng ý',
                                   onPress: () => {
-                                    deleteProduct(item.id);
+                                    deleteProduct(item.id,item.url);
                                   },
                                 },
                                 {

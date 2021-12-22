@@ -87,7 +87,11 @@ const resetState =()=> {
     //filename = name + Date.now() + '.' + extension;
       */
     }
-    
+    var ID = function () {
+      return 'TA_' + Math.random().toString(36).substr(2, 7);
+    };
+    const Id = ID();
+    console.log("tạo id: "+Id);
 
 
   const choosePhotoFromLibrary = async () => {
@@ -118,14 +122,14 @@ const resetState =()=> {
   };
 
 
-  const submitImg = async ({id,name,price,color,info}) => {
-    console.log("id sản phẩm: ",+id);
-    let imageUrl = await uploadImage(id);
+  const submitImg = async (name,price,color,info) => {
+    console.log("id sản phẩm: ",+Id);
+    let imageUrl = await uploadImage();
     firestore()
       .collection('Products')
-      .doc(id)
+      .doc(Id)
       .set({
-        id: id,
+        id: Id,
         name: name,
         url: imageUrl,
         price: price,
@@ -134,7 +138,6 @@ const resetState =()=> {
       })
       .then(() => {
         console.log('Product Added!');
-        resetState();
         ToastAndroid.show(
           'Thêm sản phẩm thành công!.',
           ToastAndroid.SHORT,
@@ -151,11 +154,11 @@ const resetState =()=> {
 
   
 
-  const uploadImage = async (id) => {
+  const uploadImage = async () => {
     if (listIMG == null) {
       return null;
     }
-    console.log("id nhận đc storage: ",+id);
+    console.log("id nhận đc storage: ",+Id);
     let uploadUri = listIMG;
     
     //let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
@@ -170,7 +173,7 @@ const resetState =()=> {
     
     while(i < filename.length)
     {
-      let storageRef = storage().ref(`Products/${id}/${filename[i]}`);
+      let storageRef = storage().ref(`Products/${Id}/${filename[i]}`);
       let task = storageRef.putFile(uploadUri[j]);
       i++;
       j++;
@@ -535,17 +538,12 @@ const onDelete = (value) => {
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
               <Button title="Lưu" disabled={!isValid} onPress={()=> {
-                var ID = function () {
-                      return 'TA_' + Math.random().toString(36).substr(2, 7);
-                    };
-                    const Id = ID();
-                    console.log("tạo id: "+Id);
+                
                 if(listIMG.length == 0){
                   Alert.alert('Thông báo!', 'Bạn chưa chọn ảnh cho sản phẩm.');
                 }
                 else if(listIMG.length > 0 && checked === '2' && (sizeM !== false || sizeL !== false || sizeXL !== false || sizeXXL !== false)) {
                   submitImg(
-                    Id,
                     values.name,
                     values.price,
                     values.color,
@@ -562,7 +560,6 @@ const onDelete = (value) => {
                 {
                   console.log('checked: '+checked);
                   submitImg(
-                    Id,
                     values.name,
                     values.price,
                     values.color,

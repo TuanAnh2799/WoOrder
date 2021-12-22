@@ -78,6 +78,7 @@ const EditProfile = ({navigation}) => {
       .catch(err => {
         console.log('openCamera catch' + err.toString());
         ToastAndroid.show('Tải ảnh lên thất bại!.', ToastAndroid.SHORT);
+        bs.current.snapTo(1);
       });
   };
 
@@ -102,6 +103,7 @@ const EditProfile = ({navigation}) => {
         ImagePicker.clean().then(() => {
           console.log('removed all tmp images from tmp directory');
         }).catch(e => {
+          
           alert(e);
         });
 
@@ -109,6 +111,7 @@ const EditProfile = ({navigation}) => {
       .catch(err => {
         console.log('openCamera catch' + err.toString());
         ToastAndroid.show('Tải ảnh lên thất bại!.', ToastAndroid.SHORT);
+        bs.current.snapTo(1);
       });
   };
 
@@ -445,9 +448,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'green',
+    borderColor: 'white',
     borderRadius: 10,
-    marginTop: 110,
+    marginTop: 115,
     padding: 3,
   },
   txtName: {
