@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {
   Alert,
   Button,
+  Dimensions,
   FlatList,
   Image,
   SafeAreaView,
@@ -22,20 +23,24 @@ import storage from '@react-native-firebase/storage';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import Textarea from 'react-native-textarea';
+import {ActivityIndicator} from 'react-native-paper';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const AddProduct = () => {
+  const [loading, setLoading] = React.useState(true);
   const [checked, setChecked] = React.useState('1'); //type
   const [sizeM, setSizeMChecked] = React.useState(false);
   const [sizeL, setSizeLChecked] = React.useState(false);
   const [sizeXL, setSizeXLChecked] = React.useState(false);
   const [sizeXXL, setSizeXXLChecked] = React.useState(false);
   const [images, setImages] = React.useState([]);
-  const [idSP,setIdSP] = React.useState('');
+
 
     //console.log(listIMG);
   images?.length > 6 && setImages([]);
-
+  
 
   let listIMG = [];
     images?.map(e =>{
@@ -61,19 +66,7 @@ const AddProduct = () => {
     .required('Bạn chưa mô tả sản phẩm.'),
 });
 
-const resetState =()=> {
-  setChecked('1');
-  setName('');
-  setPrice(0);
-  setSizeMChecked(false);
-  setSizeLChecked(false);
-  setSizeXLChecked(false);
-  setSizeXXLChecked(false);
-  setInfo('');
-  setColor([]);
-  setImages([]);
-  setIdSP(null);
-}
+
     {
       /*
       // Add timestamp to File Name
@@ -93,7 +86,7 @@ const resetState =()=> {
     const Id = ID();
     console.log("tạo id: "+Id);
 
-
+  
   const choosePhotoFromLibrary = async () => {
     ImagePicker.openPicker({
       multiple: true,
@@ -122,21 +115,60 @@ const resetState =()=> {
   };
 
 
-  const submitImg = async (name,price,color,info) => {
-    console.log("id sản phẩm: ",+Id);
+  const submitImg = async (value) => {
+    setLoading(true);
     let imageUrl = await uploadImage();
+    let color; 
+    
+    if(value.color !== '')
+    {
+      color = value.color.trim().split(' ');
+    }
+    console.log('Màu sắc:', color);
+
+    let size = '';
+    let listSize;
+
+    if(checked === '2')
+    {
+      if(sizeM !== false){
+        size += 'M'+' ';
+      }
+      if(sizeL !== false){
+        size += 'L'+' ';
+      }
+      if(sizeXL !== false){
+        size += 'XL'+' ';
+      }
+      if(sizeXXL !== false){
+        size += 'XXL'+' ';
+      }
+      listSize = size.toUpperCase().split(' ');
+    }
+    else {
+      listSize = [];
+    }
     firestore()
       .collection('Products')
       .doc(Id)
       .set({
         id: Id,
-        name: name,
+        name: value.name,
+        color: color,
         url: imageUrl,
-        price: price,
-        info: info
+        price: value.price,
+        size: listSize,
+        info: value.info,
+        type: checked,
         
       })
       .then(() => {
+        setLoading(false);
+        setSizeMChecked(false);
+        setSizeLChecked(false);
+        setSizeXLChecked(false);
+        setSizeXXLChecked(false);
+        setImages([]);
         console.log('Product Added!');
         ToastAndroid.show(
           'Thêm sản phẩm thành công!.',
@@ -158,7 +190,7 @@ const resetState =()=> {
     if (listIMG == null) {
       return null;
     }
-    console.log("id nhận đc storage: ",+Id);
+    console.log("id nhận đc storage: ",Id);
     let uploadUri = listIMG;
     
     //let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
@@ -196,19 +228,41 @@ const onDelete = (value) => {
   );
   setImages(data);
 };
- 
+const LoadingScreen =()=> (
+  // <View style={{position:'absolute', backgroundColor:'green',marginTop:windowHeight/2.5, marginLeft:windowWidth/2.5, height:85,width: 85}}>
+  //   <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
+  //     <ActivityIndicator color='red' size={35} style={{marginTop: 10}} />
+  //     <Text style={{textAlign:'center', marginTop: 10}}>Tải lên</Text>
+  //   </View>
+  // </View>
+  <View style={{backgroundColor:'#1c1c1c1c', width:windowWidth, height:windowHeight, justifyContent:'center'}}>
+    <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
+       <ActivityIndicator color='green' size={40} style={{marginTop: 10}} />
+       <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Đang tải lên...</Text>
+       <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Xin vui lòng chờ trong chốc lát</Text>
+     </View>
+  </View>
+)
+
+const initValues = {
+  name: '',
+  price: '',
+  color: '',
+  info: '',
+}
   return (
     <SafeAreaView style={{flex: 1}}>
+      {
+        loading == true ? <LoadingScreen/> : null
+      }
   <Formik
           validationSchema={uploadProducts}
-          initialValues={{
-            name: '',
-            price: '',
-            color: '',
-            info: '',
-          }}
+          initialValues={initValues}
           validateOnMount={true}
-          onSubmit={values => console.log(values)}>
+          onSubmit={async (values, { resetForm }) => {
+          await submitImg(values)
+            resetForm()
+          }}>
           {({
             handleChange,
             handleBlur,
@@ -217,6 +271,7 @@ const onDelete = (value) => {
             errors,
             touched,
             isValid,
+            resetForm
           }) => (
       <View style={{flex:1}}>
       <ScrollView>
@@ -231,11 +286,10 @@ const onDelete = (value) => {
             <View style={{width: '70%', height: 35}}>
               <TextInput 
                 style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}}
-                autoFocus={true}
                 autoCapitalize="none"
                 onChangeText={handleChange('name')}
                 onBlur={handleBlur('name')}
-                value={values.name}
+                value={values.name || ''}
                />
             </View>
           </View>
@@ -290,7 +344,8 @@ const onDelete = (value) => {
                 autoCapitalize="none"
                 onChangeText={handleChange('price')}
                 onBlur={handleBlur('price')}
-                value={values.price}
+                value={values.price || ''}
+                keyboardType='numeric'
               />
             </View>
           </View>
@@ -313,7 +368,7 @@ const onDelete = (value) => {
                 autoCapitalize="none"
                 onChangeText={handleChange('color')}
                 onBlur={handleBlur('color')}
-                value={values.color}
+                value={values.color || ''}
               />
             </View>
           </View>
@@ -356,7 +411,7 @@ const onDelete = (value) => {
                   autoCapitalize="none"
                   onChangeText={handleChange('info')}
                   onBlur={handleBlur('info')}
-                  value={values.info}
+                  value={values.info || ''}
                 />
               </View>
             </View>
@@ -411,7 +466,7 @@ const onDelete = (value) => {
           ) : null}
 
           {/*Ảnh sản phẩm*/}
-
+          
           <View style={styles.wrappUpload}>
             <Text style={{textAlign: 'center', fontSize: 17, fontWeight: '700', marginTop: 10}}>Ảnh sản phẩm </Text>
             <Text style={{fontSize: 14, fontStyle:'italic', textDecorationLine:'underline', textAlign:'center'}}>(Tối đa 6 ảnh)</Text>
@@ -531,24 +586,19 @@ const onDelete = (value) => {
         <View style={styles.wrappButton}>
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
-              <Button title="Nhập mới"/>
+              <Button title="Nhập mới" onPress={resetForm}/>
             </View>
           </View>
 
           <View style={{width: '50%', height: 35, alignItems: 'center'}}>
             <View style={{width: '90%'}}>
-              <Button title="Lưu" disabled={!isValid} onPress={()=> {
+              <Button title="Lưu" disabled={!isValid}  onPress={()=> {
                 
                 if(listIMG.length == 0){
                   Alert.alert('Thông báo!', 'Bạn chưa chọn ảnh cho sản phẩm.');
                 }
                 else if(listIMG.length > 0 && checked === '2' && (sizeM !== false || sizeL !== false || sizeXL !== false || sizeXXL !== false)) {
-                  submitImg(
-                    values.name,
-                    values.price,
-                    values.color,
-                    values.info
-                  );
+                  handleSubmit()
                   console.log('checked: '+checked);
                 }
                 else if(listIMG.length > 0 && checked === '2' && (sizeM == false || sizeL == false || sizeXL == false || sizeXXL == false))
@@ -559,12 +609,7 @@ const onDelete = (value) => {
                 else if(listIMG.length > 0  )
                 {
                   console.log('checked: '+checked);
-                  submitImg(
-                    values.name,
-                    values.price,
-                    values.color,
-                    values.info
-                  );
+                  handleSubmit()
                 }
               }}/>
             </View>

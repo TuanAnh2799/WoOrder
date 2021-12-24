@@ -226,8 +226,7 @@ export default function AdminOrderScreen({navigation}) {
                             <Text style={{fontSize: 17}}>Ngày đặt: </Text>
                             <Text style={{fontSize: 16, marginRight: 10}}>
                               {item.dateTime
-                                .toDate()
-                                .toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}
+                                .toDate().toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}
                             </Text>
                           </View>
 
