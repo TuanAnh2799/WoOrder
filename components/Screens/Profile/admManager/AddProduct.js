@@ -29,7 +29,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const AddProduct = () => {
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
   const [checked, setChecked] = React.useState('1'); //type
   const [sizeM, setSizeMChecked] = React.useState(false);
   const [sizeL, setSizeLChecked] = React.useState(false);
@@ -122,7 +122,8 @@ const AddProduct = () => {
     
     if(value.color !== '')
     {
-      color = value.color.trim().split(' ');
+      let x = await chuanhoa(value.color);
+      color = x.trim().split(' ');
     }
     console.log('Màu sắc:', color);
 
@@ -239,11 +240,23 @@ const LoadingScreen =()=> (
     <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
        <ActivityIndicator color='green' size={40} style={{marginTop: 10}} />
        <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Đang tải lên...</Text>
-       <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Xin vui lòng chờ trong chốc lát</Text>
+       <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Xin vui lòng chờ trong giây lát</Text>
      </View>
   </View>
 )
 
+const chuanhoa =async(str)=> {
+  let z = str.trim();
+    let mang = z.split(' ');
+    let chuanhoa ='';
+    mang.map(e => {
+        if(e !== '')
+        {
+            chuanhoa += e+' ';
+        }
+    })
+    return chuanhoa;
+}
 const initValues = {
   name: '',
   price: '',

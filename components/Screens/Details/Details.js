@@ -9,12 +9,15 @@ import {
   Dimensions,
   Modal,
   Alert,
+  TouchableNativeFeedback,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {AddCart} from '../../Store/action';
 import {Picker} from '@react-native-picker/picker';
 import {styles} from './styles';
 import { AuthContext } from '../../Routes/AuthProvider';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -35,7 +38,7 @@ function DetailsScreen({route, navigation, AddCart}) {
 
   const [modalOpen, setOpenModal] = useState(false);
   const [imgActive, setImgActive] = useState(0);
-
+  const [modalCMT, setModalCMT] = useState(false);
   const [selectedColor, setSelectedColor] = useState(color[0]);
   const [selectedSize, setSelectedSize] = useState(size[0]);
 
@@ -334,6 +337,56 @@ function DetailsScreen({route, navigation, AddCart}) {
           </View>
         </View>
       </Modal>
+
+      {/*Icon */}
+      <View style={{
+        width: 40, height: 150,position:'absolute', 
+        justifyContent:'center', alignItems:'center', marginTop:deviceHeight * 0.4,
+        marginLeft:deviceWitdh * 0.88}}>
+        <View >
+        <Icon name="heart" size={35} color="#000000AA" />
+        </View>
+        <View style={{marginTop: 15}}>
+        <Icon name="comment" size={35} color="red" onPress={()=>setModalCMT(true)}/>
+        </View>
+        <Text style={{textAlign:'center', fontSize: 13}}>100</Text>
+        <View style={{marginTop: 12}}>
+        <Icon name="share" size={35} color="red" />
+        </View>
+      </View>
+
+        {/**Modal chat */}
+      <Modal
+        visible={modalCMT}
+        animationType={'fade'}
+        transparent={true}
+        onRequestClose={!modalCMT}>
+        <TouchableNativeFeedback onPress={()=>setModalCMT(!openModal)}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: '#000000AA',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableNativeFeedback>
+              <View
+                style={{
+                  backgroundColor: '#fff',
+                  width: '100%',
+                  height: deviceHeight * 0.7,
+                  borderTopRightRadius: 20,
+                  borderTopLeftRadius: 20,
+                }}>
+                <View style={{flex: 2}}>
+                  
+                </View>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+        </TouchableNativeFeedback>
+      </Modal>
+      {/** End Modal chat */}
+
     </SafeAreaView>
   );
 }
