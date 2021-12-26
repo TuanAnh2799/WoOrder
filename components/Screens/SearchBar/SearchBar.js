@@ -10,9 +10,11 @@ export default function SearchScreen({navigation}) {
     const [searchFillter, setSearchFillter] = useState([]);
 
     const Search =(textSearch)=>{
-        const fillter = products.filter( e =>
+        if(textSearch !== ''){
+            const fillter = products.filter( e =>
             e.name.toLowerCase().includes(textSearch.toLowerCase()));
             setSearchFillter(fillter);
+        }  
     }
 
   useEffect(() => {

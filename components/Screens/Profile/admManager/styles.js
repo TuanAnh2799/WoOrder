@@ -133,14 +133,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textareaContainer: {
-    height: 160,
+    height: 150,
     padding: 5,
-    backgroundColor: '#F5FCFF',
+    //backgroundColor: '#F5FCFF',
     borderRadius: 10,
   },
   textarea: {
     textAlignVertical: 'top',  // hack android
-    height: 170,
+    height: 150,
     fontSize: 14,
     color: '#333',
   },

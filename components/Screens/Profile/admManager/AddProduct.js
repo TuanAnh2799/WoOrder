@@ -169,6 +169,7 @@ const AddProduct = () => {
         setSizeLChecked(false);
         setSizeXLChecked(false);
         setSizeXXLChecked(false);
+        setChecked('1');
         setImages([]);
         console.log('Product Added!');
         ToastAndroid.show(
@@ -597,14 +598,8 @@ const initValues = {
 
       <View style={{flex: 1.5, marginVertical: 15, marginBottom: 15}}>
         <View style={styles.wrappButton}>
-          <View style={{width: '50%', height: 35, alignItems: 'center'}}>
-            <View style={{width: '90%'}}>
-              <Button title="Nhập mới" onPress={resetForm}/>
-            </View>
-          </View>
-
-          <View style={{width: '50%', height: 35, alignItems: 'center'}}>
-            <View style={{width: '90%'}}>
+          <View style={{width: '100%', height: 35, alignItems: 'center', marginTop: 10}}>
+            <View style={{width: '50%'}}>
               <Button title="Lưu" disabled={!isValid}  onPress={()=> {
                 
                 if(listIMG.length == 0){
@@ -649,7 +644,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   wrappButton: {
-    flexDirection: 'row',
     //backgroundColor:'green'
   },
   label: {

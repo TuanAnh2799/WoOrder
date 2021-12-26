@@ -1,4 +1,4 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -12,20 +12,14 @@ import {
   Button,
   TextInput,
   Alert,
-  ToastAndroid,
 } from 'react-native';
-import {Searchbar} from 'react-native-paper';
+import { Searchbar } from 'react-native-paper';
 import {styles} from './styles';
-import {AddCart, AddToFavorite} from '../../../Store/action';
 import firestore, {firebase} from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Colors, TouchableRipple, ActivityIndicator} from 'react-native-paper';
-import {connect} from 'react-redux';
+import {Colors, ActivityIndicator} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
-import Share from 'react-native-share';
-import {useDispatch, useSelector} from 'react-redux';
 import Textarea from 'react-native-textarea';
 import {
   Menu,
@@ -33,6 +27,9 @@ import {
   MenuOption,
   MenuTrigger,
 } from 'react-native-popup-menu';
+import formatCash from '../../API/ConvertPrice';
+import deleteProduct from '../../API/deleteProduct';
+
 
 const listTab = [
   {
@@ -59,11 +56,10 @@ import deleteIcon from '../../../../img/Delete.png';
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
-function ListProduct({AddToFavorite}) {
+function ListProduct() {
 
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
-  //const [heart, setHeart] = useState('heart-outline');
   const [isLoading, setIsLoading] = useState(true);
   const [statusType, setStatusType] = useState(0);
 
@@ -78,6 +74,8 @@ function ListProduct({AddToFavorite}) {
   const [info, setInfo] = useState('');
 
   const [dataList, setDataList] = useState([]);
+  const [dataSearch, setDataSearch] = useState([]);
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   useEffect(async () => {
     const subscriber = await firestore()
@@ -96,50 +94,17 @@ function ListProduct({AddToFavorite}) {
         setProducts(productss);
         setDataList(productss);
       });
-
     return () => subscriber();
   }, []);
 
-  function formatCash(str) {
-    var money = '' + str;
-    return money
-      .split('')
-      .reverse()
-      .reduce((prev, next, index) => {
-        return (index % 3 ? next : next + '.') + prev;
-      });
-  }
-  const deleteProduct = (id,urlIMG)=> {
-    
-    console.log("Xóa ID", id);
 
-    urlIMG.map(e => {
-      let ref = storage().refFromURL(e);
-      storage().ref(ref.fullPath).delete().catch(err => console.log(err));
-    });
-    firestore()
-    .collection('Products')
-    .doc(id)
-    .delete()
-    .then(() => {
-      console.log(id,'Product deleted!');
-      ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
-    });
-
-  }
-  
-  const customShare = async url => {
-    const shareOptions = {
-      message: 'Tải ngay app để order nhé!',
-      url: url,
-    };
-    try {
-      const shareRespone = await Share.open(shareOptions);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  //console.log('info:', info);
+  const Search =(text)=>{
+    if(text !== ''){
+        const fillter = products.filter( e =>
+        e.name.toLowerCase().includes(text.toLowerCase()));
+        setDataSearch(fillter);
+    }  
+}
 
   const setStatusFillter = getType => {
     if (getType === 0) {
@@ -149,24 +114,6 @@ function ListProduct({AddToFavorite}) {
     }
     setStatusType(getType);
   };
-
-  const search = textSearch => {
-    const fillter = User.filter(e =>
-      e.name.toLowerCase().includes(textSearch.toLowerCase()),
-    );
-    setSearchFillter(fillter);
-  };
-
-  const Search = () => (
-    <View style={{paddingTop: 5, paddingLeft: 10, paddingRight: 10}}>
-      <Searchbar
-        placeholder="Nhập tên sản phẩm ..."
-        onChangeText={text => {
-          search(text);
-        }}
-      />
-    </View>
-  );
 
   const headerFillter = () => {
     return (
@@ -322,7 +269,15 @@ function ListProduct({AddToFavorite}) {
       ) : (
         <ScrollView>
           <View style={styles.listProduct}>
-            <Search />
+          <View style={{paddingTop: 5, paddingLeft: 10, paddingRight: 10}}>
+          <Searchbar
+            placeholder="Nhập tên sản phẩm ..."
+            onChangeText={text => {
+              Search(text);
+              setSearchQuery(text);
+              }}
+          />
+        </View>
             {/*modal chỉnh sửa sản phẩm */}
 
             <Modal
@@ -336,31 +291,33 @@ function ListProduct({AddToFavorite}) {
                   style={{
                     flex: 1,
                     backgroundColor: '#000000AA',
-                    justifyContent: 'center',
+                    justifyContent: 'flex-end',
                   }}>
                   <TouchableNativeFeedback>
                     <View
                       style={{
                         backgroundColor: '#fff',
                         width: '100%',
-                        height: deviceHeight * 0.95,
+                        height: '80%',
                         borderRadius: 20,
                         //borderTopLeftRadius: 20,
                       }}>
-                      <View style={{flex: 2}}>
+                      <View style={{flex: 1, backgroundColor:'green'}}>
                         <View
                           style={{
                             flex: 0.4,
                             width: '100%',
                             justifyContent: 'center',
                             alignItems: 'center',
+                            backgroundColor:'red'
                           }}>
                           <Text style={{fontSize: 18, fontWeight: 'bold'}}>
                             Sửa thông tin sản phẩm
                           </Text>
                         </View>
 
-                        <View style={{flex: 9}}>
+                        <View style={{flex: 8, marginTop: 20, backgroundColor:'blue'}}>
+                        
                           <View style={{height: '60%'}}>
                             <View
                               style={{
@@ -375,15 +332,18 @@ function ListProduct({AddToFavorite}) {
                                 }}>
                                 <Text>Tên sản phẩm:</Text>
                               </View>
-                              <View style={{width: '70%'}}>
+                              <View style={{width: '70%', flexDirection:'row'}}>
                                 <TextInput
                                   style={{
                                     width: '80%',
                                     height: 35,
                                     borderWidth: 1,
                                   }}
+                                  onChangeText={text => setName(text)}
                                   value={name}
                                 />
+                              { name.length > 0 && <Text style={{color:'red'}}>*</Text>}
+                                
                               </View>
                             </View>
 
@@ -491,15 +451,15 @@ function ListProduct({AddToFavorite}) {
                               </View>
                             </View>
                           </View>
-
-                          <View style={{height: '40%', top: -5}}>
+                          
+                          {/* <View style={{height: '40%', top: -5}}>
                             <Text style={{textAlign: 'center'}}>Ảnh sản phẩm</Text>
                             <ViewPhoto/>
-                          </View>
+                          </View> */}
                         </View>
                         <View
                           style={{
-                            flex: 0.6,
+                            flex: 1.6,
                             flexDirection: 'row',
                             justifyContent: 'space-around',
                             //backgroundColor: 'red'
@@ -523,7 +483,7 @@ function ListProduct({AddToFavorite}) {
 
             <View style={{marginTop: 10}}>
               <FlatList
-                data={dataList}
+                data={searchQuery !== '' ? dataSearch : dataList}
                 ListHeaderComponent={headerFillter}
                 renderItem={({item, index}) => (
                   <TouchableNativeFeedback>
@@ -564,12 +524,10 @@ function ListProduct({AddToFavorite}) {
 
                       <View style={{width: '10%', justifyContent: 'center'}}>
                         <Menu>
-                          <MenuTrigger text="Sửa" />
+                          <MenuTrigger text="Q.lý" />
                           <MenuOptions>
                             <MenuOption
                               onSelect={() => {
-                                //setIndex(index);
-                                //setDataModal(products[index]);
                                 setName(item.name);
                                 setPrice(item.price);
                                 setInfo(item.info);
@@ -579,7 +537,7 @@ function ListProduct({AddToFavorite}) {
                                 setColor(item.color);
                                 setModalVisible(!modalVisible);
                               }}
-                              text="Chỉnh sửa"
+                              text="Sửa thông tin"
                             />
                             <MenuOption onSelect={() => {
                               Alert.alert('Xác nhận', 'Bạn muốn xóa sản phẩm?', [
@@ -613,8 +571,5 @@ function ListProduct({AddToFavorite}) {
     </SafeAreaView>
   );
 }
-const mapDispatchToProps = dispatch => ({
-  AddToFavorite: item => dispatch(AddToFavorite(item)),
-});
 
-export default connect(mapDispatchToProps, {AddToFavorite})(ListProduct);
+export default ListProduct;

@@ -5,14 +5,11 @@ import {
   View,
   Image,
   TouchableNativeFeedback,
-  Alert,
-  Button,
-  RefreshControl,
   TouchableOpacity,
 } from 'react-native';
 import {styles} from './styles';
 import {AddCart, AddToFavorite} from '../../Store/action';
-import firestore, {firebase} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors, TouchableRipple, ActivityIndicator} from 'react-native-paper';
 import {connect} from 'react-redux';
@@ -20,6 +17,7 @@ import {useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
 import Share from 'react-native-share';
 import {useDispatch, useSelector} from 'react-redux';
+import formatCash from '../API/ConvertPrice';
 
 const listTab = [
   {
@@ -45,12 +43,10 @@ function ProductScreen({AddToFavorite}) {
   
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
-  //const [heart, setHeart] = useState('heart-outline');
   const [isLoading, setIsLoading] = useState(true);
   const [statusType, setStatusType] = useState(0);
 
   const Favorites = useSelector(state => state.favourites.favoriteProduct);
-  //console.log('yêu thích:', Favorites.length);
   const [dataList, setDataList] = useState([]);
 
   useEffect(async () => {
@@ -73,16 +69,6 @@ function ProductScreen({AddToFavorite}) {
     
     return () => subscriber();
   }, []);
-
-  function formatCash(str) {
-    var money = '' + str;
-    return money
-      .split('')
-      .reverse()
-      .reduce((prev, next, index) => {
-        return (index % 3 ? next : next + '.') + prev;
-      });
-  }
 
   const customShare = async url => {
     const shareOptions = {
@@ -218,7 +204,6 @@ function ProductScreen({AddToFavorite}) {
                               style={{color: 'red', marginRight: 0}}
                               onPress={() => {
                                 AddToFavorite(item);
-                                //setHeart('cards-heart');
                               
                               }}
                             />)
