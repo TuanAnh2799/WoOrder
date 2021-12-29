@@ -12,6 +12,7 @@ import {
   Button,
   TextInput,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import {styles} from './styles';
@@ -29,6 +30,10 @@ import {
 } from 'react-native-popup-menu';
 import formatCash from '../../API/ConvertPrice';
 import deleteProduct from '../../API/deleteProduct';
+import chuanhoa from '../../API/convertString';
+import {Checkbox} from 'react-native-paper';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
 
 
 const listTab = [
@@ -61,21 +66,39 @@ function ListProduct() {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingUpdate, setIsLoadUpdate] = useState(true);
   const [statusType, setStatusType] = useState(0);
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [size, setSize] = useState([]);
+  const [id, setID] = useState('');
+  const [size, setSize] = useState('');
   const [type, setType] = useState('');
-  const [color, setColor] = useState([]);
+  const [colors, setColors] = useState('');
   const [url, setUrl] = useState([]);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [info, setInfo] = useState('');
 
+  const [sizeM, setSizeMChecked] = useState(false);
+  const [sizeL, setSizeLChecked] = useState(false);
+  const [sizeXL, setSizeXLChecked] = useState(false);
+  const [sizeXXL, setSizeXXLChecked] = useState(false);
+
   const [dataList, setDataList] = useState([]);
   const [dataSearch, setDataSearch] = useState([]);
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const convertColor =(color)=> {
+    try {
+    let colors='';
+    color?.map(e => colors += e+' ');
+    setColors(colors);
+    } catch (error) {
+      console.log("Convert size ",error);
+    }
+    
+  }
 
   useEffect(async () => {
     const subscriber = await firestore()
@@ -114,6 +137,64 @@ function ListProduct() {
     }
     setStatusType(getType);
   };
+
+  const updateProduct =async(name,price,color,info)=>{
+
+    let colorSP = await chuanhoa(color);
+    let listColor = colorSP.trim().split(' ');
+
+    let size = '';
+    let listSize;
+
+    if(type == 2)
+    {
+      console.log('chjay qua check size');
+      if(sizeM !== false){
+        size += 'M'+' ';
+      }
+      if(sizeL !== false){
+        size += 'L'+' ';
+      }
+      if(sizeXL !== false){
+        size += 'XL'+' ';
+      }
+      if(sizeXXL !== false){
+        size += 'XXL';
+      }
+      listSize = size.trim().toUpperCase().split(' ');
+    }
+    else {
+      listSize = [];
+    }
+    console.log('list size:',listSize);
+    firestore()
+      .collection('Products')
+      .doc(id)
+      .update({
+        name: name,
+        color: listColor,
+        price: parseInt(price),
+        size: listSize,
+        info: info,
+        type: parseInt(type),
+        
+      })
+      .then(() => {
+        console.log('Product update!');
+        ToastAndroid.show(
+          'Sửa thành công!.',
+          ToastAndroid.SHORT,
+        );
+        setModalVisible(false);
+      })
+      .catch(error => {
+        console.log(
+          'Something went wrong with added post to firestore.',
+          error,
+        );
+        ToastAndroid.show('Sửa thất bại!.', ToastAndroid.SHORT);
+      });
+  }
 
   const headerFillter = () => {
     return (
@@ -260,6 +341,30 @@ function ListProduct() {
       );
     }
   };
+
+  const updateProducts = Yup.object().shape({
+    name: Yup.string()
+      .max(30, () => `Tên tối đa 30 ký tự.`)
+      .matches(/(\w.+\s).+/, 'Vui lòng nhập tên sản phẩm.')
+      .required('Bạn chưa nhập tên sản phẩm.'),
+    price: Yup.string()
+      .matches(/^(\d)(?=.{4,})(?=.*[0-9])/, 'Số tiền không hợp lệ.')
+      .required('Bạn chưa nhập giá sản phẩm'),
+    color: Yup.string()
+      .required('Bạn chưa nhập màu sắc.'),
+    info: Yup.string()
+      .max(300, () => `Tối đa 300 ký tự.`)
+      .matches(/(\w.+\s).+/, 'Vui lòng nhập mô tả.')
+      .required('Bạn chưa mô tả sản phẩm.'),
+  });
+
+  const initValues = {
+    name: name,
+    price: price.toString(),
+    color: colors,
+    info: info,
+  }
+
   return (
     <SafeAreaView>
       {isLoading ? (
@@ -286,7 +391,13 @@ function ListProduct() {
               transparent={true}
               onRequestClose={() => setModalVisible(!modalVisible)}>
               <TouchableNativeFeedback
-                onPress={() => setModalVisible(!modalVisible)}>
+                onPress={() => {
+                  setSizeMChecked(false);
+                  setSizeLChecked(false);
+                  setSizeXLChecked(false);
+                  setSizeXXLChecked(false);
+                  setModalVisible(!modalVisible)}
+                }>
                 <View
                   style={{
                     flex: 1,
@@ -298,31 +409,79 @@ function ListProduct() {
                       style={{
                         backgroundColor: '#fff',
                         width: '100%',
-                        height: '80%',
+                        height: '92%',
                         borderRadius: 20,
                         //borderTopLeftRadius: 20,
                       }}>
-                      <View style={{flex: 1, backgroundColor:'green'}}>
+                      <Formik
+                        validationSchema={updateProducts}
+                        initialValues={initValues}
+                        validateOnMount={true}
+                        onSubmit={values => console.log(values)}>
+                        {({
+                          handleChange,
+                          handleBlur,
+                          handleSubmit,
+                          values,
+                          errors,
+                          touched,
+                          isValid,
+                        }) => (
+                      <View style={{flex: 1}}>
                         <View
                           style={{
-                            flex: 0.4,
+                            flex: 0.7,
                             width: '100%',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor:'red'
                           }}>
-                          <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+                          <Text style={{fontSize: 18, fontWeight: 'bold', marginTop: 5}}>
                             Sửa thông tin sản phẩm
                           </Text>
                         </View>
 
-                        <View style={{flex: 8, marginTop: 20, backgroundColor:'blue'}}>
+                        <View style={{flex: 8, marginTop: 10,}}>
                         
                           <View style={{height: '60%'}}>
                             <View
                               style={{
                                 flexDirection: 'row',
                                 marginTop: 10,
+                                height: 37,
+                              }}>
+                              <View
+                                style={{
+                                  width: '30%',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text style={{marginLeft: 5}}>Tên sản phẩm:</Text>
+                              </View>
+                              <View style={{width: '70%', flexDirection:'row'}}>
+                                <TextInput
+                                  style={{
+                                    width: '80%',
+                                    height: 37,
+                                    borderWidth: 1,
+                                  }}
+                                  onChangeText={handleChange('name')}
+                                  onBlur={handleBlur('name')}
+                                  value={values.name}
+                                />
+                              </View>
+                            </View>
+                            {errors.name && touched.name && (
+                              <View style={{width: '100%', flexDirection:'row'}}>
+                                <View style={{width: '30%'}}></View>
+                                <View style={{width: '70%'}}>
+                                  <Text style={{fontSize: 12, color:'red'}}>{errors.name}</Text> 
+                                </View>
+                              </View>
+                            )} 
+
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                marginTop: 15,
                                 height: 35,
                               }}>
                               <View
@@ -330,7 +489,7 @@ function ListProduct() {
                                   width: '30%',
                                   justifyContent: 'center',
                                 }}>
-                                <Text>Tên sản phẩm:</Text>
+                                <Text style={{marginLeft: 5}}>Giá sản phẩm:</Text>
                               </View>
                               <View style={{width: '70%', flexDirection:'row'}}>
                                 <TextInput
@@ -339,44 +498,27 @@ function ListProduct() {
                                     height: 35,
                                     borderWidth: 1,
                                   }}
-                                  onChangeText={text => setName(text)}
-                                  value={name}
-                                />
-                              { name.length > 0 && <Text style={{color:'red'}}>*</Text>}
-                                
-                              </View>
-                            </View>
-
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                marginTop: 7,
-                                height: 35,
-                              }}>
-                              <View
-                                style={{
-                                  width: '30%',
-                                  justifyContent: 'center',
-                                }}>
-                                <Text>Giá sản phẩm:</Text>
-                              </View>
-                              <View style={{width: '70%'}}>
-                                <TextInput
-                                  style={{
-                                    width: '80%',
-                                    height: 35,
-                                    borderWidth: 1,
-                                  }}
-                                  value={price.toString()}
+                                  keyboardType='numeric'
+                                  onChangeText={handleChange('price')}
+                                  onBlur={handleBlur('price')}
+                                  value={values.price}
                                 />
                               </View>
                             </View>
+                            {errors.price && touched.price && (
+                              <View style={{width: '100%', flexDirection:'row'}}>
+                                <View style={{width: '30%'}}></View>
+                                <View style={{width: '70%'}}>
+                                  <Text style={{fontSize: 12, color:'red'}}>{errors.price}</Text> 
+                                </View>
+                              </View>
+                            )}
 
                             {type == '2' ? (
                               <View
                                 style={{
                                   flexDirection: 'row',
-                                  marginTop: 7,
+                                  marginTop: 15,
                                   height: 35,
                                 }}>
                                 <View
@@ -384,17 +526,38 @@ function ListProduct() {
                                     width: '30%',
                                     justifyContent: 'center',
                                   }}>
-                                  <Text>Kích cỡ</Text>
+                                  <Text style={{marginLeft: 5}}>Kích cỡ</Text>
                                 </View>
-                                <View style={{width: '70%'}}>
-                                  <TextInput
-                                    style={{
-                                      width: '80%',
-                                      height: 35,
-                                      borderWidth: 1,
-                                    }}
-                                    value={size.toString()}
-                                  />
+                                <View style={{width: '70%', height: 35, flexDirection:'row'}}>
+                                  <Checkbox
+                                      status={sizeM ? 'checked' : 'unchecked'}
+                                      onPress={() => {
+                                        setSizeMChecked(!sizeM);
+                                      }}
+                                      
+                                    />
+                                    <Text style={styles.checkbox}>M</Text>
+                                    <Checkbox
+                                      status={sizeL ? 'checked' : 'unchecked'}
+                                      onPress={() => {
+                                        setSizeLChecked(!sizeL);
+                                      }}
+                                    />
+                                    <Text style={styles.checkbox}>L</Text>
+                                    <Checkbox
+                                      status={sizeXL ? 'checked' : 'unchecked'}
+                                      onPress={() => {
+                                        setSizeXLChecked(!sizeXL);
+                                      }}
+                                    />
+                                    <Text style={styles.checkbox}>XL</Text>
+                                    <Checkbox
+                                      status={sizeXXL ? 'checked' : 'unchecked'}
+                                      onPress={() => {
+                                        setSizeXXLChecked(!sizeXXL);
+                                      }}
+                                    />
+                                    <Text style={styles.checkbox}>XXL</Text>
                                 </View>
                               </View>
                             ) : null}
@@ -402,37 +565,40 @@ function ListProduct() {
                             <View
                               style={{
                                 flexDirection: 'row',
-                                marginTop: 7,
-                                height: 35,
+                                marginTop: 15,
+                                height: 37,
                               }}>
                               <View
                                 style={{
                                   width: '30%',
                                   justifyContent: 'center',
                                 }}>
-                                <Text>Màu sắc:</Text>
+                                <Text style={{marginLeft: 5}}>Màu sắc:</Text>
                               </View>
-                              <View style={{width: '70%'}}>
+                              <View style={{width: '70%', flexDirection:'row'}}>
                                 <TextInput
                                   style={{
                                     width: '80%',
-                                    height: 35,
+                                    height: 37,
                                     borderWidth: 1,
                                   }}
-                                  value={color.toString()}
+                                  onChangeText={handleChange('color')}
+                                  onBlur={handleBlur('color')}
+                                  value={values.color}
                                 />
                               </View>
                             </View>
+                            {errors.color && touched.color && (
+                              <View style={{width: '100%', flexDirection:'row'}}>
+                                <View style={{width: '30%'}}></View>
+                                <View style={{width: '70%'}}>
+                                  <Text style={{fontSize: 12, color:'red'}}>{errors.color}</Text> 
+                                </View>
+                              </View>
+                            )}
 
-                            <View
-                              style={
-                                type == '2'
-                                  ? styles.labelMota1
-                                  : styles.labelMota2
-                              }>
-                              <Text>Mô tả</Text>
-                            </View>
                             <View style={styles.container}>
+                            <Text>Mô tả sản phẩm</Text>
                               <View
                                 style={{
                                   width: '100%',
@@ -442,14 +608,25 @@ function ListProduct() {
                                 <Textarea
                                   containerStyle={styles.textareaContainer}
                                   style={styles.textarea}
-                                  onChangeText={text => setInfo(text)}
-                                  value={info}
+                                  onChangeText={handleChange('info')}
+                                  onBlur={handleBlur('info')}
+                                  value={values.info}
                                   maxLength={300}
                                   placeholderTextColor={'#c7c7c7'}
                                   underlineColorAndroid={'transparent'}
                                 />
                               </View>
+                            {errors.info && touched.info && (
+                              <View style={{width: '100%', flexDirection:'row'}}>
+                                <View style={{width: '30%'}}></View>
+                                <View style={{width: '70%'}}>
+                                  <Text style={{fontSize: 12, color:'red'}}>{errors.info}</Text> 
+                                </View>
+                              </View>
+                            )}
                             </View>
+
+
                           </View>
                           
                           {/* <View style={{height: '40%', top: -5}}>
@@ -459,22 +636,54 @@ function ListProduct() {
                         </View>
                         <View
                           style={{
-                            flex: 1.6,
+                            flex: 0.6,
                             flexDirection: 'row',
                             justifyContent: 'space-around',
-                            //backgroundColor: 'red'
                           }}>
                           <View style={{width: '40%', marginTop: 0}}>
                             <Button
                               title="Hủy"
-                              onPress={() => setModalVisible(!modalVisible)}
+                              onPress={() => {
+                                setSizeMChecked(false);
+                                setSizeLChecked(false);
+                                setSizeXLChecked(false);
+                                setSizeXXLChecked(false);
+                                setModalVisible(!modalVisible);
+                              }}
                             />
                           </View>
                           <View style={{width: '40%', marginTop: 0}}>
-                            <Button title="Lưu" />
+                            <Button title="Lưu" disabled={!isValid} onPress={()=> {
+
+                            if(type === '2' && (sizeM !== false || sizeL !== false || sizeXL !== false || sizeXXL !== false)) {
+                              updateProduct(values.name, values.price, values.color, values.info)
+                            }
+                            else if(type === '2' && sizeM == false && sizeL == false && sizeXL == false && sizeXXL == false)
+                            {
+                              Alert.alert('Thông báo!', 'Bạn chưa chọn kích cỡ sản phẩm.');
+                            }
+                            else if(type !== '2')
+                            {
+                              updateProduct(values.name, values.price, values.color, values.info);
+                            }
+                              // if(type === '2' && (sizeM !== false || sizeL !== false || sizeXL !== false || sizeXXL !== false))
+                              // {
+                              //   updateProduct(values.name, values.price, values.color, values.info); 
+                              //   setSizeMChecked(false);
+                              //   setSizeLChecked(false);
+                              //   setSizeXLChecked(false);
+                              //   setSizeXXLChecked(false);                              
+                              // }
+                              // else if(type === '2' && (sizeM == false || sizeL == false || sizeXL == false || sizeXXL == false)){
+                              //   ToastAndroid.show("Thông báo!", "Chưa điền đầy đủ thông tin.");
+                              // }
+                            }
+                              }/>
                           </View>
                         </View>
                       </View>
+                      )}
+                    </Formik>
                     </View>
                   </TouchableNativeFeedback>
                 </View>
@@ -528,13 +737,34 @@ function ListProduct() {
                           <MenuOptions>
                             <MenuOption
                               onSelect={() => {
+                                if(item.type == 2){
+                                  item.size.map(e => {
+                                    if(e === "M")
+                                    {
+                                      setSizeMChecked(true);
+                                    }
+                                    if(e === 'L')
+                                    {
+                                      setSizeLChecked(true);
+                                    }
+                                    if(e === 'XL')
+                                    {
+                                      setSizeXLChecked(true);
+                                    }
+                                    if(e === 'XXL')
+                                    {
+                                      setSizeXXLChecked(true);
+                                    }
+                                  })
+                                }
+                                setID(item.id);
                                 setName(item.name);
                                 setPrice(item.price);
                                 setInfo(item.info);
                                 setUrl(item.url);
                                 setSize(item.size);
                                 setType(item.type);
-                                setColor(item.color);
+                                convertColor(item.color);
                                 setModalVisible(!modalVisible);
                               }}
                               text="Sửa thông tin"

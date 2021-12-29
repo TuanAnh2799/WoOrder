@@ -127,30 +127,25 @@ export const styles = StyleSheet.create({
     color:'#fff',
   },
   container: {
-    flex: 1,
-    padding: 30,
+    width: '100%',
+    padding: 25,
     justifyContent: 'center',
     alignItems: 'center',
   },
   textareaContainer: {
-    height: 150,
+    height: 155,
     padding: 5,
-    //backgroundColor: '#F5FCFF',
     borderRadius: 10,
   },
   textarea: {
     textAlignVertical: 'top',  // hack android
-    height: 150,
+    height: '100%',
     fontSize: 14,
     color: '#333',
   },
-  labelMota1: {
-    marginLeft: 40,
-    top: 4,
-  },
-  labelMota2: {
-    marginLeft: 40,
-    top: 20,
+  checkbox: {
+    fontSize: 17,
+    marginTop: 7,
   },
   
 });

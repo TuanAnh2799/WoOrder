@@ -24,6 +24,8 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import Textarea from 'react-native-textarea';
 import {ActivityIndicator} from 'react-native-paper';
+import chuanhoa from '../../API/convertString';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -37,8 +39,6 @@ const AddProduct = () => {
   const [sizeXXL, setSizeXXLChecked] = React.useState(false);
   const [images, setImages] = React.useState([]);
 
-
-    //console.log(listIMG);
   images?.length > 6 && setImages([]);
   
 
@@ -46,7 +46,6 @@ const AddProduct = () => {
     images?.map(e =>{
     listIMG.push(e)
   });
-
 
   console.log('list img',listIMG.length);
 
@@ -61,7 +60,7 @@ const AddProduct = () => {
   color: Yup.string()
     .required('Bạn chưa nhập màu sắc.'),
   info: Yup.string()
-    .max(300, () => `Tên tối đa 300 ký tự.`)
+    .max(300, () => `Tối đa 300 ký tự.`)
     .matches(/(\w.+\s).+/, 'Vui lòng nhập mô tả.')
     .required('Bạn chưa mô tả sản phẩm.'),
 });
@@ -157,10 +156,10 @@ const AddProduct = () => {
         name: value.name,
         color: color,
         url: imageUrl,
-        price: value.price,
+        price:  parseInt(value.price),
         size: listSize,
         info: value.info,
-        type: checked,
+        type: parseInt(checked),
         
       })
       .then(() => {
@@ -230,13 +229,9 @@ const onDelete = (value) => {
   );
   setImages(data);
 };
+
 const LoadingScreen =()=> (
-  // <View style={{position:'absolute', backgroundColor:'green',marginTop:windowHeight/2.5, marginLeft:windowWidth/2.5, height:85,width: 85}}>
-  //   <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
-  //     <ActivityIndicator color='red' size={35} style={{marginTop: 10}} />
-  //     <Text style={{textAlign:'center', marginTop: 10}}>Tải lên</Text>
-  //   </View>
-  // </View>
+
   <View style={{backgroundColor:'#1c1c1c1c', width:windowWidth, height:windowHeight, justifyContent:'center'}}>
     <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
        <ActivityIndicator color='green' size={40} style={{marginTop: 10}} />
@@ -246,18 +241,6 @@ const LoadingScreen =()=> (
   </View>
 )
 
-const chuanhoa =async(str)=> {
-  let z = str.trim();
-    let mang = z.split(' ');
-    let chuanhoa ='';
-    mang.map(e => {
-        if(e !== '')
-        {
-            chuanhoa += e+' ';
-        }
-    })
-    return chuanhoa;
-}
 const initValues = {
   name: '',
   price: '',
@@ -660,7 +643,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   wrappIMG: {
-    //flex: 1,
     backgroundColor: '#fff',
     padding: 2,
     marginVertical: 2,
@@ -671,7 +653,6 @@ const styles = StyleSheet.create({
     borderColor:'#009387',
     borderWidth: 1,
     marginLeft: '0.8%',
-    //position:'relative'
   },
   labelRadioBtn: {
     justifyContent:'center',
