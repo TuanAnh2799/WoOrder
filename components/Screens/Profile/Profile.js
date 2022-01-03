@@ -26,21 +26,6 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
   const [myOrder2, setMyOrder2] = useState(0);
   const [checkOrder, setCheckOrder] = useState([]);
 
-  //console.log(user.uid);
-  /*
-  useEffect(() => {
-    const getData = async() => {
-      const data = await firestore()
-      .collection('Users')
-      .doc(user.uid)
-      .get();
-      setUserInfo(data);
-      console.log('logdata: ',data);
-    } 
-    getData();
-  }, [])
-  */
-
   useEffect(() => {
     const subscriber = firestore()
       .collection('UserAddress')
@@ -137,18 +122,26 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
 
   return (
     <SafeAreaView style={styles.container}>
-    <ScrollView >
-      <View style={styles.userInfoSection}>
+    
+      {userInfo == undefined ? (
+        <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
+          <View>
+            <Text>Mạng kém</Text>
+          </View>
+        </View>
+      ) : (
+        <ScrollView>
+        <View style={styles.userInfoSection}>
         <View style={{flexDirection: 'row', marginTop: 15}}>
           <Avatar.Image
             source={{
-              uri: userInfo.avatar,
+              uri: userInfo?.avatar,
             }}
             size={85}
           />
           <View style={{marginLeft: 20, width: '63%'}}>
             <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>
-              {userInfo.fullname}
+              {userInfo?.fullname}
             </Title>
             {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
               <Caption style={styles.caption}>@Admin</Caption>
@@ -165,25 +158,24 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
           />
         </View>
       </View>
-
       <View style={styles.userInfo}>
         <View style={styles.row}>
           <Icon name="map-marker-radius" size={20} color="#777777" />
-          {userInfo.address == '' ? (
+          {userInfo?.address == '' ? (
             <Text style={{fontSize: 15, marginLeft: 10}}>Việt Nam</Text>
           ) : (
             <Text style={{fontSize: 15, marginLeft: 10}}>
-              {userInfo.address}
+              {userInfo?.address}
             </Text>
           )}
         </View>
         <View style={styles.row}>
           <Icon name="phone" size={20} color="#777777" />
-          <Text style={{fontSize: 15, marginLeft: 10}}>{userInfo.phone}</Text>
+          <Text style={{fontSize: 15, marginLeft: 10}}>{userInfo?.phone}</Text>
         </View>
         <View style={styles.row}>
           <Icon name="email" size={20} color="#777777" />
-          <Text style={{fontSize: 15, marginLeft: 10}}>{userInfo.email}</Text>
+          <Text style={{fontSize: 15, marginLeft: 10}}>{userInfo?.email}</Text>
         </View>
       </View>
 
@@ -275,12 +267,6 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
             <Text style={styles.menuItemText}>Hỗ trợ</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {ToastAndroid.show("Chức năng sẽ cập nhật trong thời gian tới.", ToastAndroid.SHORT)}}>
-          <View style={styles.menuItem}>
-            <Icon name="cog" color="#FF6347" size={25} />
-            <Text style={styles.menuItemText}>Cài đặt</Text>
-          </View>
-        </TouchableRipple>
         <TouchableRipple
           onPress={() => {
             Alert.alert('Thông báo', 'Bạn muốn đăng xuất?', [
@@ -304,8 +290,17 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
             <Text style={styles.menuItemText}>Đăng xuất</Text>
           </View>
         </TouchableRipple>
+        {/* <TouchableRipple onPress={() => {ToastAndroid.show("Chức năng sẽ cập nhật trong thời gian tới.", ToastAndroid.SHORT)}}>
+          <View style={styles.menuItem}>
+            <Icon name="cog" color="#FF6347" size={25} />
+            <Text style={styles.menuItemText}>Cài đặt</Text>
+          </View>
+        </TouchableRipple> */}
+        
         
       </View></ScrollView>
+        )}
+      
     </SafeAreaView>
   );
 }

@@ -35,6 +35,7 @@ export default function RegisterScreen({navigation}) {
       .matches(/^(0)(\d)(?=.{8,})(?=.*[0-9])/, 'Số điện thoại không hợp lệ.')
       .required('Bạn chưa nhập số điện thoại'),
     email: Yup.string()
+      .max(30, () => `Email tối đa 30 ký tự.`)
       .email('Vui lòng nhập địa chỉ email.')
       .required('Bạn chưa nhập địa chỉ email.'),
     password: Yup.string()
@@ -49,6 +50,7 @@ export default function RegisterScreen({navigation}) {
       .oneOf([Yup.ref('password')], 'Mật khẩu không khớp')
       .required('Bạn chưa nhập lại mật khẩu'),
   });
+  
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
@@ -103,7 +105,6 @@ export default function RegisterScreen({navigation}) {
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                   value={values.email}
-                  placeholder="Nhập email..."
                   keyboardType="email-address"
                 />
               </View>
@@ -123,7 +124,6 @@ export default function RegisterScreen({navigation}) {
                   onChangeText={handleChange('phoneNumber')}
                   onBlur={handleBlur('phoneNumber')}
                   value={values.phoneNumber}
-                  placeholder="Nhập số điện thoại..."
                   keyboardType="phone-pad"
                 />
               </View>
@@ -173,7 +173,7 @@ export default function RegisterScreen({navigation}) {
                   <Feather name="lock" color="#05375a" size={20} />
                 </View>
 
-                <PasswordInputText
+                  <PasswordInputText
                   placeholder="Nhập lại mật khẩu ..."
                   style={styles.textInputPass}
                   onChangeText={handleChange('confirmPassword')}
@@ -183,6 +183,7 @@ export default function RegisterScreen({navigation}) {
                   secureTextEntry={true}
                   label=""
                 />
+                
               </View>
               {errors.confirmPassword && touched.confirmPassword && (
                 <Text style={styles.text_err}>{errors.confirmPassword}</Text>
@@ -200,6 +201,7 @@ export default function RegisterScreen({navigation}) {
                       values.email,
                       values.phoneNumber,
                       values.password,
+                      false,
                     );
                   }}/>
               </View>

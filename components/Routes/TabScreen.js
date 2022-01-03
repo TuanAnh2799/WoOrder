@@ -39,8 +39,10 @@ export default function TabScreen() {
     tabBarOptions={{
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
+      keyboardHidesTabBar: true,
       showLabel: true,
-      labelStyle: {fontSize: 15}
+      labelStyle: {fontSize: 15},
+      style: {position:'absolute'},
     }}
     initialRouteName="Trang chủ"
     >

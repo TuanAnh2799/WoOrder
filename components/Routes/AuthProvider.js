@@ -39,9 +39,10 @@ export const AuthProvider = ({children}) => {
               ToastAndroid.show('Tên tài khoản hoặc mật khẩu không chính xác.',ToastAndroid.SHORT);
             }
           },
-          register: async (fullname,email, phonenumber, password) => {
+          register: async (fullname,email, phonenumber, password,isAdmin) => {
+              console.log('list data user:',fullname,email, phonenumber, password,isAdmin);
             try {
-
+              
              var userIfo = await auth().createUserWithEmailAndPassword(email,password);
 
              ToastAndroid.show('Đăng ký thành công.',ToastAndroid.SHORT);
@@ -67,6 +68,8 @@ export const AuthProvider = ({children}) => {
                   fullname: fullname,
                   email: userID.email,
                   phone: phonenumber,
+                  isAdmin: isAdmin,
+                  avatar: 'https://firebasestorage.googleapis.com/v0/b/orderapp-652bc.appspot.com/o/user.png?alt=media&token=4a320416-9e29-41a6-9b47-fddadad728bb',
                   address: '',
                   
                 })
@@ -76,7 +79,7 @@ export const AuthProvider = ({children}) => {
               });
               
 
-            } catch (err) {
+            } catch (error) {
               if (error.code === 'auth/email-already-in-use') {
                 ToastAndroid.show('Tài khoản đã tồn tại.',ToastAndroid.SHORT);
                 console.log('That email address is already in use!');
@@ -93,7 +96,6 @@ export const AuthProvider = ({children}) => {
             try {
               await auth().signOut()
                      
-              
             } catch (e) {
 
               

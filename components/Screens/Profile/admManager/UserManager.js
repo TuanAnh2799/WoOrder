@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { FlatList, SafeAreaView, StyleSheet, Text, View,TouchableNativeFeedback,Image } from 'react-native';
+import React, { useState,useEffect } from 'react'
+import { FlatList, SafeAreaView, StyleSheet, Text, View,TouchableNativeFeedback,Image, LogBox } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import firestore from '@react-native-firebase/firestore';
 import {
     Menu,
     MenuOptions,
@@ -8,64 +9,65 @@ import {
     MenuTrigger,
   } from 'react-native-popup-menu';
 import { Searchbar } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
   
 const UserManagerScreen = () => {
     const [searchFillter, setSearchFillter] = useState([]);
+    const [listUser, setListUser] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [loading,setIsLoading] = useState(true);
 
-    const User = [
-        {
-            id: 1,
-            name: 'Tuấn Anh',
-            phone: '01236694015',
-            avatar: 'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg',
-            email: 's2luckyboy123@gmail.com'
-        },
-        {
-            id: 2,
-            name: 'Anh Hàng Xóm',
-            phone: '0342918313',
-            avatar: 'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg',
-            email: 'anhanh99@gmail.com'
-        },
-        {
-            id: 3,
-            name: 'Tuấn Anh Sky',
-            phone: '012345678910',
-            avatar: 'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg',
-            email: '27tuananh99@gmail.com'
-        },
-        {
-            id: 4,
-            name: 'Em Hàng Xóm',
-            phone: '01236694015',
-            avatar: 'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg',
-            email: '27tuananh99@gmail.com'
-        },
-    ];
-    const search =(textSearch)=>{
-        const fillter = User.filter( e =>
-            e.name.toLowerCase().includes(textSearch.toLowerCase()));
-            setSearchFillter(fillter);
-    }
+    useEffect(async () => {
+      const subscriber = await firestore()
+        .collection('UserAddress')
+        .onSnapshot(querySnapshot => {
+          const user = [];
+  
+          querySnapshot.forEach(documentSnapshot => {
+            user.push({
+              ...documentSnapshot.data(),
+              key: documentSnapshot.id,
+            });
+          });
+  
+          setIsLoading(false);
+          setListUser(user);
+        });
+      LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
+      return () => subscriber();
+    }, []);
 
-    const Search =()=>(
-        <View style={styles.search}>
-            <Searchbar
-                placeholder="Nhập tên hoặc ID người dùng..."
-                onChangeText={text =>{
-                    search(text);
-                }}
-                />
-        </View>
-    );
+  const search =(text)=>{
+    if(text !== ''){
+        const fillter = listUser.filter( e =>
+        e.fullname.toLowerCase().includes(text.toLowerCase()));
+        setSearchFillter(fillter);
+    }  
+  }
+
+  const deleteUser =(id)=> {
+    
+  }
+
     return (
         <SafeAreaView style={{flex:  1}}>
+           <View style={{paddingTop: 5, paddingLeft: 10, paddingRight: 10, marginBottom: 7,}}>
+            <Searchbar
+              placeholder="Nhập tên người dùng ..."
+              onChangeText={text => {
+                search(text);
+                setSearchQuery(text);
+                }}
+            />
+          </View>
+          <ScrollView>
             <FlatList
-              data={searchFillter}
-              ListHeaderComponent={Search}
+              data={searchQuery !== '' ? searchFillter : listUser}
+              style={{marginTop: 2}}
+              //ListHeaderComponent={Search}
               renderItem={({item, index}) => (
                 <TouchableNativeFeedback>
-                  <View style={styles.item} key={User.id}>
+                  <View style={styles.item} key={item.key}>
                     <View style={styles.wrappIMG}>
                         <Image
                             source={{uri: item.avatar}}
@@ -86,7 +88,7 @@ const UserManagerScreen = () => {
                             width: '100%',
                           }}>
                           
-                          <Text style={styles.name}>{item.name}</Text>
+                          <Text style={styles.name}>{item.fullname}</Text>
                         </View>
                       </View>
 
@@ -98,6 +100,7 @@ const UserManagerScreen = () => {
                           style={{
                             alignItems: 'flex-start',
                             width: '85%',
+                            overflow:'hidden',
                           }}>
                           
                           <Text style={styles.name}>{item.email}</Text> 
@@ -122,7 +125,7 @@ const UserManagerScreen = () => {
 
                     <View style={{width: '10%', justifyContent: 'center'}}>
                       <Menu>
-                        <MenuTrigger text="Sửa" />
+                        <MenuTrigger text="Q.lý" />
                         <MenuOptions>
                           <MenuOption
                             onSelect={() => alert(`Save`)}
@@ -137,8 +140,9 @@ const UserManagerScreen = () => {
                   </View>
                 </TouchableNativeFeedback>
               )}
-              keyExtractor={(item, index) => item.id}
+              keyExtractor={(item, index) => index}
             />
+            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -152,27 +156,30 @@ const styles = StyleSheet.create({
         marginVertical: 7,
         marginHorizontal: 5,
         width: '96%',
-        height: 130,
+        height: 100,
         borderRadius: 5,
         marginTop: 1,
         borderColor:'#009387',
         borderWidth: 1,
         marginLeft: '2%',
-        flexDirection:'row'
+        flexDirection:'row',
+        shadowColor:'black',
+        elevation: 2,
       },
       name: {
-        fontSize: 15,
+        fontSize: 14,
         marginTop: 4,
         marginLeft: 10
       },
       phone: {
-        fontSize: 15,
-        marginLeft: 10
+        fontSize: 14,
+        marginLeft: 10,
+        marginTop: 5,
       },
       wrappIMG: {
-        width: '30%',
+        width: '24%',
         height: '100%',
-        borderRadius: 500,
+        borderRadius: 100,
         borderColor: '#009387',
         borderWidth: 1,
         
@@ -180,7 +187,7 @@ const styles = StyleSheet.create({
       image: {
         width: '100%',
         height: '100%',
-        borderRadius: 500,
+        borderRadius: 520,
       },
       wrappInfo: {
         marginLeft: 3,
@@ -189,7 +196,8 @@ const styles = StyleSheet.create({
       wrappEmail: {
         marginLeft: 3,
         marginTop: 5,
-        flexDirection:'row'
+        flexDirection:'row',
+        
       },
       wrapPhone:{
         marginLeft: 3,

@@ -64,12 +64,12 @@ const LoginScreen = ({navigation}) => {
             </View>
             <Animatable.View animation="fadeInUpBig" style={styles.Input}>
               <Text style={[styles.text, {marginTop: 35}]}>Email</Text>
-              <View style={{flexDirection: 'row', marginTop: 20}}>
+              <View style={{flexDirection: 'row', marginTop: 20,}}>
                 <FontAwesome
                   name="envelope"
                   color="#05375a"
                   size={20}
-                  style={{marginLeft: 15}}
+                  style={{marginLeft: 15, marginTop: 5}}
                 />
                 <TextInput
                   placeholder="Nhập email ..."
@@ -78,20 +78,19 @@ const LoginScreen = ({navigation}) => {
                   onChangeText={handleChange('email')}
                   onBlur={handleBlur('email')}
                   value={values.email}
-                  placeholder="Nhập email..."
                   keyboardType="email-address"
                 />
               </View>
               {errors.email && touched.email && (
-                <Text style={{fontSize: 14, color: 'red', marginLeft: '5%'}}>
+                <Text style={{fontSize: 14, color: 'red', marginLeft: '10%'}}>
                   {errors.email}
                 </Text>
               )}
               <View>
                 <Text style={styles.text}>Mật khẩu</Text>
                 <View style={{flexDirection: 'row'}}>
-                  <View style={{marginTop: 20, marginLeft: 15}}>
-                    <FontAwesome name="user-o" color="#05375a" size={20} />
+                  <View style={{marginTop: 15, marginLeft: 15, justifyContent:'center', alignItems:'center'}}>
+                    <FontAwesome name="lock" color="#05375a" size={24} />
                   </View>
 
                   <PasswordInputText
@@ -101,12 +100,12 @@ const LoginScreen = ({navigation}) => {
                     value={values.password}
                     placeholder="Nhập mật khẩu..."
                     secureTextEntry={true}
-                    label=""
+                    label=''
                   />
                 </View>
 
                 {errors.password && touched.password && (
-                  <Text style={{fontSize: 14, color: 'red', marginLeft: '5%'}}>
+                  <Text style={{fontSize: 14, color: 'red', marginLeft: '10%'}}>
                     {errors.password}
                   </Text>
                 )}

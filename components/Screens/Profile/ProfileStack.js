@@ -12,6 +12,9 @@ import IconAddProductScreen from './admManager/IconAddProductScreen';
 import AddProductStack from './admManager/AddProductStack';
 import AddProduct from './admManager/AddProduct';
 import ViewPhotoScreen from './ViewPhoto';
+import IconAddUserScreen from './admManager/IconAddUserScreen';
+import UserStack from './admManager/UserStack';
+import AddUserScreen from './admManager/AddUserScreen';
 
 
 const ProfileStack = createStackNavigator();
@@ -92,10 +95,27 @@ const ProfileStackScreen = () => (
         name="UserManager"
         component={UserManagerScreen}
         options={{
+          headerRight: ()=> <IconAddUserScreen/>,
           title: 'Quản lý người dùng',
           headerTitleAlign: 'center',
       }}/>
-    
+
+    <ProfileStack.Screen
+        name="UserStack"
+        component={UserStack}
+        options={{
+          headerTitleAlign: 'center',
+          headerShown: false,
+      }}/>
+
+      <ProfileStack.Screen
+        name="AddUser"
+        component={AddUserScreen}
+        options={{
+          title: 'Thêm người dùng',
+          headerTitleAlign: 'center',
+      }}/>
+
     <ProfileStack.Screen
         name="AddProductStack"
         component={AddProductStack}
@@ -112,6 +132,7 @@ const ProfileStackScreen = () => (
           headerTitleAlign: 'center',
           headerShown: true,
       }}/>
+
       <ProfileStack.Screen
         name="ViewPhoto"
         component={ViewPhotoScreen}

@@ -4,7 +4,6 @@ import auth from '@react-native-firebase/auth';
 import { AuthContext } from './AuthProvider';
 
 import AuthStack from './AuthStack';
-import AppStack from './AppStack';
 import TabScreen from './TabScreen';
 
 const Routes = () => {

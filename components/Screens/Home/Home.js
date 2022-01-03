@@ -12,7 +12,7 @@ const HomeScreen = () => {
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
     LogBox.ignoreLogs(['If you want to use Reanimated 2']);
-    LogBox.ignoreLogs(['Can'+'t perform a React state update on an unmounted component.']);
+    
     
   }, [])
 

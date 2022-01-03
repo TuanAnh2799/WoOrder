@@ -13,6 +13,7 @@ import {
   TextInput,
   Alert,
   ToastAndroid,
+  LogBox,
 } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import {styles} from './styles';
@@ -58,15 +59,15 @@ const listTab = [
 
 import deleteIcon from '../../../../img/Delete.png';
 
-const deviceWitdh = Dimensions.get('window').width;
-const deviceHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 function ListProduct() {
 
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingUpdate, setIsLoadUpdate] = useState(true);
+  const [isLoadingUpdate, setIsLoadUpdate] = useState(false);
   const [statusType, setStatusType] = useState(0);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -117,6 +118,7 @@ function ListProduct() {
         setProducts(productss);
         setDataList(productss);
       });
+    LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
     return () => subscriber();
   }, []);
 
@@ -138,8 +140,19 @@ function ListProduct() {
     setStatusType(getType);
   };
 
-  const updateProduct =async(name,price,color,info)=>{
+  const LoadingScreen =()=> (
 
+    <View style={{backgroundColor:'#1c1c1c1c', width:windowWidth, height:windowHeight, justifyContent:'center',}}>
+      <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
+         <ActivityIndicator color='green' size={40} style={{marginTop: 10}} />
+         <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Đang thay đổi...</Text>
+         <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Xin vui lòng chờ trong giây lát</Text>
+       </View>
+    </View>
+  )
+
+  const updateProduct =async(name,price,color,info)=>{
+    setIsLoadUpdate(true);
     let colorSP = await chuanhoa(color);
     let listColor = colorSP.trim().split(' ');
 
@@ -166,7 +179,7 @@ function ListProduct() {
     else {
       listSize = [];
     }
-    console.log('list size:',listSize);
+
     firestore()
       .collection('Products')
       .doc(id)
@@ -181,6 +194,7 @@ function ListProduct() {
       })
       .then(() => {
         console.log('Product update!');
+        setIsLoadUpdate(false);
         ToastAndroid.show(
           'Sửa thành công!.',
           ToastAndroid.SHORT,
@@ -367,6 +381,7 @@ function ListProduct() {
 
   return (
     <SafeAreaView>
+      
       {isLoading ? (
         <View style={{flex: 1, justifyContent: 'center', marginTop: '90%'}}>
           <ActivityIndicator size="large" color={Colors.blue500} />
@@ -428,6 +443,9 @@ function ListProduct() {
                           isValid,
                         }) => (
                       <View style={{flex: 1}}>
+                      {
+                        isLoadingUpdate == true ? <LoadingScreen/> : null
+                      }
                         <View
                           style={{
                             flex: 0.7,
