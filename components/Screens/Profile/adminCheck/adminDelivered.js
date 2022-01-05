@@ -5,18 +5,14 @@ import {
   Text,
   View,
   Image,
-  FlatList,
-  Button,
   ScrollView,
   ImageBackground,
-  Alert,
-  ToastAndroid,
   RefreshControl
 } from 'react-native';
 import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator, Colors } from 'react-native-paper';
-
+import formatCash from '../../API/ConvertPrice';
 
 
 export default function AdminDeliveredScreen({navigation}) {
@@ -74,14 +70,6 @@ export default function AdminDeliveredScreen({navigation}) {
 
   // Unsubscribe from events when no longer in use
   return () => subscriber();
-  }
-
-
-  function formatCash(str) {
-    var money = ''+str;
-    return money.split('').reverse().reduce((prev, next, index) => {
-      return ((index % 3) ? next : (next + '.')) + prev
-    })
   }
 
   function wait(time){
@@ -242,7 +230,7 @@ const onRefresh = React.useCallback(() => {
       ) : (
         <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>
           <ImageBackground style={{width: '100%', height: '100%', marginRight: 10, justifyContent:'center'}} source={{uri: 'https://i.pinimg.com/474x/94/57/8b/94578b8106aae0097af26d35af55c1b2.jpg'}}>
-            <Text style={{textAlign:'center', marginTop: 170, fontSize: 18,fontWeight:'600'}}>CHƯA CÓ ĐƠN HÀNG NÀO</Text>
+            <Text style={{textAlign:'center', marginTop: 170, fontSize: 17,fontWeight:'600'}}>CHƯA CÓ ĐƠN HÀNG NÀO</Text>
           </ImageBackground>
         </View>
       )}

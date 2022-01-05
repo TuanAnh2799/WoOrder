@@ -17,15 +17,15 @@ import {Picker} from '@react-native-picker/picker';
 import {styles} from './styles';
 import { AuthContext } from '../../Routes/AuthProvider';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { useSelector } from 'react-redux';
+import formatCash from '../API/ConvertPrice';
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
 function DetailsScreen({route, navigation, AddCart}) {
 
-  const {user} = useContext(AuthContext);
-
+  const userid = useSelector(state => state.userState.User);
   const id = route.params.product.id;
   const name = route.params.product.name;
   const color = route.params.product.color;
@@ -64,16 +64,6 @@ function DetailsScreen({route, navigation, AddCart}) {
       }
     }
   };
-
-  function formatCash(str) {
-    var money = '' + str;
-    return money
-      .split('')
-      .reverse()
-      .reduce((prev, next, index) => {
-        return (index % 3 ? next : next + '.') + prev;
-      });
-  }
 
   return (
     <SafeAreaView>
@@ -177,7 +167,7 @@ function DetailsScreen({route, navigation, AddCart}) {
             <View style={{marginTop: 30}}>
               <View style={{width: '60%', marginLeft: '20%'}}>
               {
-                user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2'? (
+                userid == '6d1OQZfciSaMqv3azVASuPtQnaV2'? (
                   <View></View>) : (
                     <Button
                     title="Mua ngay"

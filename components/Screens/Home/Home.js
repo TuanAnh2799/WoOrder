@@ -7,6 +7,7 @@ import ProductsScreen from '../ListProducts/Products';
 import SlideScreen from '../Slide/slide';
 
 
+
 const HomeScreen = () => {
 
   useEffect(() => {
@@ -15,7 +16,7 @@ const HomeScreen = () => {
     
     
   }, [])
-
+  
   return (
     <SafeAreaView style={{flex: 1}}>
       <View >

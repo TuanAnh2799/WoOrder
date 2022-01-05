@@ -2,11 +2,13 @@ import React, {useState, useEffect, useContext} from 'react';
 import { StyleSheet, Text, View ,ImageBackground, Image, Alert,ScrollView, SafeAreaView,Button,ToastAndroid, RefreshControl} from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator, Colors } from 'react-native-paper';
-import { AuthContext } from '../../../Routes/AuthProvider';
+import { useSelector } from 'react-redux';
+import formatCash from '../../API/ConvertPrice';
+
 
 export default function AdminCancelOrdersScreen() {
 
-  const {user} = useContext(AuthContext);
+  const userid = useSelector(state => state.userState.User);
 
   const [myOrder, setMyOrder] = useState([]);
   const [isLoading,setLoading] = useState(true);
@@ -22,7 +24,7 @@ export default function AdminCancelOrdersScreen() {
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${user.uid}`)
+      .where('orderBy', '==', `${userid}`)
       .where('orderStatus', '==', 'Đã hủy đơn hàng')
       .get()
       .then(querySnapshot => {
@@ -78,12 +80,6 @@ const onRefresh = React.useCallback(() => {
   })
 },[isRefreshing])
 
-  function formatCash(str) {
-    var money = ''+str;
-    return money.split('').reverse().reduce((prev, next, index) => {
-      return ((index % 3) ? next : (next + '.')) + prev
-    })
-  }
 
   return (
     <SafeAreaView style={{flex: 1}}>

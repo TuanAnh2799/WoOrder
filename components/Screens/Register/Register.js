@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Button,
   StyleSheet,
@@ -9,22 +9,90 @@ import {
   Platform,
   StatusBar,
   LogBox,
+  Dimensions,
+  ToastAndroid,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {AuthContext} from '../../Routes/AuthProvider';
+//import {AuthContext} from '../../Routes/AuthProvider';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import Feather from 'react-native-vector-icons/Feather';
 import PasswordInputText from 'react-native-hide-show-password-input';
+import {connect} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {setUserRegister} from '../../Store/action';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import { ActivityIndicator } from 'react-native-paper';
 
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 LogBox.ignoreLogs(['Animated: `useNativeDriver` was not specified.']);
 
-export default function RegisterScreen({navigation}) {
-  const {register} = useContext(AuthContext);
+function RegisterScreen({navigation,setUserRegister}) {
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
+
+  const RegisterAuth =async(values)=> {
+    setIsLoading(true);
+    try {
+      
+     var userIfo = await auth().createUserWithEmailAndPassword(values.email,values.password);
+
+      var userID = userIfo.user;
+      console.log('userID:',userID.uid);
+      firestore()
+      .collection('Users')
+      .doc(userID.uid)
+      .set({
+        id: userID.uid,
+        fullname: values.fullname,
+        email: values.email,
+        phone: parseInt(values.phoneNumber),
+        favorites: [],
+        
+      })
+      .then(() => {
+        //add UserAddress
+        firestore()
+        .collection('UserAddress')
+        .doc(userID.uid)
+        .set({
+          addressID: userID.uid,
+          fullname: values.fullname,
+          email: values.email,
+          phone: parseInt(values.phoneNumber),
+          isAdmin: false,
+          avatar: 'https://firebasestorage.googleapis.com/v0/b/orderapp-652bc.appspot.com/o/user.png?alt=media&token=4a320416-9e29-41a6-9b47-fddadad728bb',
+          address: '',
+          
+        })
+        .then(() => {
+          console.log('Added User Address!');
+          setUserRegister(userID.uid);
+          ToastAndroid.show('Đăng ký thành công.',ToastAndroid.SHORT);
+          setIsLoading(false);
+        });
+      });
+      
+
+    } catch (error) {
+        setIsLoading(false);
+      if (error.code === 'auth/email-already-in-use') {
+        ToastAndroid.show('Tài khoản đã tồn tại.',ToastAndroid.SHORT);
+        console.log('That email address is already in use!');
+      }
+
+      if (error.code === 'auth/invalid-email') {
+        ToastAndroid.show('Email không hợp lệ.',ToastAndroid.SHORT);
+        console.log('That email address is invalid!');
+      }
+      //ToastAndroid.show('Đăng ký thất bại.',ToastAndroid.SHORT);
+    } 
+}
 
   const registerValidSchema = Yup.object().shape({
     fullname: Yup.string()
@@ -51,8 +119,22 @@ export default function RegisterScreen({navigation}) {
       .required('Bạn chưa nhập lại mật khẩu'),
   });
   
+  const LoadingScreen =()=> (
+
+    <View style={{backgroundColor:'#1c1c1c1c', width:windowWidth, height:'100%', justifyContent:'center',}}>
+      <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
+         <ActivityIndicator color='white' size={40} style={{marginTop: 10}} />
+         <Text style={{textAlign:'center', marginTop: 10, color:'white'}}>Đang thực hiện...</Text>
+         <Text style={{textAlign:'center', marginTop: 10, color:'white'}}>Xin vui lòng chờ trong giây lát</Text>
+       </View>
+    </View>
+  )
+
   return (
     <View style={styles.container}>
+    {
+      isLoading == true ? <LoadingScreen /> : null
+    }
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
       <View style={styles.header}>
         <Text style={styles.text_header}>Đăng ký ngay!</Text>
@@ -195,14 +277,8 @@ export default function RegisterScreen({navigation}) {
                   disabled={!isValid}
                   title="Đăng ký"
                   onPress={() => {
-                    setIsLoading(true);
-                    register(
-                      values.fullname,
-                      values.email,
-                      values.phoneNumber,
-                      values.password,
-                      false,
-                    );
+                    //Register(values.fullname, values.email, values.password, values.phoneNumber);
+                    RegisterAuth(values);
                   }}/>
               </View>
                 <Text style={{marginTop: 5, fontSize: 16}}>Đã có tài khoản?</Text>
@@ -293,3 +369,11 @@ const styles = StyleSheet.create({
     width: '92%',
   },
 });
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setUserRegister: user => dispatch(setUserRegister(user)),
+  };
+}
+
+export default connect(mapDispatchToProps, {setUserRegister})(RegisterScreen);

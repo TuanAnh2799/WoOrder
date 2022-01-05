@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {styles} from './styles';
-import {AddCart, AddToFavorite} from '../../Store/action';
+import {AddCart, AddToFavorite, setProduct} from '../../Store/action';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors, TouchableRipple, ActivityIndicator} from 'react-native-paper';
@@ -18,6 +18,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import Share from 'react-native-share';
 import {useDispatch, useSelector} from 'react-redux';
 import formatCash from '../API/ConvertPrice';
+
 
 const listTab = [
   {
@@ -39,7 +40,7 @@ const listTab = [
   },
 ];
 
-function ProductScreen({AddToFavorite}) {
+function ProductScreen({AddToFavorite, setProduct}) {
   
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
@@ -65,6 +66,7 @@ function ProductScreen({AddToFavorite}) {
         setIsLoading(false);
         setProducts(productss);
         setDataList(productss);
+        setProduct(productss);
       });
     
     return () => subscriber();
@@ -277,6 +279,7 @@ function ProductScreen({AddToFavorite}) {
 }
 const mapDispatchToProps = dispatch => ({
   AddToFavorite: item => dispatch(AddToFavorite(item)),
+  setProduct: item => dispatch(setProduct(item)),
 });
 
-export default connect(mapDispatchToProps, {AddToFavorite})(ProductScreen);
+export default connect(mapDispatchToProps, {AddToFavorite, setProduct})(ProductScreen);

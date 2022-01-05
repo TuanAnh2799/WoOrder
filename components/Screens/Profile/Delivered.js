@@ -15,15 +15,15 @@ import {
 } from 'react-native';
 import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../../Routes/AuthProvider';
 import { ActivityIndicator, Colors } from 'react-native-paper';
+import formatCash from '../API/ConvertPrice';
+import {useSelector } from 'react-redux';
 
 
 
 export default function DeliveredScreen({navigation}) {
-
-  const {user} = useContext(AuthContext);
-
+  
+  const userid = useSelector(state => state.userState.User);
   const [myOrder, setMyOrder] = useState([]);
   const [isLoading,setLoading] = useState(true);
   const [isRefreshing,setRefreshing] = useState(false);
@@ -37,7 +37,7 @@ export default function DeliveredScreen({navigation}) {
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${user.uid}`)
+      .where('orderBy', '==', `${userid}`)
       .where('orderStatus', '==', 'Đã giao hàng')
       .get()
       .then(querySnapshot => {
@@ -58,12 +58,12 @@ export default function DeliveredScreen({navigation}) {
     return () => subscriber();
   }
 
-  function formatCash(str) {
-    var money = ''+str;
-    return money.split('').reverse().reduce((prev, next, index) => {
-      return ((index % 3) ? next : (next + '.')) + prev
-    })
-  }
+  // function formatCash(str) {
+  //   var money = ''+str;
+  //   return money.split('').reverse().reduce((prev, next, index) => {
+  //     return ((index % 3) ? next : (next + '.')) + prev
+  //   })
+  // }
 
   function wait(time){
     return new Promise(resolve => {

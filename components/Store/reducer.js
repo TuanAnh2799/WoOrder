@@ -1,10 +1,6 @@
-import {GET_NUMBER_CART,ADD_CART,ADD_FAVORITE, DECREASE_QUANTITY, INCREASE_QUANTITY, DELETE_CART, CLEAR_FAVORITE,RESET_STORE} from  './action';
+import {GET_NUMBER_CART,ADD_CART,ADD_FAVORITE, DECREASE_QUANTITY, INCREASE_QUANTITY, DELETE_CART,
+     CLEAR_FAVORITE, RESET_STORE, SET_USER_LOGIN, SET_USER_REGISTER, SET_USER_LOGOUT, SET_PRODUCT, DELETE_PRODUCT } from  './action';
 import { combineReducers } from 'redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import firestore from '@react-native-firebase/firestore';
-import { useContext } from 'react';
-import { AuthContext } from '../Routes/AuthProvider';
-import { addToFav } from '../Screens/API/addToFav';
 import { ToastAndroid } from 'react-native';
 
 
@@ -12,6 +8,70 @@ import { ToastAndroid } from 'react-native';
 const initProduct = {
     numberCart: 0,
     Carts:[],
+}
+
+const initUser = {
+    User : null,
+}
+
+const initListProduct = {
+    Product : null,
+}
+
+function reducerProduct( state = initListProduct, action){
+    
+    switch(action.type){
+
+        case SET_PRODUCT:
+            let product = action.payload
+            //console.log('Product bên reducer nhận đc:',product);
+            return {
+                Product: product
+            }  
+        case DELETE_PRODUCT:
+            let id = action.payload
+            if(state.Product != null)
+            {
+                return{
+                    ...state,
+                    Product: state.Product.filter(item =>{
+                        return item.id !== id
+                    })
+                }
+            }
+            return {
+                ...state
+            } 
+        default:
+            return state;
+    }
+}
+
+function reducerAuth( state = initUser, action){
+    
+    switch(action.type){
+
+        case SET_USER_LOGIN:
+            let user = action.payload
+            console.log('data bên reducer nhận đc:',user);
+            return {
+                User: user
+            }  
+
+        case SET_USER_REGISTER:
+            let userRegister = action.payload
+            console.log('register bên reducer nhận đc:',userRegister)
+            return {
+                User: userRegister
+            }
+            
+        case SET_USER_LOGOUT:
+            return {
+                User: null
+            }
+        default:
+            return state;
+    }
 }
 
 const initFav = {
@@ -45,8 +105,10 @@ const favoriteReducer = (state =initFav, action) => {
             
         }
         //return state.concat(action.payload)
-      case CLEAR_FAVORITE:
-        return initFav;
+    case CLEAR_FAVORITE:
+        return {
+            favoriteProduct:[],
+        }
     default:
         
         return state;
@@ -147,9 +209,10 @@ function reducerCart( state = initProduct, action){
 
 
 export default  combineReducers({
-    //history: historicNames,
+    userState: reducerAuth,
     cartStore: reducerCart,
     favourites: favoriteReducer,
+    productStore: reducerProduct,
 
   })
 

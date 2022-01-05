@@ -16,6 +16,7 @@ import {
 import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
 import {ActivityIndicator, Colors} from 'react-native-paper';
+import formatCash from '../../API/ConvertPrice';
 //import {getListOrder,myOrder} from '../../API/getListOrder';
 
 
@@ -57,16 +58,6 @@ export default function AdminOrderScreen({navigation}) {
     return () => subscriber();
   };
   
-
-  function formatCash(str) {
-    var money = '' + str;
-    return money
-      .split('')
-      .reverse()
-      .reduce((prev, next, index) => {
-        return (index % 3 ? next : next + '.') + prev;
-      });
-  }
 
     const  UserAddress = async()=> {
       const subscriber = await firestore()
@@ -351,7 +342,7 @@ export default function AdminOrderScreen({navigation}) {
                   style={{
                     textAlign: 'center',
                     marginTop: 170,
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: '600',
                   }}>
                   CHƯA CÓ ĐƠN HÀNG NÀO

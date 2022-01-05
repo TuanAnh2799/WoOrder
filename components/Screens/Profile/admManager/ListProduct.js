@@ -30,12 +30,13 @@ import {
   MenuTrigger,
 } from 'react-native-popup-menu';
 import formatCash from '../../API/ConvertPrice';
-import deleteProduct from '../../API/deleteProduct';
+import deleteProducts from '../../API/deleteProduct';
 import chuanhoa from '../../API/convertString';
 import {Checkbox} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-
+import { useSelector } from 'react-redux';
+import {connect} from 'react-redux';
 
 const listTab = [
   {
@@ -58,14 +59,16 @@ const listTab = [
 ];
 
 import deleteIcon from '../../../../img/Delete.png';
+import { deleteProduct } from '../../../Store/action';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-function ListProduct() {
+function ListProduct({deleteProduct}) {
 
+  const products = useSelector(state => state.productStore.Product);
   const navigation = useNavigation();
-  const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingUpdate, setIsLoadUpdate] = useState(false);
   const [statusType, setStatusType] = useState(0);
@@ -101,25 +104,11 @@ function ListProduct() {
     
   }
 
-  useEffect(async () => {
-    const subscriber = await firestore()
-      .collection('Products')
-      .onSnapshot(querySnapshot => {
-        const productss = [];
+  useEffect(() => {
 
-        querySnapshot.forEach(documentSnapshot => {
-          productss.push({
-            ...documentSnapshot.data(),
-            key: documentSnapshot.id,
-          });
-        });
-
-        setIsLoading(false);
-        setProducts(productss);
-        setDataList(productss);
-      });
-    LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
-    return () => subscriber();
+      setIsLoading(false);
+      setDataList(products);
+      LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
   }, []);
 
 
@@ -792,7 +781,8 @@ function ListProduct() {
                                 {
                                   text: 'Đồng ý',
                                   onPress: () => {
-                                    deleteProduct(item.id,item.url);
+                                    deleteProducts(item.id,item.url); // xóa bên firbase
+                                    deleteProduct(item.id); // xóa bên store
                                   },
                                 },
                                 {
@@ -820,4 +810,11 @@ function ListProduct() {
   );
 }
 
-export default ListProduct;
+function mapDispatchToProps(dispatch) {
+  return {
+    deleteProduct: id => dispatch(deleteProduct(id)),
+  };
+}
+
+export default connect(mapDispatchToProps, {deleteProduct})(ListProduct);
+

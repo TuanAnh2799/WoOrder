@@ -1,5 +1,5 @@
 import React, {createContext, useState,useContext} from 'react';
-import auth from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import { Alert, ToastAndroid } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
@@ -44,7 +44,7 @@ export const AuthProvider = ({children}) => {
             try {
               
              var userIfo = await auth().createUserWithEmailAndPassword(email,password);
-
+              console.log('thông tin đăng ký:',userIfo);
              ToastAndroid.show('Đăng ký thành công.',ToastAndroid.SHORT);
               var userID = userIfo.user;
               firestore()

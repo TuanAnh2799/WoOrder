@@ -2,7 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { ToastAndroid } from 'react-native';
 
-const deleteProduct = (id,urlIMG)=> {
+const deleteProducts = (id,urlIMG)=> {
     urlIMG.map(e => {
       let ref = storage().refFromURL(e);
       storage().ref(ref.fullPath).delete().catch(err => console.log(err));
@@ -16,4 +16,4 @@ const deleteProduct = (id,urlIMG)=> {
     });
 
   }
-  export default deleteProduct;
+  export default deleteProducts;

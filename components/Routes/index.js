@@ -11,11 +11,17 @@ const Providers = () => {
   return (
     <StoreProvider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <AuthProvider>
           <Routes />
-        </AuthProvider>
       </PersistGate>
     </StoreProvider>
+
+    // <StoreProvider store={store}>
+    //   <PersistGate loading={null} persistor={persistor}>
+    //     <AuthProvider>
+    //       <Routes />
+    //     </AuthProvider>
+    //   </PersistGate>
+    // </StoreProvider>
     
   );
 }

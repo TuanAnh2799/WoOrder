@@ -15,13 +15,13 @@ import {
 } from 'react-native';
 import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../../Routes/AuthProvider';
 import { ActivityIndicator, Colors } from 'react-native-paper';
-
+import formatCash from '../API/ConvertPrice';
+import { useSelector } from 'react-redux';
 
 
 export default function MyOrderScreen({navigation}) {
-  const {user} = useContext(AuthContext);
+  const userid = useSelector(state => state.userState.User);
 
   const [myOrder, setMyOrder] = useState([]);
   const [isLoading,setLoading] = useState(true);
@@ -36,7 +36,7 @@ export default function MyOrderScreen({navigation}) {
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${user.uid}`)
+      .where('orderBy', '==', `${userid}`)
       .where('orderStatus', '==', 'Đang chờ xử lý')
       .get()
       .then(querySnapshot => {
@@ -55,13 +55,6 @@ export default function MyOrderScreen({navigation}) {
 
     // Unsubscribe from events when no longer in use
     return () => subscriber();
-  }
-
-  function formatCash(str) {
-    var money = ''+str;
-    return money.split('').reverse().reduce((prev, next, index) => {
-      return ((index % 3) ? next : (next + '.')) + prev
-    })
   }
 
   function wait(time){

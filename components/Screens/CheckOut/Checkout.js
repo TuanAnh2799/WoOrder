@@ -28,6 +28,7 @@ import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Caption, Title, Colors} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import formatCash from '../API/ConvertPrice';
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -42,7 +43,7 @@ function CheckOutScreen({
   let ListCart = [];
   let TotalCart = 0;
 
-  const {user} = useContext(AuthContext);
+  const userid = useSelector(state => state.userState.User);
   const [userInfo, setUserInfo] = useState([]);
 
   const [modalVisibleAddress, setModalAddress] = useState(false);
@@ -58,7 +59,7 @@ function CheckOutScreen({
   useEffect(() => {
     const subscriber = firestore()
       .collection('UserAddress')
-      .doc(user.uid)
+      .doc(userid)
       .onSnapshot(documentSnapshot => {
         //console.log('User data: ', documentSnapshot.data());
         setUserInfo(documentSnapshot.data());
@@ -78,15 +79,6 @@ function CheckOutScreen({
     return Number(price * tonggia).toLocaleString('en-US');
   }
 
-  function formatCash(str) {
-    var money = '' + str;
-    return money
-      .split('')
-      .reverse()
-      .reduce((prev, next, index) => {
-        return (index % 3 ? next : next + '.') + prev;
-      });
-  }
 
   function shipCost() {
     const ship = Number(TotalCart) * 0.02;
@@ -363,7 +355,7 @@ function CheckOutScreen({
                                       try {
                                         firestore()
                                           .collection('UserAddress')
-                                          .doc(user.uid)
+                                          .doc(userid)
                                           .update({
                                             address: updateAddress,
                                           })
@@ -491,7 +483,7 @@ function CheckOutScreen({
                               try {
                                 firestore()
                                   .collection('UserAddress')
-                                  .doc(user.uid)
+                                  .doc(userid)
                                   .update({
                                     phone: updatePhone,
                                   })
@@ -613,8 +605,8 @@ function CheckOutScreen({
                       const newOrder = {
                         id: Id,
 
-                        orderBy: user.uid,
-                        addressID: user.uid,
+                        orderBy: userid,
+                        addressID: userid,
                         total: totalCash,
                         dateTime: datetime,
                         orderStatus: 'Đang chờ xử lý',

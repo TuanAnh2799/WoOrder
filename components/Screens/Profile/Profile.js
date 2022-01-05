@@ -10,26 +10,31 @@ import {
 } from 'react-native';
 import {Avatar, Title, Caption, TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {AuthContext} from '../../Routes/AuthProvider';
+//import {AuthContext} from '../../Routes/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
-import {resetStore, ClearFavorite} from '../../Store/action';
+import {setUserLogout,resetStore,clearFavorite} from '../../Store/action';
 import {connect} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 
-function ProfileScreen({ resetStore, ClearFavorite}) {
 
+function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
+
+  const userid = useSelector(state => state.userState.User);
+  console.log('profile - userid:',userid);
   const navigation = useNavigation();
-  const {logout, user} = useContext(AuthContext);
+  //const {logout, user} = useContext(AuthContext);
   const [userInfo, setUserInfo] = useState([]);
   const [myOrder, setMyOrder] = useState(0);
   const [myOrder2, setMyOrder2] = useState(0);
   const [checkOrder, setCheckOrder] = useState([]);
 
+
   useEffect(() => {
     const subscriber = firestore()
       .collection('UserAddress')
-      .doc(user.uid)
+      .doc(userid)
       .onSnapshot(documentSnapshot => {
         //console.log('User data: ', documentSnapshot.data());
         setUserInfo(documentSnapshot.data());
@@ -38,7 +43,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
     getData();
     getDataDaDuyet();
     
-    if (user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2') {
+    if (userid == '6d1OQZfciSaMqv3azVASuPtQnaV2') {
       return adminGetData();
     }
     // Stop listening for updates when no longer required
@@ -49,7 +54,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${user.uid}`)
+      .where('orderBy', '==', `${userid}`)
       .where('orderStatus', '==', 'Đang chờ xử lý')
       .get()
       .then(querySnapshot => {
@@ -71,7 +76,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${user.uid}`)
+      .where('orderBy', '==', `${userid}`)
       .where('orderStatus', '==','Đã duyệt')
       .get()
       .then(querySnapshot => {
@@ -143,7 +148,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
             <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>
               {userInfo?.fullname}
             </Title>
-            {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
+            {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
               <Caption style={styles.caption}>@Admin</Caption>
             ) : (
               <Caption style={styles.caption}>@Người dùng</Caption>
@@ -192,7 +197,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
           <Caption style={{fontSize: 17}}>Ví tiền</Caption>
         </View>
 
-        {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
+        {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
           <TouchableNativeFeedback onPress={()=> navigation.navigate('CheckOrder')}>
             <View style={styles.infoBox}>
               {checkOrder.length > 0 ? (
@@ -220,7 +225,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
 
       <View style={styles.menuWrapper}>
       
-      {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
+      {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
           <TouchableRipple onPress={() => navigation.navigate("ProductManager")}>
             <View style={styles.menuItem}>
               <Icon name="database-plus" color="#FF6347" size={25} />
@@ -230,7 +235,7 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
         )
       }
 
-      {user.uid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
+      {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
           <TouchableRipple onPress={() => navigation.navigate("UserManager")}>
             <View style={styles.menuItem}>
               <Icon name="account-details" color="#FF6347" size={25} />
@@ -273,9 +278,9 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
               {
                 text: 'Đồng ý',
                 onPress: () => {
-                  logout();
                   resetStore();
-                  ClearFavorite();
+                  clearFavorite();
+                  setUserLogout();
                 },
               },
               {
@@ -305,16 +310,16 @@ function ProfileScreen({ resetStore, ClearFavorite}) {
   );
 }
 
-const mapDispatchToProps = dispatch => {
+function mapDispatchToProps(dispatch) {
   return {
+    setUserLogout: () => dispatch(setUserLogout()),
     resetStore: () => dispatch(resetStore()),
-    ClearFavorite: () => dispatch(ClearFavorite()),
+    clearFavorite: () => dispatch(clearFavorite()),
   };
-};
+}
 
-export default connect(mapDispatchToProps, {resetStore, ClearFavorite})(
-  ProfileScreen,
-);
+export default connect(mapDispatchToProps, {setUserLogout,resetStore,clearFavorite})(ProfileScreen);
+
 
 const styles = StyleSheet.create({
   container: {

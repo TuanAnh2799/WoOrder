@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,19 +8,59 @@ import {
   TextInput,
   Image,
   StatusBar,
+  ToastAndroid,
+  Dimensions,
 } from 'react-native';
 import Banner from '../../../img/banner.jpg';
-import {AuthContext} from '../../Routes/AuthProvider';
+//import {AuthContext} from '../../Routes/AuthProvider';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import * as Animatable from 'react-native-animatable';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {connect} from 'react-redux';
+import { useSelector } from 'react-redux';
+import {setUserLogin} from '../../Store/action';
+import auth from '@react-native-firebase/auth';
+import { ActivityIndicator } from 'react-native-paper';
 
-const LoginScreen = ({navigation}) => {
-  const {login} = useContext(AuthContext);
-  //const [email, onChangeEmail] = React.useState("");
-  //const [password, onChangePass] = React.useState("");
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
+const LoginScreen = ({navigation,setUserLogin}) => {
+
+  const [isLoading,setIsLoading] = useState(false);
+
+  var user = useSelector(state => state.userState.User);
+
+  console.log("test get data:",isLoading);
+  console.log("User bên login hiện tại:",user);
+
+  const Login =async(email,pass) => {
+    setIsLoading(true);
+    console.log("Thông tin đăng nhập:",email,pass);
+    try {
+      await auth().signInWithEmailAndPassword(email, pass)
+      .then(()=> {
+        auth().onAuthStateChanged((user) => {
+          if (user) {
+            // User logged in already or has just logged in.
+            console.log('get user from firebase:',user.uid);
+            setUserLogin(user.uid);
+          } else {
+            // User not logged in or has just logged out.
+          }
+        });
+          ToastAndroid.show('Đăng nhập thành công.',ToastAndroid.SHORT);   
+      });
+      } catch (e) {
+      {
+        console.log(e);
+        ToastAndroid.show('Tên tài khoản hoặc mật khẩu không chính xác.',ToastAndroid.SHORT);
+      }
+    }
+  }
 
   const loginValidSchema = Yup.object().shape({
     email: Yup.string()
@@ -33,12 +73,26 @@ const LoginScreen = ({navigation}) => {
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/,
         'Mật khẩu phải lớn hơn 5 ký tự, bao gồm viết hoa, viết thường và số.',
-      ), //(?=.*[!@#\$%\^&\*]) bỏ phải nhập ký tự
+      ), //(?=.*[!@#\$%\^&\*]) bỏ phải nhập ký tự #009387#1c1c1c1c
   });
+
+  const LoadingScreen =()=> (
+
+    <View style={{backgroundColor:'#009387', width:windowWidth, height:'100%', justifyContent:'center'}}> 
+      <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
+         <ActivityIndicator color='white' size={40} style={{marginTop: 10}} />
+         <Text style={{textAlign:'center', marginTop: 10, color:'white'}}>Đang đăng nhập...</Text>
+         <Text style={{textAlign:'center', marginTop: 10, color:'white'}}>Vui lòng chờ trong giây lát</Text>
+       </View>
+    </View>
+  )
 
   return (
     <SafeAreaView style={{flex: 1, flexDirection: 'row'}}>
       <StatusBar backgroundColor="#009387" barStyle="light-content" />
+      {
+        isLoading == true ? <LoadingScreen /> : null
+      }
       <Formik
         validationSchema={loginValidSchema}
         initialValues={{email: '', password: ''}}
@@ -54,6 +108,7 @@ const LoginScreen = ({navigation}) => {
           isValid,
         }) => (
           <View style={{flex: 1, height: '100%'}}>
+          
             <View style={styles.bannerWrapp}>
               <Image
                 source={{
@@ -115,7 +170,7 @@ const LoginScreen = ({navigation}) => {
                   <Button
                     title="Đăng nhập"
                     disabled={!isValid}
-                    onPress={() => login(values.email, values.password)}
+                    onPress={() => Login(values.email, values.password)}
                   />
                   <Text
                     style={{padding: 15, fontSize: 17, textAlign: 'center'}}>
@@ -189,4 +244,12 @@ const styles = StyleSheet.create({
     width: '85%',
   },
 });
-export default LoginScreen;
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setUserLogin: user => dispatch(setUserLogin(user)),
+  };
+}
+
+export default connect(mapDispatchToProps, {setUserLogin})(LoginScreen);
+

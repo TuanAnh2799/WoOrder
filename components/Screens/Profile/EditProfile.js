@@ -15,17 +15,18 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import {AuthContext} from '../../Routes/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import {ActivityIndicator} from 'react-native-paper';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
+
 
 const EditProfile = ({navigation}) => {
-  const {user} = useContext(AuthContext);
+
+  const userid = useSelector(state => state.userState.User);
   const [userInfo, setUserInfo] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -50,7 +51,7 @@ const EditProfile = ({navigation}) => {
   useEffect(() => {
     const subscriber = firestore()
       .collection('UserAddress')
-      .doc(user.uid)
+      .doc(userid)
       .onSnapshot(documentSnapshot => {
         //console.log('User data: ', documentSnapshot.data());
         setUserInfo(documentSnapshot.data());
@@ -121,7 +122,7 @@ const EditProfile = ({navigation}) => {
 
     firestore()
       .collection('UserAddress')
-      .doc(user.uid)
+      .doc(userid)
       .update({
         avatar: imageUrl,
       })
@@ -156,7 +157,7 @@ const EditProfile = ({navigation}) => {
     setUploading(true);
     setTransferred(0);
 
-    const storageRef = storage().ref(`Users/${user.uid}/${filename}`);
+    const storageRef = storage().ref(`Users/${userid}/${filename}`);
     const task = storageRef.putFile(uploadUri);
 
     task.on('state_changed', taskSnapshot => {
@@ -388,7 +389,7 @@ const EditProfile = ({navigation}) => {
                     try {
                       firestore()
                         .collection('UserAddress')
-                        .doc(user.uid)
+                        .doc(userid)
                         .update({
                           fullname: values.fullname,
                           phone: values.phonenumber,

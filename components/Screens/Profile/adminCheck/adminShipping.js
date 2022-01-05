@@ -3,6 +3,9 @@ import { StyleSheet, Text, View ,ImageBackground, Image, Alert,ScrollView, SafeA
 import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 
+import formatCash from '../../API/ConvertPrice';
+
+
 export default function AdminShippingScreen() {
 
   const [myOrder, setMyOrder] = useState([]);
@@ -73,13 +76,6 @@ const onRefresh = React.useCallback(() => {
     getData();
   })
 },[isRefreshing])
-
-  function formatCash(str) {
-    var money = ''+str;
-    return money.split('').reverse().reduce((prev, next, index) => {
-      return ((index % 3) ? next : (next + '.')) + prev
-    })
-  }
 
   return (
     <SafeAreaView style={{flex: 1}}>
