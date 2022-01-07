@@ -61,12 +61,13 @@ function ProductScreen({AddToFavorite, setProduct}) {
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
+          setProduct(productss); // truyền data cho store
         });
 
         setIsLoading(false);
         setProducts(productss);
         setDataList(productss);
-        setProduct(productss);
+        
       });
     
     return () => subscriber();

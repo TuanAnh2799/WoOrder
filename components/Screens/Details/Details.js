@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -15,10 +15,12 @@ import {connect} from 'react-redux';
 import {AddCart} from '../../Store/action';
 import {Picker} from '@react-native-picker/picker';
 import {styles} from './styles';
-import { AuthContext } from '../../Routes/AuthProvider';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
 import formatCash from '../API/ConvertPrice';
+import { FlatList } from 'react-native-gesture-handler';
+import firestore from '@react-native-firebase/firestore';
+
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -43,7 +45,30 @@ function DetailsScreen({route, navigation, AddCart}) {
   const [selectedSize, setSelectedSize] = useState(size[0]);
 
   //console.log('chọn màu:',selectedColor);
-  //console.log('chọn size',selectedSize);
+  console.log('Id sản phẩm',id);
+  const [comments, setComments] = useState(null);
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('Comments')
+      .doc(id)
+      .onSnapshot(documentSnapshot => {
+        console.log('User data: ', documentSnapshot.data());
+      });
+      getComments(id);
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
+
+  const getComments=async(id)=> {
+     const cmt = await firestore().collection('Comments').get();
+     setComments(cmt);
+    console.log(cmt);
+    setComments(user)
+  }
+
+console.log('List comment by product:',comments);
+
   const splitInfo = info.split('.');
 
   const closeModal = () => {
@@ -154,14 +179,17 @@ function DetailsScreen({route, navigation, AddCart}) {
                 <View style={{width: '20%'}}>
                   <Text style={{fontSize: 17}}>Chi tiết:</Text>
                 </View>
-                <View style={{width: '80%'}}>
+                
+              </View>
+
+              <View style={{width: '90%', backgroundColor:'green'}}>
                   {splitInfo.map((e, index) => (
                     <Text key={index} style={{fontSize: 16, textAlign: 'left'}}>
                       {e}
                     </Text>
                   ))}
                 </View>
-              </View>
+
             </View>
 
             <View style={{marginTop: 30}}>
@@ -367,8 +395,16 @@ function DetailsScreen({route, navigation, AddCart}) {
                   borderTopRightRadius: 20,
                   borderTopLeftRadius: 20,
                 }}>
-                <View style={{flex: 2}}>
-                  
+                <View style={{flex: 1, backgroundColor:'green'}}>
+
+                  <View style={{flex: 0.5, backgroundColor:'red', justifyContent:'center', alignItems:'center'}}>
+                    <Text style={{fontSize: 17}}>Bình luận</Text>
+                  </View>
+
+                  <View style={{flex: 9.5, backgroundColor:'yellow'}}>
+                    <FlatList/>
+                  </View>
+
                 </View>
               </View>
             </TouchableNativeFeedback>
