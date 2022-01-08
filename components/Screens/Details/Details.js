@@ -90,8 +90,10 @@ function DetailsScreen({route, navigation, AddCart}) {
       });
       getUserInfo();
     return () => subscriber();
-  }, [comments]);
+  }, []);
 
+  console.log('Lặp vô hạn');
+  
   const getUserInfo =()=> {
     firestore()
       .collection('UserAddress')
