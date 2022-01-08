@@ -10,6 +10,10 @@ import {
   Modal,
   Alert,
   TouchableNativeFeedback,
+  TextInput,
+  TouchableWithoutFeedback,
+  ToastAndroid,
+  LogBox,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {AddCart} from '../../Store/action';
@@ -20,10 +24,13 @@ import { useSelector } from 'react-redux';
 import formatCash from '../API/ConvertPrice';
 import { FlatList } from 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
+import Comment from './Comment';
 
 
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
+
+LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
 
 function DetailsScreen({route, navigation, AddCart}) {
 
@@ -43,31 +50,102 @@ function DetailsScreen({route, navigation, AddCart}) {
   const [modalCMT, setModalCMT] = useState(false);
   const [selectedColor, setSelectedColor] = useState(color[0]);
   const [selectedSize, setSelectedSize] = useState(size[0]);
+  const [userInfo, setUserInfo] = useState([]);
+  
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
 
-  //console.log('chọn màu:',selectedColor);
-  console.log('Id sản phẩm',id);
-  const [comments, setComments] = useState(null);
+  const fillterProduct =comments?.filter(e => {
+      return e.idSP == id;
+    })
 
-  useEffect(() => {
-    const subscriber = firestore()
+  const rootComment = fillterProduct?.filter(fillterProduct => {
+      return fillterProduct.parentRoot == '';
+    });
+
+  const listReplyComment = fillterProduct?.filter(fillterProduct => {
+      return fillterProduct.parentRoot !== '';
+    });
+
+  const getReplies =(idComment)=>{
+      return  listReplyComment?.filter(listReplyComment => listReplyComment.parentRoot === idComment)
+      .sort(
+        (a, b) => new Date(a.createAt).getTime() - new Date(b.createAt).getTime()
+      );
+    } 
+
+  useEffect(async () => {
+    const subscriber = await firestore()
       .collection('Comments')
-      .doc(id)
-      .onSnapshot(documentSnapshot => {
-        console.log('User data: ', documentSnapshot.data());
-      });
-      getComments(id);
-    // Stop listening for updates when no longer required
-    return () => subscriber();
-  }, []);
+      .onSnapshot(querySnapshot => {
+        const cmt = [];
 
-  const getComments=async(id)=> {
-     const cmt = await firestore().collection('Comments').get();
-     setComments(cmt);
-    console.log(cmt);
-    setComments(user)
+        querySnapshot.forEach(documentSnapshot => {
+          cmt.push({
+            ...documentSnapshot.data(),
+            //key: documentSnapshot.id,
+          });
+        });
+        setComments(cmt);
+      });
+      getUserInfo();
+    return () => subscriber();
+  }, [comments]);
+
+  const getUserInfo =()=> {
+    firestore()
+      .collection('UserAddress')
+      .doc(userid)
+      .onSnapshot(documentSnapshot => {
+        
+        setUserInfo(documentSnapshot.data());
+      });
   }
 
-console.log('List comment by product:',comments);
+  var ID = function () {
+    return 'TA_' + Math.random().toString(36).substr(2, 5);
+  };
+  
+
+const addComment =()=> {
+  
+  const IdChat = ID();
+  const datetime = new Date();
+  console.log("Data insert: "+IdChat,id,userInfo.fullname,userInfo.avatar,datetime,newComment,userid);
+  try {
+    firestore()
+      .collection('Comments')
+      .doc(IdChat)
+      .set({
+        idComment: IdChat,
+        idSP:id,
+        name: userInfo.fullname,
+        parentRoot: '',
+        avatar: userInfo.avatar,
+        createAt: datetime,
+        comment: newComment,
+        idUser: userid,
+        
+      })
+      .then(() => {
+        setNewComment('');
+        console.log('Comment Added!');
+        ToastAndroid.show(
+          'Thành công!.',
+          ToastAndroid.SHORT,
+        );
+      })
+      .catch(error => {
+        console.log(
+          'Something went wrong with added post to firestore.',
+          error,
+        );
+        ToastAndroid.show('Thêm thất bại!.', ToastAndroid.SHORT);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+}
 
   const splitInfo = info.split('.');
 
@@ -365,9 +443,10 @@ console.log('List comment by product:',comments);
         <Icon name="heart" size={35} color="#000000AA" />
         </View>
         <View style={{marginTop: 15}}>
-        <Icon name="comment" size={35} color="red" onPress={()=>setModalCMT(true)}/>
+        <Icon name="comment" size={35} color="red" onPress={()=>{
+          setModalCMT(true)}}/>
         </View>
-        <Text style={{textAlign:'center', fontSize: 13}}>100</Text>
+        <Text style={{textAlign:'center', fontSize: 13}}>{fillterProduct?.length}</Text>
         <View style={{marginTop: 12}}>
         <Icon name="share" size={35} color="red" />
         </View>
@@ -386,28 +465,78 @@ console.log('List comment by product:',comments);
               backgroundColor: '#000000AA',
               justifyContent: 'flex-end',
             }}>
-            <TouchableNativeFeedback>
+            <TouchableWithoutFeedback>
               <View
                 style={{
                   backgroundColor: '#fff',
                   width: '100%',
-                  height: deviceHeight * 0.7,
+                  height: deviceHeight * 0.65,
                   borderTopRightRadius: 20,
                   borderTopLeftRadius: 20,
                 }}>
-                <View style={{flex: 1, backgroundColor:'green'}}>
+                <View style={{flex: 1}}>
 
-                  <View style={{flex: 0.5, backgroundColor:'red', justifyContent:'center', alignItems:'center'}}>
-                    <Text style={{fontSize: 17}}>Bình luận</Text>
+                  <View style={{flex: 0.5, justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
+                    <View style={{width:'89%',justifyContent:'center', alignItems:'center', marginLeft:'3%'}}>
+                      {fillterProduct?.length > 0 ? 
+                      (<Text style={{fontSize: 14}}>{fillterProduct.length} bình luận</Text>)
+                      : (<Text style={{fontSize: 17}}>Bình luận</Text>)}
+                    </View>
+                    <View style={{width:'8%',justifyContent:'center'}}>
+                      <TouchableWithoutFeedback onPress={()=>setModalCMT(!modalCMT)}>
+                        <Text style={{textAlign:'left', fontSize: 17, color:'red'}}>X</Text>
+                      </TouchableWithoutFeedback>
+                      
+                    </View>
                   </View>
 
-                  <View style={{flex: 9.5, backgroundColor:'yellow'}}>
-                    <FlatList/>
+                  <View style={{flex: 8.5}}>
+                  {fillterProduct?.length <= 0 ? 
+                  (<View style={{flex: 1,justifyContent:'center', alignItems:'center'}}>
+                    <View style={{justifyContent:'center', alignItems:'center'}}>
+                      <Text>Chưa có bình luận nào</Text>
+                      <Text>Hãy là người đầu tiên bình luận cho sản phẩm này</Text>
+                    </View>
+                  </View>)
+                  : 
+                  (<View>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                      {
+                        rootComment.map((rootComment) => (
+                          <Comment key={rootComment.idComment} comment={rootComment} replies={getReplies(rootComment.idComment)}/>
+                        ))
+                      }
+
+                    </ScrollView>
+                    
+                  </View>)}
+                  </View>
+
+                  <View style={{flex: 1.2,flexDirection:'row',alignItems:'center'}}>
+                    <View style={{width: '83%', height:'70%', borderColor:'black', borderWidth: 0.5, marginLeft:'2%', borderRadius: 20, alignContent:'center'}}>
+                      <View>
+                        <TextInput placeholder='Hãy để lại bình luận của bạn...'
+                          value={newComment}
+                          onChangeText={(text) => setNewComment(text)}
+                        />
+                      </View>
+                    </View>
+                    <View style={{width: '15%', height:'90%',justifyContent:'center', alignItems:'center'}}>
+                      <Icon name="send" size={35} color="blue" onPress={()=>{
+                        if(newComment !== '')
+                        {
+                          addComment();
+                        }
+                        else {
+                          console.log('Không add đc hihi');
+                        }
+                      }}/>
+                    </View>
                   </View>
 
                 </View>
               </View>
-            </TouchableNativeFeedback>
+            </TouchableWithoutFeedback>
           </View>
         </TouchableNativeFeedback>
       </Modal>
