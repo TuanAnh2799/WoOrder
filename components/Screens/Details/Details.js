@@ -25,6 +25,7 @@ import formatCash from '../API/ConvertPrice';
 import { FlatList } from 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import Comment from './Comment';
+import FormComment from './CommentForm';
 
 
 const deviceWitdh = Dimensions.get('window').width;
@@ -54,6 +55,7 @@ function DetailsScreen({route, navigation, AddCart}) {
   
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [activeComment, setActiveComment] = useState(null)
 
   const fillterProduct =comments?.filter(e => {
       return e.idSP == id;
@@ -92,7 +94,6 @@ function DetailsScreen({route, navigation, AddCart}) {
     return () => subscriber();
   }, []);
 
-  console.log('Lặp vô hạn');
   
   const getUserInfo =()=> {
     firestore()
@@ -149,6 +150,68 @@ const addComment =()=> {
   }
 }
 
+const onDelete =(id)=>{
+  console.log('Xóa id: ',id);
+  try {
+    firestore()
+    .collection('Comments')
+    .doc(id)
+    .delete()
+    .then(() => {
+      console.log('Comment deleted!');
+      ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
+    });
+  } catch (error) {
+    console.log(error);
+    ToastAndroid.show('Xóa thất bại!.', ToastAndroid.SHORT);
+  }
+  
+}
+
+
+const addReply =(text,idRoot)=>{
+  console.log("comment:",text," id gốc: ",idRoot);
+  const IdChat = ID();
+  const datetime = new Date();
+  console.log("add reply data: "+"idComment: ",IdChat," id sản phẩm: ",id,userInfo.fullname,userInfo.avatar,datetime,text,userid, " parentRoot: ",idRoot);
+  try {
+    firestore()
+      .collection('Comments')
+      .doc(IdChat)
+      .set({
+        idComment: IdChat,
+        idSP:id,
+        name: userInfo.fullname,
+        parentRoot: idRoot,
+        avatar: userInfo.avatar,
+        createAt: datetime,
+        comment: text,
+        idUser: userid,
+        
+      })
+      .then(() => {
+        setNewComment('');
+        console.log('Reply Added!');
+        ToastAndroid.show(
+          'Thành công!.',
+          ToastAndroid.SHORT,
+        );
+      })
+      .catch(error => {
+        console.log(
+          'Something went wrong with added post to firestore.',
+          error,
+        );
+        ToastAndroid.show('Thất bại!.', ToastAndroid.SHORT);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const editComment =(text,id)=>{
+
+}
   const splitInfo = info.split('.');
 
   const closeModal = () => {
@@ -479,7 +542,7 @@ const addComment =()=> {
                 <View style={{flex: 1}}>
 
                   <View style={{flex: 0.5, justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
-                    <View style={{width:'89%',justifyContent:'center', alignItems:'center', marginLeft:'3%'}}>
+                    <View style={{width:'85%',justifyContent:'center', alignItems:'center', marginLeft:'7%'}}>
                       {fillterProduct?.length > 0 ? 
                       (<Text style={{fontSize: 14}}>{fillterProduct.length} bình luận</Text>)
                       : (<Text style={{fontSize: 17}}>Bình luận</Text>)}
@@ -505,10 +568,18 @@ const addComment =()=> {
                     <ScrollView showsVerticalScrollIndicator={false}>
                       {
                         rootComment.map((rootComment) => (
-                          <Comment key={rootComment.idComment} comment={rootComment} replies={getReplies(rootComment.idComment)}/>
+                        <Comment key={rootComment.idComment} 
+                          onDelete={onDelete} 
+                          userid={userid} 
+                          comment={rootComment} 
+                          activeComment={activeComment}
+                          setActiveComment={setActiveComment}
+                          addReply={addReply}
+                          editComment={editComment}
+                          replies={getReplies(rootComment.idComment)}/>
+                          
                         ))
                       }
-
                     </ScrollView>
                     
                   </View>)}
