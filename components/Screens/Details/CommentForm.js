@@ -1,15 +1,15 @@
 import React, {useState} from 'react'
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
 
-const CommentForm = ({ handleSubmit, submitLabel,setActiveComment }) => {
+const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, holder }) => {
 
-    const [text, setText] = useState("");
+    const [text, setText] = useState(initialText);
     const isDisabled = text.length === 0;
 
     return (
         <View style={{width:'100%', marginTop: 5}}>
             <View style={{width:'100%', height: 40, borderColor:'black', borderWidth:0.5, borderRadius:10}}>
-            <TextInput placeholder='Trả lời bình luận...'
+            <TextInput placeholder={holder}
                 value={text}
                 onChangeText={(text) => setText(text)}
                 />

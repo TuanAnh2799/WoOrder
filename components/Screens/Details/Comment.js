@@ -3,12 +3,12 @@ import {Text, View, Image, StyleSheet, Alert} from 'react-native';
 import CommentForm from './CommentForm';
 
 
-const Comment = ({comment, replies, onDelete, addReply,editComment, userid, activeComment, setActiveComment, parentId = null}) => {
+const Comment = ({comment, replies, onDelete, addReply,editComment, userid, activeComment, setActiveComment,isAdmin, parentId = null}) => {
   const fiveMinutes = 300000;
   const timePassed = new Date() - new Date(comment.createAt) > fiveMinutes;
   const canReply = Boolean(userid);
   const canEdit = userid === comment.idUser && !timePassed;
-  const canDelete = userid === comment.idUser && !timePassed;
+  const canDelete = userid === comment.idUser && !timePassed  || isAdmin == true;
   const createAt = comment.createAt.toDate().toLocaleDateString('en-GB')
   .replace(/(\d{2})[-/](\d{2})[-/](\d+)/, '$2/$1/$3');
   const isReplying = activeComment && activeComment.type ==="replying" && activeComment.id === comment.idComment;
@@ -50,9 +50,19 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
           </View>
         </View>
         <View style={{marginLeft: 10, width: '95%'}}>
-          <Text style={{flexWrap: 'wrap-reverse', fontSize: 15}}>
-            {comment.comment}
-          </Text>
+          {
+            !isEditing && 
+            <Text style={{flexWrap: 'wrap-reverse', fontSize: 15}}>
+              {comment.comment}
+            </Text>
+          }
+          {
+            isEditing && <CommentForm
+            initialText = {comment.comment}
+            handleSubmit={(text) => editComment(text,comment.idComment)}
+            setActiveComment={setActiveComment}
+            submitLabel="Cập nhật"/>
+          }
         </View>
 
         <View
@@ -60,7 +70,7 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
             flexDirection: 'row',
             justifyContent: 'space-around',
             marginTop: 5,
-            width: '55%',
+            width: '50%',
           }}>
           <View>
             {
@@ -103,16 +113,21 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
               <CommentForm 
               handleSubmit={(text) => addReply(text,replyId)}
               setActiveComment={setActiveComment}
+              initialText=''
+              holder = 'Trả lời bình luận ...'
               submitLabel="Trả lời"/>
             )
           }
-          {
+          {/* {
             isEditing && (
               <CommentForm 
-              handleSubmit={(text) => editComment(text,replyId)}
-              submitLabel="Chỉnh sửa"/>
+              setActiveComment={setActiveComment}
+              holder = 'Chỉnh sửa ...'
+              initialText={comment.comment}
+              handleSubmit={(text) => editComment(text,comment.idComment)}
+              submitLabel="Cập nhật"/>
             )
-          }
+          } */}
           
         {replies.length > 0 && (
           <View>
@@ -127,6 +142,7 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
               parentId={comment.idComment}
               activeComment={activeComment}
               setActiveComment={setActiveComment}
+              isAdmin={isAdmin}
               replies={[]} />
             ))}
           </View>

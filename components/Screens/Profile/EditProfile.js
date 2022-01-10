@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: -1, height: -3},
     shadowRadius: 2,
     shadowOpacity: 0.4,
-    paddingTop: 20,
+    paddingTop: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderTopWidth: 1,
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: '#00000040',
-    marginBottom: 10,
+    marginBottom: 2,
   },
   panelTitle: {
     fontSize: 27,
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#FF6347',
     alignItems: 'center',
-    marginVertical: 7,
+    marginVertical: 5,
   },
   panelButtonTitle: {
     fontSize: 17,
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   panel: {
     padding: 20,
     backgroundColor: '#FFFFFF',
-    paddingTop: 20,
+    paddingTop: 5,
   },
 });
 

@@ -150,21 +150,66 @@ const addComment =()=> {
   }
 }
 
-const onDelete =(id)=>{
-  console.log('Xóa id: ',id);
-  try {
-    firestore()
-    .collection('Comments')
-    .doc(id)
-    .delete()
-    .then(() => {
-      console.log('Comment deleted!');
-      ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
-    });
-  } catch (error) {
-    console.log(error);
-    ToastAndroid.show('Xóa thất bại!.', ToastAndroid.SHORT);
+const getChild = (idParent)=> {
+  let data = listReplyComment.filter(rep => {
+    return rep.parentRoot == idParent;
+  })
+  return data;
+}
+const onDelete =async(id) => {
+
+  const child = getChild(id);
+  console.log("List child comment: ",child);
+  if(child.length == 0)
+  {
+    try {
+      firestore()
+      .collection('Comments')
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log('Comment deleted!');
+        ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
+      });
+    } catch (error) {
+      console.log(error);
+      ToastAndroid.show('Xóa thất bại!.', ToastAndroid.SHORT);
+    }
   }
+  else {
+    let i = 0;
+    try {
+      firestore()
+      .collection('Comments')
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log('Comment deleted!');
+        ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
+      });
+
+      try {
+        while (i <= child.length)
+        {
+          firestore()
+          .collection('Comments')
+          .doc(child[i].idComment)
+          .delete()
+          .then(() => {
+            console.log('Child comment deleted!');
+            //ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
+          });
+          i++;
+        }
+      } catch (error) {
+        
+      }
+    } catch (error) {
+      console.log(error);
+      ToastAndroid.show('Xóa thất bại!.', ToastAndroid.SHORT);
+    }
+  }
+  
   
 }
 
@@ -210,8 +255,24 @@ const addReply =(text,idRoot)=>{
 }
 
 const editComment =(text,id)=>{
-
+  console.log('ID chỉnh sửa:',id, ' Nội dung: ',text);
+  try {
+    firestore()
+      .collection('Comments')
+      .doc(id)
+      .update({
+        comment: text,
+      })
+      .then(() => {
+        console.log('Edit success!');
+        ToastAndroid.show('Sửa thành công!.', ToastAndroid.SHORT);
+      });
+  } catch (error) {
+    console.log('Edit thất bại!');
+    ToastAndroid.show('Thất bại!.', ToastAndroid.SHORT);
+  }
 }
+
   const splitInfo = info.split('.');
 
   const closeModal = () => {
@@ -568,16 +629,16 @@ const editComment =(text,id)=>{
                     <ScrollView showsVerticalScrollIndicator={false}>
                       {
                         rootComment.map((rootComment) => (
-                        <Comment key={rootComment.idComment} 
-                          onDelete={onDelete} 
-                          userid={userid} 
-                          comment={rootComment} 
-                          activeComment={activeComment}
-                          setActiveComment={setActiveComment}
-                          addReply={addReply}
-                          editComment={editComment}
-                          replies={getReplies(rootComment.idComment)}/>
-                          
+                            <Comment key={rootComment.idComment} 
+                            onDelete={onDelete} 
+                            userid={userid} 
+                            comment={rootComment} 
+                            activeComment={activeComment}
+                            setActiveComment={setActiveComment}
+                            addReply={addReply}
+                            editComment={editComment}
+                            isAdmin={userInfo.isAdmin}
+                            replies={getReplies(rootComment.idComment)}/>
                         ))
                       }
                     </ScrollView>
