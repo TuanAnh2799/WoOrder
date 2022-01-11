@@ -131,7 +131,10 @@ const AddUserScreen = () => {
             password: '',
           }}
           validateOnMount={true}
-          onSubmit={values => console.log(values)}>
+          onSubmit={async (values, { resetForm }) => {
+          await addUser(values)
+            resetForm()
+          }}>
           {({
             handleChange,
             handleBlur,
@@ -250,7 +253,7 @@ const AddUserScreen = () => {
 
                                 <View style={{width:'100%', justifyContent:'center', alignItems:'center', marginTop: 40}}>
                                     <View style={{width:'50%'}}>
-                                        <Button disabled={!isValid} title='Thêm' onPress={()=>addUser(values)}/>
+                                        <Button disabled={!isValid} title='Thêm' onPress={()=>handleSubmit()}/>
                                     </View>
                                 </View>
                             </View>

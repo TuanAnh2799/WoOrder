@@ -656,13 +656,13 @@ const editComment =(text,id)=>{
                       </View>
                     </View>
                     <View style={{width: '15%', height:'90%',justifyContent:'center', alignItems:'center'}}>
-                      <Icon name="send" size={35} color="blue" onPress={()=>{
-                        if(newComment !== '')
+                      <Icon name="send" size={35} color="blue"  onPress={()=>{
+                        if(newComment !== '' && newComment.length <= 100)
                         {
                           addComment();
                         }
                         else {
-                          console.log('Không add đc hihi');
+                          ToastAndroid.show('Chỉ nhập tối đa 100 ký tự!.', ToastAndroid.SHORT);
                         }
                       }}/>
                     </View>

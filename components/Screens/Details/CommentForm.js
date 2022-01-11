@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
 const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, holder }) => {
 
     const [text, setText] = useState(initialText);
-    const isDisabled = text.length === 0;
+    const isDisabled = text.length === 0 || text.length >100;
 
     return (
         <View style={{width:'100%', marginTop: 5}}>
@@ -15,7 +15,7 @@ const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, h
                 />
             </View>
             <View style={{flexDirection:'row', width:'100%', justifyContent:'space-around', marginTop: 12, height: 35}}>
-                <View style={{width:'35%', height: '100%'}}>
+                <View style={{width:'40%', height: '100%'}}>
                     <Button title={submitLabel} disabled={isDisabled} onPress={() => {
                         if(text !== ''){
                             setActiveComment(null);

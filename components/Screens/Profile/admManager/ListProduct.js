@@ -65,7 +65,8 @@ import { deleteProduct } from '../../../Store/action';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-function ListProduct({deleteProduct}) {
+
+const ListProduct = () => {
 
   const products = useSelector(state => state.productStore.Product);
   const navigation = useNavigation();
@@ -74,7 +75,6 @@ function ListProduct({deleteProduct}) {
   const [statusType, setStatusType] = useState(0);
 
   const [modalVisible, setModalVisible] = useState(false);
-
   const [id, setID] = useState('');
   const [size, setSize] = useState('');
   const [type, setType] = useState('');
@@ -106,290 +106,294 @@ function ListProduct({deleteProduct}) {
 
   useEffect(() => {
 
-      setIsLoading(false);
-      setDataList(products);
-      LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
-  }, []);
+    setIsLoading(false);
+    setDataList(products);
+    LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
+}, []);
 
-
-  const Search =(text)=>{
-    if(text !== ''){
-        const fillter = products.filter( e =>
-        e.name.toLowerCase().includes(text.toLowerCase()));
-        setDataSearch(fillter);
-    }  
+const Search =(text)=>{
+  if(text !== ''){
+      const fillter = products.filter( e =>
+      e.name.toLowerCase().includes(text.toLowerCase()));
+      setDataSearch(fillter);
+  }  
 }
 
-  const setStatusFillter = getType => {
-    if (getType === 0) {
-      setDataList(products);
-    } else {
-      setDataList([...products.filter(e => e.type === getType)]);
+const LoadingScreen =()=> (
+
+  <View style={{backgroundColor:'#1c1c1c1c', width:windowWidth, height:windowHeight, justifyContent:'center',}}>
+    <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
+       <ActivityIndicator color='green' size={40} style={{marginTop: 10}} />
+       <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Đang thay đổi...</Text>
+       <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Xin vui lòng chờ trong giây lát</Text>
+     </View>
+  </View>
+)
+
+const updateProduct =async(name,price,color,info)=>{
+  setIsLoadUpdate(true);
+  let colorSP = await chuanhoa(color);
+  let listColor = colorSP.trim().split(' ');
+
+  let size = '';
+  let listSize;
+
+  if(type == 2)
+  {
+    console.log('chjay qua check size');
+    if(sizeM !== false){
+      size += 'M'+' ';
     }
-    setStatusType(getType);
-  };
-
-  const LoadingScreen =()=> (
-
-    <View style={{backgroundColor:'#1c1c1c1c', width:windowWidth, height:windowHeight, justifyContent:'center',}}>
-      <View style={{justifyContent:'center', alignSelf:'center', alignContent:'center'}}>
-         <ActivityIndicator color='green' size={40} style={{marginTop: 10}} />
-         <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Đang thay đổi...</Text>
-         <Text style={{textAlign:'center', marginTop: 10, color:'black'}}>Xin vui lòng chờ trong giây lát</Text>
-       </View>
-    </View>
-  )
-
-  const updateProduct =async(name,price,color,info)=>{
-    setIsLoadUpdate(true);
-    let colorSP = await chuanhoa(color);
-    let listColor = colorSP.trim().split(' ');
-
-    let size = '';
-    let listSize;
-
-    if(type == 2)
-    {
-      console.log('chjay qua check size');
-      if(sizeM !== false){
-        size += 'M'+' ';
-      }
-      if(sizeL !== false){
-        size += 'L'+' ';
-      }
-      if(sizeXL !== false){
-        size += 'XL'+' ';
-      }
-      if(sizeXXL !== false){
-        size += 'XXL';
-      }
-      listSize = size.trim().toUpperCase().split(' ');
+    if(sizeL !== false){
+      size += 'L'+' ';
     }
-    else {
-      listSize = [];
+    if(sizeXL !== false){
+      size += 'XL'+' ';
     }
-
-    firestore()
-      .collection('Products')
-      .doc(id)
-      .update({
-        name: name,
-        color: listColor,
-        price: parseInt(price),
-        size: listSize,
-        info: info,
-        type: parseInt(type),
-        
-      })
-      .then(() => {
-        console.log('Product update!');
-        setIsLoadUpdate(false);
-        ToastAndroid.show(
-          'Sửa thành công!.',
-          ToastAndroid.SHORT,
-        );
-        setModalVisible(false);
-      })
-      .catch(error => {
-        console.log(
-          'Something went wrong with added post to firestore.',
-          error,
-        );
-        ToastAndroid.show('Sửa thất bại!.', ToastAndroid.SHORT);
-      });
+    if(sizeXXL !== false){
+      size += 'XXL';
+    }
+    listSize = size.trim().toUpperCase().split(' ');
+  }
+  else {
+    listSize = [];
   }
 
-  const headerFillter = () => {
-    return (
+  firestore()
+    .collection('Products')
+    .doc(id)
+    .update({
+      name: name,
+      color: listColor,
+      price: parseInt(price),
+      size: listSize,
+      info: info,
+      type: parseInt(type),
+      
+    })
+    .then(() => {
+      console.log('Product update!');
+      setIsLoadUpdate(false);
+      ToastAndroid.show(
+        'Sửa thành công!.',
+        ToastAndroid.SHORT,
+      );
+      setModalVisible(false);
+    })
+    .catch(error => {
+      console.log(
+        'Something went wrong with added post to firestore.',
+        error,
+      );
+      ToastAndroid.show('Sửa thất bại!.', ToastAndroid.SHORT);
+    });
+}
+
+const headerFillter = () => {
+  return (
+    <View
+      style={{
+        height: 10,
+        width: '100%',
+        height: 40,
+        marginTop: 2,
+        borderTopWidth: 0.5,
+        borderRightWidth: 0.5,
+        borderLeftWidth: 0.5,
+        borderLeftColor: '#009387',
+        borderTopColor: '#009387',
+        borderRightColor: '#009387',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        marginVertical: 10,
+        marginBottom: 10,
+      }}>
       <View
         style={{
-          height: 10,
-          width: '100%',
-          height: 40,
-          marginTop: 2,
-          borderTopWidth: 0.5,
-          borderRightWidth: 0.5,
-          borderLeftWidth: 0.5,
-          borderLeftColor: '#009387',
-          borderTopColor: '#009387',
-          borderRightColor: '#009387',
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          marginVertical: 10,
-          marginBottom: 10,
+          flexDirection: 'row',
+          width: '93%',
+          height: 30,
+          marginTop: 12,
+          marginLeft: '3%',
+          marginVertical: 2,
         }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '93%',
-            height: 30,
-            marginTop: 12,
-            marginLeft: '3%',
-            marginVertical: 2,
-          }}>
-          {listTab.map((e, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.styleBtnTab,
-                statusType === e.type && styles.btnTabActive,
-              ]}
-              onPress={() => {
-                console.log(e.type);
-                setStatusFillter(e.type);
-              }}>
-              {e.type == 0 && <Text style={styles.textTab}>Tất cả</Text>}
-              {e.type == 1 && <Text style={styles.textTab}>Công nghệ</Text>}
-              {e.type == 2 && <Text style={styles.textTab}>Thời trang</Text>}
-              {e.type == 3 && <Text style={styles.textTab}>Đồ chơi</Text>}
-            </TouchableOpacity>
-          ))}
-        </View>
+        {listTab.map((e, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.styleBtnTab,
+              statusType === e.type && styles.btnTabActive,
+            ]}
+            onPress={() => {
+              console.log(e.type);
+              setStatusFillter(e.type);
+            }}>
+            {e.type == 0 && <Text style={styles.textTab}>Tất cả</Text>}
+            {e.type == 1 && <Text style={styles.textTab}>Công nghệ</Text>}
+            {e.type == 2 && <Text style={styles.textTab}>Thời trang</Text>}
+            {e.type == 3 && <Text style={styles.textTab}>Đồ chơi</Text>}
+          </TouchableOpacity>
+        ))}
       </View>
-    );
-  };
-  const ViewPhoto = () => {
-    if (url?.length === 0) {
-      return (
-        <View
-          style={{
-            width: '23%',
-            height: 95,
-            marginLeft: 20,
-            marginTop: 10,
-            borderWidth: 1,
-            borderColor: '#000000AA',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 20,
-            backgroundColor: '#ffff'
-          }}>
-          <Icon name='camera' size={28} color='black'/>
-        </View>
-      );
-    } else if (url?.length >= 1 && url?.length <= 5) {
-      return (
-        <View
-          style={{
-            flexDirection: 'row',
-            height: '90%',
-            flexWrap: 'wrap',
-          }}>
-          {url.map((e, index) => (
-            <View
-              style={styles.wrappImgEDIT} key={index}>
-              <Image
-                source={{uri: e}}
-                style={{width:'100%', height: '100%',borderRadius: 7}}
-                key={index}
-              />
-              <Image
-                style={{
-                  position: 'absolute',
-                  width: 20,
-                  height: 25,
-                  marginLeft: '78%',
-                  marginTop: 5,
-                }}
-                source={deleteIcon}
-              />
-            </View>
-          ))}
-          <View
-          style={{
-            width: '25%',
-            height: 95,
-            marginLeft: 15,
-            marginTop: 10,
-            borderWidth: 1,
-            borderColor: '#000000AA',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 20,
-            backgroundColor: '#ffff'
-          }}>
-          <Icon name='camera' size={28} color='black'/>
-        </View>
-        </View>
-      );
-    } else if(url?.length == 6){
-      return (
-        <View
-          style={{
-            flexDirection: 'row',
-            height: '90%',
-            flexWrap: 'wrap',
-          }}>
-          {url.map((e, index) => (
-            <View
-              style={styles.wrappImgEDIT} key={index}>
-              <Image
-                source={{uri: e}}
-                style={{width:'100%', height: '100%',borderRadius: 7}}
-                key={index}
-              />
-              <Image
-                style={{
-                  position: 'absolute',
-                  width: 20,
-                  height: 25,
-                  marginLeft: '78%',
-                  marginTop: 5,
-                }}
-                source={deleteIcon}
-              />
-            </View>
-          ))}
-        </View>
-      );
-    }
-  };
+    </View>
+  );
+};
 
-  const updateProducts = Yup.object().shape({
-    name: Yup.string()
-      .max(30, () => `Tên tối đa 30 ký tự.`)
-      .matches(/(\w.+\s).+/, 'Vui lòng nhập tên sản phẩm.')
-      .required('Bạn chưa nhập tên sản phẩm.'),
-    price: Yup.string()
-      .matches(/^(\d)(?=.{4,})(?=.*[0-9])/, 'Số tiền không hợp lệ.')
-      .required('Bạn chưa nhập giá sản phẩm'),
-    color: Yup.string()
-      .required('Bạn chưa nhập màu sắc.'),
-    info: Yup.string()
-      .max(300, () => `Tối đa 300 ký tự.`)
-      .matches(/(\w.+\s).+/, 'Vui lòng nhập mô tả.')
-      .required('Bạn chưa mô tả sản phẩm.'),
-  });
+const updateProducts = Yup.object().shape({
+  name: Yup.string()
+    .max(30, () => `Tên tối đa 30 ký tự.`)
+    .matches(/(\w.+\s).+/, 'Vui lòng nhập tên sản phẩm.')
+    .required('Bạn chưa nhập tên sản phẩm.'),
+  price: Yup.string()
+    .matches(/^(\d)(?=.{4,})(?=.*[0-9])/, 'Số tiền không hợp lệ.')
+    .required('Bạn chưa nhập giá sản phẩm'),
+  color: Yup.string()
+    .required('Bạn chưa nhập màu sắc.'),
+  info: Yup.string()
+    .max(300, () => `Tối đa 300 ký tự.`)
+    .matches(/(\w.+\s).+/, 'Vui lòng nhập mô tả.')
+    .required('Bạn chưa mô tả sản phẩm.'),
+});
 
-  const initValues = {
-    name: name,
-    price: price.toString(),
-    color: colors,
-    info: info,
+const initValues = {
+  name: name,
+  price: price.toString(),
+  color: colors,
+  info: info,
+}
+
+const setStatusFillter = getType => {
+  if (getType === 0) {
+    setDataList(products);
+  } else {
+    setDataList([...products.filter(e => e.type === getType)]);
   }
+  setStatusType(getType);
+};
 
+
+  const ListProductScreen = () => (
+    <View style={{marginTop: 10}}>
+      <FlatList
+        data={searchQuery !== '' ? dataSearch : dataList}
+        ListHeaderComponent={headerFillter}
+        renderItem={({item, index}) => (
+          <TouchableNativeFeedback>
+            <View style={styles.item} key={index}>
+              <View style={styles.wrappIMG}>
+                <Image
+                  source={{uri: item.url[0]}}
+                  style={styles.image}
+                  resizeMode={'stretch'}
+                />
+              </View>
+
+              <View style={{width: '50%'}}>
+                <View style={styles.wrappInfo}>
+                  <View
+                    style={{
+                      //justifyContent: 'flex-start',
+                      alignItems: 'flex-start',
+                      width: '100%',
+                    }}>
+                    <Text style={styles.name}>{item.name}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.wrapPrice}>
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'flex-start',
+                      width: '100%',
+                    }}>
+                    <Text style={styles.price}>
+                      Giá: {formatCash(item.price)} VNĐ
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={{width: '10%', justifyContent: 'center'}}>
+                <Menu>
+                  <MenuTrigger text="Q.lý" />
+                  <MenuOptions>
+                    <MenuOption
+                      onSelect={() => {
+                        if (item.type == 2) {
+                          item.size.map(e => {
+                            if (e === 'M') {
+                              setSizeMChecked(true);
+                            }
+                            if (e === 'L') {
+                              setSizeLChecked(true);
+                            }
+                            if (e === 'XL') {
+                              setSizeXLChecked(true);
+                            }
+                            if (e === 'XXL') {
+                              setSizeXXLChecked(true);
+                            }
+                          });
+                        }
+                        setID(item.id);
+                        setName(item.name);
+                        setPrice(item.price);
+                        setInfo(item.info);
+                        setUrl(item.url);
+                        setSize(item.size);
+                        setType(item.type);
+                        convertColor(item.color);
+                        setModalVisible(!modalVisible);
+                      }}
+                      text="Sửa thông tin"
+                    />
+                    <MenuOption
+                      onSelect={() => {
+                        Alert.alert('Xác nhận', 'Bạn muốn xóa sản phẩm?', [
+                          {
+                            text: 'Đồng ý',
+                            onPress: () => {
+                              deleteProducts(item.id, item.url); // xóa bên firbase
+                              deleteProduct(item.id); // xóa bên store
+                            },
+                          },
+                          {
+                            text: 'Hủy',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                          },
+                        ]);
+                      }}>
+                      <Text style={{color: 'red'}}>Xóa</Text>
+                    </MenuOption>
+                  </MenuOptions>
+                </Menu>
+              </View>
+            </View>
+          </TouchableNativeFeedback>
+        )}
+        keyExtractor={(item, index) => item.id}
+      />
+    </View>
+  );
   return (
-    <SafeAreaView>
-      
-      {isLoading ? (
-        <View style={{flex: 1, justifyContent: 'center', marginTop: '90%'}}>
-          <ActivityIndicator size="large" color={Colors.blue500} />
-        </View>
-      ) : (
-        <ScrollView>
-          <View style={styles.listProduct}>
-          <View style={{paddingTop: 5, paddingLeft: 10, paddingRight: 10}}>
-          <Searchbar
-            placeholder="Nhập tên sản phẩm ..."
-            onChangeText={text => {
+    <View style={{width: '100%', height: '100%'}}>
+      <View style={{flex:1,}}>
+        <View style={{paddingTop: 5, paddingLeft: 10, paddingRight: 10}}>
+            <Searchbar
+              placeholder="Nhập tên sản phẩm ..."
+              onChangeText={text => {
               Search(text);
               setSearchQuery(text);
-              }}
-          />
+            }}
+            />
         </View>
-            {/*modal chỉnh sửa sản phẩm */}
+        <FlatList
+          ListFooterComponent={<ListProductScreen/>}
+        />
 
-            <Modal
+          <Modal
               visible={modalVisible}
               animationType={'slide'}
               transparent={true}
@@ -697,124 +701,9 @@ function ListProduct({deleteProduct}) {
               </TouchableNativeFeedback>
             </Modal>
 
-            <View style={{marginTop: 10}}>
-              <FlatList
-                data={searchQuery !== '' ? dataSearch : dataList}
-                ListHeaderComponent={headerFillter}
-                renderItem={({item, index}) => (
-                  <TouchableNativeFeedback>
-                    <View style={styles.item} key={index}>
-                      <View style={styles.wrappIMG}>
-                        <Image
-                          source={{uri: item.url[0]}}
-                          style={styles.image}
-                          resizeMode={'stretch'}
-                        />
-                      </View>
-
-                      <View style={{width: '50%'}}>
-                        <View style={styles.wrappInfo}>
-                          <View
-                            style={{
-                              //justifyContent: 'flex-start',
-                              alignItems: 'flex-start',
-                              width: '100%',
-                            }}>
-                            <Text style={styles.name}>{item.name}</Text>
-                          </View>
-                        </View>
-
-                        <View style={styles.wrapPrice}>
-                          <View
-                            style={{
-                              justifyContent: 'center',
-                              alignItems: 'flex-start',
-                              width: '100%',
-                            }}>
-                            <Text style={styles.price}>
-                              Giá: {formatCash(item.price)} VNĐ
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-
-                      <View style={{width: '10%', justifyContent: 'center'}}>
-                        <Menu>
-                          <MenuTrigger text="Q.lý" />
-                          <MenuOptions>
-                            <MenuOption
-                              onSelect={() => {
-                                if(item.type == 2){
-                                  item.size.map(e => {
-                                    if(e === "M")
-                                    {
-                                      setSizeMChecked(true);
-                                    }
-                                    if(e === 'L')
-                                    {
-                                      setSizeLChecked(true);
-                                    }
-                                    if(e === 'XL')
-                                    {
-                                      setSizeXLChecked(true);
-                                    }
-                                    if(e === 'XXL')
-                                    {
-                                      setSizeXXLChecked(true);
-                                    }
-                                  })
-                                }
-                                setID(item.id);
-                                setName(item.name);
-                                setPrice(item.price);
-                                setInfo(item.info);
-                                setUrl(item.url);
-                                setSize(item.size);
-                                setType(item.type);
-                                convertColor(item.color);
-                                setModalVisible(!modalVisible);
-                              }}
-                              text="Sửa thông tin"
-                            />
-                            <MenuOption onSelect={() => {
-                              Alert.alert('Xác nhận', 'Bạn muốn xóa sản phẩm?', [
-                                {
-                                  text: 'Đồng ý',
-                                  onPress: () => {
-                                    deleteProducts(item.id,item.url); // xóa bên firbase
-                                    deleteProduct(item.id); // xóa bên store
-                                  },
-                                },
-                                {
-                                  text: 'Hủy',
-                                  onPress: () => console.log('Cancel Pressed'),
-                                  style: 'cancel',
-                                },
-                              ]);
-                            }}>
-                              <Text style={{color: 'red'}}>Xóa</Text>
-                            </MenuOption>
-                          </MenuOptions>
-                        </Menu>
-                      </View>
-                    </View>
-                  </TouchableNativeFeedback>
-                )}
-                keyExtractor={(item, index) => item.id}
-              />
-            </View>
-          </View>
-        </ScrollView>
-      )}
-    </SafeAreaView>
+      </View>
+    </View>
   );
-}
+};
 
-function mapDispatchToProps(dispatch) {
-  return {
-    deleteProduct: id => dispatch(deleteProduct(id)),
-  };
-}
-
-export default connect(mapDispatchToProps, {deleteProduct})(ListProduct);
-
+export default ListProduct;
