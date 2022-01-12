@@ -654,6 +654,8 @@ function CheckOutScreen({
                 />
               </View>
             </View>
+
+            <View style={{width: '100%', marginTop: 50}}></View>
           </ScrollView>
         </View>
       )}

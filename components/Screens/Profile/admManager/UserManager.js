@@ -91,7 +91,7 @@ const UserManagerScreen = () => {
 
   const initValues = {
     fullname: user?.fullname,
-    phone: user?.phone,
+    phone: user?.phone.toString(),
     address: user?.address,
     isAdmin: user?.isAdmin,
   };
@@ -345,7 +345,7 @@ const UserManagerScreen = () => {
                               <FontAwesome name="home" color="#05375a" size={25} />
                           </View>
                           <View style={{width: '85%', borderRadius: 10, backgroundColor:'white', height: 40, borderColor:'green', borderWidth: 0.5}}>
-                            <TextInput style={{width: '100%', height: '100%', color:'black'}} placeholder='Số điện thoại ...'
+                            <TextInput style={{width: '100%', height: '100%', color:'black'}} placeholder='Địa chỉ ...'
                               autoCapitalize="none"
                               onChangeText={handleChange('address')}
                               onBlur={handleBlur('address')}

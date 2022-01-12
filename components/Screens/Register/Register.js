@@ -96,7 +96,7 @@ function RegisterScreen({navigation,setUserRegister}) {
 
   const registerValidSchema = Yup.object().shape({
     fullname: Yup.string()
-      .max(25, () => `Tên tối đa 25 ký tự.`)
+      .max(30, () => `Tên tối đa 30 ký tự.`)
       .matches(/(\w.+\s).+/, 'Vui lòng nhập họ và tên')
       .required('Bạn chưa nhập họ tên.'),
     phoneNumber: Yup.string()

@@ -73,17 +73,7 @@ function ProductScreen({AddToFavorite, setProduct}) {
     return () => subscriber();
   }, []);
 
-  const customShare = async url => {
-    const shareOptions = {
-      message: 'Tải ngay app để order nhé!',
-      url: url,
-    };
-    try {
-      const shareRespone = await Share.open(shareOptions);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
   //console.log('data:', products);
 
   
@@ -187,85 +177,7 @@ function ProductScreen({AddToFavorite, setProduct}) {
                         </Text>
                       </View>
                     </View>
-                    <View style={styles.wrappIcon}>
-                      <View
-                        style={{
-                          bottom: 0,
-                          width: 31,
-                          height: 30,
-                          borderWidth: 1,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          marginRight: 5,
-                          borderColor: '#fff',
-                        }}>
-                          {
-                            Favorites.length === 0 && (
-                              <Icon
-                              name="heart-outline"
-                              size={25}
-                              style={{color: 'red', marginRight: 0}}
-                              onPress={() => {
-                                AddToFavorite(item);
-                              
-                              }}
-                            />)
-
-                          }
-                          {
-                            Favorites.length !== 0 && 
-                            Favorites.map(e=> {
-                              if(e.id === item.id)
-                              {
-                                return (
-                                  <Icon
-                                  name="cards-heart"
-                                  size={25}
-                                  style={{color: 'red', marginRight: 0}}
-                                  onPress={() => {
-                                    AddToFavorite(item);
-                                    //setHeart('cards-heart');
-                                  
-                                  }}
-                                />
-                                )
-                              } else {
-                                return(
-                                  <Icon
-                                  name="heart-outline"
-                                  size={25}
-                                  style={{color: 'red', marginRight: 0}}
-                                  onPress={() => {
-                                    AddToFavorite(item);
-                                    //setHeart('cards-heart');
-                                  
-                                  }}
-                                  />)
-                              }
-                          })
-                          }  
-                      
-                        
-                      </View>
-                      <View
-                        style={{
-                          width: 31,
-                          height: 30,
-                          borderWidth: 1,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          marginRight: 5,
-                          borderColor: '#fff',
-                        }}>
-                        <Icon
-                          name="share-variant"
-                          size={25}
-                          style={styles.cartIcon}
-                          color={Colors.red400}
-                          onPress={() => customShare(item.url[0])}
-                        />
-                      </View>
-                    </View>
+                    
                   </View>
                 </TouchableNativeFeedback>
               )}

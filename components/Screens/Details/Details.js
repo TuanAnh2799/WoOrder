@@ -25,7 +25,8 @@ import formatCash from '../API/ConvertPrice';
 import { FlatList } from 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import Comment from './Comment';
-import FormComment from './CommentForm';
+import deleteIcon from '../../../img/Delete.png';
+import Share from 'react-native-share';
 
 
 const deviceWitdh = Dimensions.get('window').width;
@@ -56,6 +57,7 @@ function DetailsScreen({route, navigation, AddCart}) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [activeComment, setActiveComment] = useState(null)
+  const [isFavorite, setFavorite] = useState(false);
 
   const fillterProduct =comments?.filter(e => {
       return e.idSP == id;
@@ -75,6 +77,18 @@ function DetailsScreen({route, navigation, AddCart}) {
         (a, b) => new Date(a.createAt).getTime() - new Date(b.createAt).getTime()
       );
     } 
+
+  const customShare = async url => {
+      const shareOptions = {
+        message: 'Tải ngay app để order nhé!',
+        url: url,
+      };
+      try {
+        const shareRespone = await Share.open(shareOptions);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
   useEffect(async () => {
     const subscriber = await firestore()
@@ -326,7 +340,7 @@ const editComment =(text,id)=>{
       </View>
 
       {/**Thong tin sản phẩm */}
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} >
         <View style={styles.wrapInfo}>
           <View style={styles.wrapDetail}>
             <View style={{flexDirection: 'row'}}>
@@ -414,6 +428,7 @@ const editComment =(text,id)=>{
             </View>
           </View>
         </View>
+        <View style={{width: '100%', marginTop: 50}}></View>
       </ScrollView>
 
       {/**Modal pickup */}
@@ -560,21 +575,21 @@ const editComment =(text,id)=>{
         </View>
       </Modal>
 
-      {/*Icon */}
+      {/*Icon #000000AA */}
       <View style={{
         width: 40, height: 150,position:'absolute', 
         justifyContent:'center', alignItems:'center', marginTop:deviceHeight * 0.4,
         marginLeft:deviceWitdh * 0.88}}>
         <View >
-        <Icon name="heart" size={35} color="#000000AA" />
+          <Icon name="cards-heart" size={35} color={isFavorite == true ? 'red' : 'black'} onPress={()=> setFavorite(!isFavorite)}/>
         </View>
         <View style={{marginTop: 15}}>
-        <Icon name="comment" size={35} color="red" onPress={()=>{
+          <Icon name="chat-processing-outline" size={35} color="red" onPress={()=>{
           setModalCMT(true)}}/>
         </View>
         <Text style={{textAlign:'center', fontSize: 13}}>{fillterProduct?.length}</Text>
         <View style={{marginTop: 12}}>
-        <Icon name="share" size={35} color="red" />
+          <Icon name="share" size={35} color="red" onPress={()=> customShare(url[0])}/>
         </View>
       </View>
 
@@ -603,14 +618,15 @@ const editComment =(text,id)=>{
                 <View style={{flex: 1}}>
 
                   <View style={{flex: 0.5, justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
-                    <View style={{width:'85%',justifyContent:'center', alignItems:'center', marginLeft:'7%'}}>
+                    <View style={{width:'82%',justifyContent:'center', alignItems:'center', marginLeft:'10%'}}>
                       {fillterProduct?.length > 0 ? 
                       (<Text style={{fontSize: 14}}>{fillterProduct.length} bình luận</Text>)
                       : (<Text style={{fontSize: 17}}>Bình luận</Text>)}
                     </View>
-                    <View style={{width:'8%',justifyContent:'center'}}>
+                    <View style={{width:'8%',justifyContent:'center', marginRight: 5}}>
                       <TouchableWithoutFeedback onPress={()=>setModalCMT(!modalCMT)}>
-                        <Text style={{textAlign:'left', fontSize: 17, color:'red'}}>X</Text>
+                        <Text style={{fontSize: 17}}>X</Text>
+                        {/* <Image source={deleteIcon} style={{width: 25, height: 25}}/> */}
                       </TouchableWithoutFeedback>
                       
                     </View>
@@ -656,13 +672,17 @@ const editComment =(text,id)=>{
                       </View>
                     </View>
                     <View style={{width: '15%', height:'90%',justifyContent:'center', alignItems:'center'}}>
-                      <Icon name="send" size={35} color="blue"  onPress={()=>{
-                        if(newComment !== '' && newComment.length <= 100)
+                      <Icon name="send" size={35} color={newComment.length >0 ? "orange" : "black"}  onPress={()=>{
+                        if(newComment !== '' )
                         {
                           addComment();
                         }
-                        else {
-                          ToastAndroid.show('Chỉ nhập tối đa 100 ký tự!.', ToastAndroid.SHORT);
+                        else if(newComment.length > 100) {
+                          ToastAndroid.show('Chỉ nhập tối đa 100 ký tự!', ToastAndroid.SHORT);
+                        }
+                        else if(newComment == '')
+                        {
+                          ToastAndroid.show('Chưa nhập bình luận.', ToastAndroid.SHORT);
                         }
                       }}/>
                     </View>

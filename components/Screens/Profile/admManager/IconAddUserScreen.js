@@ -9,13 +9,12 @@ const IconAddUserScreen = () => {
 
   const navigation = useNavigation();
   return (
-    <View>
+    <View style={{marginRight: 12}}>
       <Icon
-        name="plus-circle-outline"
+        name="account-plus"
         color={Colors.black}
         size={26}
         onPress={() => navigation.navigate('AddUser')}
-        style={{marginRight: 10}}
       />
     </View>
   );
