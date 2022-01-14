@@ -1,17 +1,36 @@
 import React,{useState,useEffect} from 'react';
-import { Button, View,Text, SafeAreaView,  Image, LogBox, VirtualizedList } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { View,SafeAreaView} from 'react-native';
+import { FlatList} from 'react-native-gesture-handler';
 import HeaderScreen from '../Header/Header';
 import ProductsScreen from '../ListProducts/Products';
 import SlideScreen from '../Slide/slide';
+import firestore from '@react-native-firebase/firestore';
+import { useSelector } from 'react-redux';
+import { setFavorite } from '../../Store/action';
+import {connect} from 'react-redux';
 
 
-const HomeScreen = () => {
+const HomeScreen = ({setFavorite}) => {
 
+  const userid = useSelector(state => state.userState.User);
   useEffect(() => {
-    LogBox.ignoreLogs(['If you want to use Reanimated 2']);
+    
+
+    const subscriber = firestore()
+      .collection('Users')
+      .doc(userid)
+      .onSnapshot(documentSnapshot => {
+        let x =documentSnapshot.data();
+        setFavorite(x.favorites);
+      });
+
+    
+
+    return () => subscriber();
   }, [])
   
+  //console.log("Home nhận fav: ",User.favorites);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View >
@@ -27,5 +46,13 @@ const HomeScreen = () => {
       
   );
 }
-export default HomeScreen;
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setFavorite: data => dispatch(setFavorite(data)),
+  };
+}
+
+export default connect(mapDispatchToProps, {setFavorite})(HomeScreen);
+
 

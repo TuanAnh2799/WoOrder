@@ -9,8 +9,7 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
   const canReply = Boolean(userid);
   const canEdit = userid === comment.idUser && !timePassed;
   const canDelete = userid === comment.idUser && !timePassed  || isAdmin == true;
-  const createAt = comment.createAt.toDate().toLocaleDateString('en-GB')
-  .replace(/(\d{2})[-/](\d{2})[-/](\d+)/, '$2/$1/$3');
+  const createAt = comment.createAt.toDate().toLocaleDateString('en-GB').replace(/(\d{2})[-/](\d{2})[-/](\d+)/, '$2/$1/$3');
   const isReplying = activeComment && activeComment.type ==="replying" && activeComment.id === comment.idComment;
   const isEditing = activeComment && activeComment.type ==="editing" && activeComment.id === comment.idComment;
   const replyId = parentId ? parentId : comment.idComment;
@@ -94,7 +93,7 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
                   "Bạn muốn xóa?",
                   [
                     {
-                      text: "OK",
+                      text: "Đồng ý",
                       onPress: () => onDelete(comment.idComment),
                       style: "cancel"
                     },

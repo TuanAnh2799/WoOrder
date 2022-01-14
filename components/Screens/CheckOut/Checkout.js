@@ -6,18 +6,15 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Button,
   Alert,
   ScrollView,
-  ImageBackground,
   TextInput,
   Modal,
   Dimensions,
   ToastAndroid,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../../Routes/AuthProvider';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   IncreaseQuantity,

@@ -14,7 +14,7 @@ export const SET_USER_REGISTER = 'SET_USER_REGISTER';
 export const SET_USER_LOGOUT = 'SET_USER_LOGOUT';
 export const SET_PRODUCT = 'SET_PRODUCT';
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
-
+export const SET_FAVORITE = 'SET_FAVORITE';
 
 export function AddCart(payload){
     return {
@@ -56,6 +56,13 @@ export const resetStore = () => {
 export const AddToFavorite =(payload)=> {
     return {
         type: 'ADD_FAVORITE',payload
+    }
+    
+};
+
+export const setFavorite =(payload)=> {
+    return {
+        type: 'SET_FAVORITE',payload
     }
     
 };

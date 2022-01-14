@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,14 +11,33 @@ import {
 import {useSelector} from 'react-redux';
 
 export default function FavoritesScreen({navigation}) {
-  
+  const [data, setData] = useState
   const Favorites = useSelector(state => state.favourites.favoriteProduct);
+  const products = useSelector(state => state.productStore.Product);
+  let listFav =()=>{
+    // let productss = [];
+    //   products.map(e => {
+    //   Favorites.map(fav => {
+    //     if(e.id == fav){
+    //       products.push(e);
+    //     }
+    //   })
+    // });
+    // setData(productss);
+    // return productss;
+
+  } 
+  function getSameValues(a1,a2){
+    return  a1.filter(function(n) { return a2.indexOf(n) !== -1;});
+}
+
+  const datas = getSameValues(products.id,Favorites);
 
   return (
     <SafeAreaView>
       {Favorites.length !== 0 ? (
         <FlatList
-          data={Favorites}
+          data={datas}
           renderItem={({item, index}) => (
             <TouchableNativeFeedback
               onPress={() =>
@@ -39,7 +58,7 @@ export default function FavoritesScreen({navigation}) {
                     <Text style={styles.name}>{item.name}</Text>
                   </View>
                   <View style={styles.wrappTitle}>
-                    <Text style={styles.title}>Xem ngay >>></Text>
+                    <Text style={styles.title}>Xem ngay -></Text>
                   </View>
                 </View>
               </View>

@@ -16,16 +16,14 @@ import {
   LogBox,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {AddCart} from '../../Store/action';
+import {AddCart, setFavorite, AddToFavorite} from '../../Store/action';
 import {Picker} from '@react-native-picker/picker';
 import {styles} from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
 import formatCash from '../API/ConvertPrice';
-import { FlatList } from 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import Comment from './Comment';
-import deleteIcon from '../../../img/Delete.png';
 import Share from 'react-native-share';
 
 
@@ -34,9 +32,10 @@ const deviceHeight = Dimensions.get('window').height;
 
 LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
 
-function DetailsScreen({route, navigation, AddCart}) {
+function DetailsScreen({route, navigation, AddCart, setFavorite,AddToFavorite}) {
 
   const userid = useSelector(state => state.userState.User);
+  const listFavorites = useSelector(state => state.favourites.favoriteProduct);
   const id = route.params.product.id;
   const name = route.params.product.name;
   const color = route.params.product.color;
@@ -57,7 +56,7 @@ function DetailsScreen({route, navigation, AddCart}) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [activeComment, setActiveComment] = useState(null)
-  const [isFavorite, setFavorite] = useState(false);
+  const [colors, setColor] = useState('black');
 
   const fillterProduct =comments?.filter(e => {
       return e.idSP == id;
@@ -90,6 +89,65 @@ function DetailsScreen({route, navigation, AddCart}) {
       }
     };
 
+
+  const Fav =()=> {
+    if(listFavorites.includes(id) == true)
+    {
+      setColor('red');
+    }
+    else {
+      setColor('black');
+    }
+  }
+
+  const dataLike =()=> {
+    try {
+      firestore()
+        .collection('Users')
+        .doc(userid)
+        .update({
+          favorites: listFavorites
+          
+        })
+        .then(() => {
+          console.log('Data khi like to firebase: ',listFavorites);
+        })
+        .catch(error => {
+          console.log(
+            'Something went wrong with added post to firestore.',
+            error,
+          );
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const dataUnLike =()=> {
+    let x = listFavorites.filter(e => {
+      return e !== id;
+    })
+    try {
+      firestore()
+        .collection('Users')
+        .doc(userid)
+        .update({
+          favorites: x
+          
+        })
+        .then(() => {
+          console.log('Data khi UnLike to firebase: ',x);
+        })
+        .catch(error => {
+          console.log(
+            'Something went wrong with added post to firestore.',
+            error,
+          );
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(async () => {
     const subscriber = await firestore()
       .collection('Comments')
@@ -105,6 +163,7 @@ function DetailsScreen({route, navigation, AddCart}) {
         setComments(cmt);
       });
       getUserInfo();
+      Fav();
     return () => subscriber();
   }, []);
 
@@ -581,7 +640,20 @@ const editComment =(text,id)=>{
         justifyContent:'center', alignItems:'center', marginTop:deviceHeight * 0.4,
         marginLeft:deviceWitdh * 0.88}}>
         <View >
-          <Icon name="cards-heart" size={35} color={isFavorite == true ? 'red' : 'black'} onPress={()=> setFavorite(!isFavorite)}/>
+          <Icon name="cards-heart" size={35} color={colors} onPress={()=> {
+            if(colors == 'red'){
+              setColor('black');
+              AddToFavorite(id);
+              dataUnLike();
+            }
+
+            if(colors == 'black'){
+              setColor('red');
+              AddToFavorite(id);
+              dataLike();
+            }
+
+          }}/>
         </View>
         <View style={{marginTop: 15}}>
           <Icon name="chat-processing-outline" size={35} color="red" onPress={()=>{
@@ -703,7 +775,10 @@ const editComment =(text,id)=>{
 function mapDispatchToProps(dispatch) {
   return {
     AddCart: item => dispatch(AddCart(item)),
+    setFavorite: data => dispatch(setFavorite(data)),
+    AddToFavorite: id => dispatch(AddToFavorite(id)),
   };
 }
 
-export default connect(mapDispatchToProps, {AddCart})(DetailsScreen);
+
+export default connect(mapDispatchToProps, {AddCart,setFavorite, AddToFavorite})(DetailsScreen);

@@ -590,7 +590,7 @@ const initValues = {
             <View style={styles.wrappButton}>
               <View style={{width: '100%', height: 35, alignItems: 'center'}}>
                 <View style={{width: '50%'}}>
-                  <Button title="Lưu" disabled={!isValid}  onPress={()=> {
+                  <Button title="Thêm" disabled={!isValid}  onPress={()=> {
                     
                     if(listIMG.length == 0){
                       Alert.alert('Thông báo!', 'Bạn chưa chọn ảnh cho sản phẩm.');

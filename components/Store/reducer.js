@@ -1,5 +1,5 @@
 import {GET_NUMBER_CART,ADD_CART,ADD_FAVORITE, DECREASE_QUANTITY, INCREASE_QUANTITY, DELETE_CART,
-     CLEAR_FAVORITE, RESET_STORE, SET_USER_LOGIN, SET_USER_REGISTER, SET_USER_LOGOUT, SET_PRODUCT, DELETE_PRODUCT } from  './action';
+     CLEAR_FAVORITE, RESET_STORE, SET_USER_LOGIN, SET_USER_REGISTER, SET_USER_LOGOUT, SET_PRODUCT, DELETE_PRODUCT, SET_FAVORITE } from  './action';
 import { combineReducers } from 'redux';
 import { ToastAndroid } from 'react-native';
 
@@ -80,26 +80,37 @@ const initFav = {
 const favoriteReducer = (state =initFav, action) => {
     
     switch (action.type) {
+    
+    case SET_FAVORITE:
+        let fav = action.payload;
+            console.log('data bên reducer nhận đc:',fav);
+            return {
+                favoriteProduct: fav
+            } 
 
-      case ADD_FAVORITE:
-        const indexExit = state.favoriteProduct.findIndex(fav => fav.id === action.payload.id)
+    case ADD_FAVORITE:
+        let idSP = action.payload;
+        const indexExit = state.favoriteProduct.findIndex(fav => fav == action.payload)
         if(indexExit >= 0){
-            const updateFav = [...state.favoriteProduct]
-            const remove = updateFav.map(item => {
-                return item.id
-            }).indexOf(action.payload.id)
-            updateFav.splice(remove,1) // xóa 1 phần tử remove trong array
+            //const updateFav = [...state.favoriteProduct]
+            let remove = state.favoriteProduct.filter( id => {
+                return id != idSP;
+            })
+            // const remove = updateFav.map(item => {
+            //     return item
+            // }).indexOf(action.payload.id)
+            // updateFav.splice(remove,1) // xóa 1 phần tử remove trong array
             ToastAndroid.show("Đã xóa khỏi mục yêu thích.", ToastAndroid.SHORT)
             return{
                 ...state,
-                favoriteProduct: updateFav
+                favoriteProduct: remove
             }
         } else {
-            const favorite = action.payload;
+            let favorite = action.payload;
+            state.favoriteProduct.push(favorite);
             ToastAndroid.show("Đã thêm vào mục yêu thích.", ToastAndroid.SHORT)
             return {
                 ...state,
-                favoriteProduct: state.favoriteProduct.concat(favorite),
                 
             }
             

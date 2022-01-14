@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
+import { StyleSheet, Text, View, Button, TextInput, ToastAndroid } from 'react-native'
 
 const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, holder }) => {
 
@@ -20,6 +20,10 @@ const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, h
                         if(text !== ''){
                             setActiveComment(null);
                             handleSubmit(text);
+                        }
+                        else if(text.length > 100)
+                        {
+                            ToastAndroid.show('Tối đa 100 kí tự.', ToastAndroid.SHORT);
                         }
                     }}/>
                 </View>
