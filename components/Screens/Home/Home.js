@@ -10,6 +10,7 @@ import { setFavorite } from '../../Store/action';
 import {connect} from 'react-redux';
 
 
+
 const HomeScreen = ({setFavorite}) => {
 
   const userid = useSelector(state => state.userState.User);
@@ -28,7 +29,7 @@ const HomeScreen = ({setFavorite}) => {
 
     return () => subscriber();
   }, [])
-  
+
   //console.log("Home nhận fav: ",User.favorites);
 
   return (

@@ -56,6 +56,7 @@ const LoginScreen = ({navigation,setUserLogin}) => {
       });
       } catch (e) {
       {
+        setIsLoading(false);
         console.log(e);
         ToastAndroid.show('Tên tài khoản hoặc mật khẩu không chính xác.',ToastAndroid.SHORT);
       }
@@ -181,6 +182,10 @@ const LoginScreen = ({navigation,setUserLogin}) => {
                     onPress={() => navigation.navigate('Register')}
                   />
                 </View>
+                <View style={{width:'100%', marginTop: 20, justifyContent:'center', alignItems:'center'}}>
+                  <Text onPress={()=>navigation.navigate('Forgot')} style={{fontSize: 17, textDecorationLine:'underline'}}>Quên mật khẩu?</Text>
+                </View>
+                
               </View>
             </Animatable.View>
           </View>

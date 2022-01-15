@@ -47,7 +47,7 @@ function CheckOutScreen({
   const [modalVisiblePhone, setModalPhone] = useState(false);
 
   const [updateAddress, setUpdateAddress] = useState('');
-  const [updatePhone, setUpdatePhone] = useState('');
+  const [updatePhone, setUpdatePhone] = useState(userInfo.phone);
 
   const Carts = useSelector(state => state.cartStore.Carts);
 

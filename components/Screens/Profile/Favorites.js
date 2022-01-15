@@ -11,27 +11,32 @@ import {
 import {useSelector} from 'react-redux';
 
 export default function FavoritesScreen({navigation}) {
-  const [data, setData] = useState
+  const [data, setData] = useState([]);
   const Favorites = useSelector(state => state.favourites.favoriteProduct);
   const products = useSelector(state => state.productStore.Product);
   let listFav =()=>{
-    // let productss = [];
-    //   products.map(e => {
-    //   Favorites.map(fav => {
-    //     if(e.id == fav){
-    //       products.push(e);
-    //     }
-    //   })
-    // });
-    // setData(productss);
-    // return productss;
-
+    let list = [];
+    for(let i = 0; i < products.length; i++)
+    {
+      for(let j = 0; j < Favorites.length; j++)
+      {
+        if(products[i].id == Favorites[j])
+        {
+          list.push(products[i]);
+        }
+      }
+    }
+    
+    return list;
   } 
-  function getSameValues(a1,a2){
-    return  a1.filter(function(n) { return a2.indexOf(n) !== -1;});
-}
 
-  const datas = getSameValues(products.id,Favorites);
+  // for(let j = 0; j < Favorites.length; j++)
+  //     {
+  //       console.log('tt: ',Favorites[j]);
+  //     }
+let datas = listFav();
+console.log("List Fav sau khi lọc:",datas);
+//console.log("Log info:",products[1].id);
 
   return (
     <SafeAreaView>
@@ -48,7 +53,7 @@ export default function FavoritesScreen({navigation}) {
               <View style={styles.item} key={index}>
                 <View style={styles.wrappIMG}>
                   <Image
-                    source={{uri: item.url[1]}}
+                    source={{uri: item?.url[0]}}
                     style={styles.image}
                     resizeMode={'stretch'}
                   />
@@ -142,6 +147,6 @@ const styles = StyleSheet.create({
   },
   emptyFavMessage: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 18,
   },
 });

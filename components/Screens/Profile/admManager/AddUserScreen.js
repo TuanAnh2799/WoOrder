@@ -56,7 +56,7 @@ const AddUserScreen = () => {
             id: userID.uid,
             fullname: values.fullname,
             email: values.email,
-            phone: parseInt(values.phoneNumber),
+            phone: values.phoneNumber,
             favorites: [],
             
           })
@@ -69,7 +69,7 @@ const AddUserScreen = () => {
               addressID: userID.uid,
               fullname: values.fullname,
               email: values.email,
-              phone: parseInt(values.phoneNumber),
+              phone: values.phoneNumber,
               isAdmin: isAdmin,
               avatar: 'https://firebasestorage.googleapis.com/v0/b/orderapp-652bc.appspot.com/o/user.png?alt=media&token=4a320416-9e29-41a6-9b47-fddadad728bb',
               address: '',

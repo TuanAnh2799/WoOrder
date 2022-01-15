@@ -272,6 +272,14 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
             <Text style={styles.menuItemText}>Hỗ trợ</Text>
           </View>
         </TouchableRipple>
+
+        <TouchableRipple onPress={() => navigation.navigate('ChangePass')}>
+          <View style={styles.menuItem}>
+            <Icon name="lock" color="#FF6347" size={25} />
+            <Text style={styles.menuItemText}>Đổi mật khẩu</Text>
+          </View>
+        </TouchableRipple>
+
         <TouchableRipple
           onPress={() => {
             Alert.alert('Thông báo', 'Bạn muốn đăng xuất?', [

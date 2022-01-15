@@ -41,7 +41,7 @@ function RegisterScreen({navigation,setUserRegister}) {
     try {
       
      var userIfo = await auth().createUserWithEmailAndPassword(values.email,values.password);
-
+     
       var userID = userIfo.user;
       console.log('userID:',userID.uid);
       firestore()
@@ -51,7 +51,7 @@ function RegisterScreen({navigation,setUserRegister}) {
         id: userID.uid,
         fullname: values.fullname,
         email: values.email,
-        phone: parseInt(values.phoneNumber),
+        phone: values.phoneNumber,
         favorites: [],
         
       })
@@ -64,7 +64,7 @@ function RegisterScreen({navigation,setUserRegister}) {
           addressID: userID.uid,
           fullname: values.fullname,
           email: values.email,
-          phone: parseInt(values.phoneNumber),
+          phone: values.phoneNumber,
           isAdmin: false,
           avatar: 'https://firebasestorage.googleapis.com/v0/b/orderapp-652bc.appspot.com/o/user.png?alt=media&token=4a320416-9e29-41a6-9b47-fddadad728bb',
           address: '',

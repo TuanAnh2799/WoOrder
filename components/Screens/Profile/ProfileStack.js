@@ -15,6 +15,7 @@ import ViewPhotoScreen from './ViewPhoto';
 import IconAddUserScreen from './admManager/IconAddUserScreen';
 import UserStack from './admManager/UserStack';
 import AddUserScreen from './admManager/AddUserScreen';
+import changePasswordScreen from './changePassword';
 
 
 const ProfileStack = createStackNavigator();
@@ -72,6 +73,13 @@ const ProfileStackScreen = () => (
         title: 'Quản lý đơn hàng',
         headerTitleAlign: 'center',
       }}/>
+    <ProfileStack.Screen
+      name="ChangePass"
+      component={changePasswordScreen}
+      options={{
+        title: 'Đổi mật khẩu',
+        headerTitleAlign: 'center',
+    }}/>
 
     <ProfileStack.Screen
       name="Favorites"
