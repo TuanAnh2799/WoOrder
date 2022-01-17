@@ -303,6 +303,8 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
             <Text style={styles.menuItemText}>Đăng xuất</Text>
           </View>
         </TouchableRipple>
+        <View style={{width:'100%', height: 50}}></View>
+        
         {/* <TouchableRipple onPress={() => {ToastAndroid.show("Chức năng sẽ cập nhật trong thời gian tới.", ToastAndroid.SHORT)}}>
           <View style={styles.menuItem}>
             <Icon name="cog" color="#FF6347" size={25} />

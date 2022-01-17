@@ -8,8 +8,6 @@ import { Caption, Colors, TextInput, Title, TouchableRipple } from 'react-native
 import {IncreaseQuantity,DecreaseQuantity,DeleteCart} from '../../Store/action';
 import { connect } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-//import {saveCart, getCar} from '../API/saveToCart';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function CartScreen({items,IncreaseQuantity,DecreaseQuantity,DeleteCart,}) {

@@ -41,6 +41,7 @@ const HomeScreen = ({setFavorite}) => {
           <FlatList 
             ListHeaderComponent={<SlideScreen/>}
             ListFooterComponent={<ProductsScreen />}
+            ListFooterComponentStyle={{marginBottom: 50}}
           />
       </View>
     </SafeAreaView>

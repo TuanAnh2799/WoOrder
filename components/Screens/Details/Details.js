@@ -257,7 +257,7 @@ const onDelete =async(id) => {
       .doc(id)
       .delete()
       .then(() => {
-        console.log('Comment deleted!');
+        console.log('Comment deleted!',id);
         ToastAndroid.show('Xóa thành công!.', ToastAndroid.SHORT);
       });
 

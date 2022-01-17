@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 5,
     width: '47%',
-    height: 275,
+    height: 250,
     borderRadius: 5,
     marginTop: 5,
     borderColor:'#009387',
@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   },
   wrappIMG: {
     width: '100%',
-    height: '70%',
+    height: '80%',
     borderRadius: 20,
   },
   image: {

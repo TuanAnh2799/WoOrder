@@ -476,7 +476,7 @@ function CheckOutScreen({
                         <Button
                           title="Cập nhật"
                           onPress={() => {
-                            if (updatePhone !== '') {
+                            if (updatePhone !== '' && updatePhone.length >9) {
                               try {
                                 firestore()
                                   .collection('UserAddress')
@@ -485,6 +485,12 @@ function CheckOutScreen({
                                     phone: updatePhone,
                                   })
                                   .then(() => {
+                                    firestore()
+                                    .collection('Users')
+                                    .doc(userid)
+                                    .update({
+                                      phone: updatePhone,
+                                    });
                                     ToastAndroid.show(
                                       'Cập nhật thành công.',
                                       ToastAndroid.SHORT,

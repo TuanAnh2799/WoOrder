@@ -58,7 +58,7 @@ const listTab = [
   },
 ];
 
-import deleteIcon from '../../../../img/Delete.png';
+import deleteIcon from '../../../../img/delete.png';
 import { deleteProduct } from '../../../Store/action';
 
 
@@ -391,6 +391,7 @@ const setStatusFillter = getType => {
         </View>
         <FlatList
           ListFooterComponent={<ListProductScreen/>}
+          style={{marginBottom: 50}}
         />
 
           <Modal

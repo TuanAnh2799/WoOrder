@@ -12,35 +12,50 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firestore from '@react-native-firebase/firestore';
-import deleteIcon from '../../../../img/Delete.png';
+import deleteIcon from '../../../../img/delete.png';
 import {
   Menu,
   MenuOptions,
   MenuOption,
   MenuTrigger,
 } from 'react-native-popup-menu';
-import {Searchbar, RadioButton} from 'react-native-paper';
+import {Searchbar, RadioButton, ActivityIndicator} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
+ const updateUser = Yup.object().shape({
+    fullname: Yup.string()
+      .max(25, () => `Tên tối đa 25 ký tự.`)
+      .matches(/(\w.+\s).+/, 'Vui lòng nhập họ và tên')
+      .required('Bạn chưa nhập họ tên.'),
+    phone: Yup.string()
+      .matches(/^(0)(\d)(?=.{8,})(?=.*[0-9])/, 'Số điện thoại không hợp lệ.')
+      .required('Bạn chưa nhập số điện thoại'),
+    address: Yup.string()
+      .max(60, () => `Tên tối đa 60 ký tự.`)
+      .matches(/(\w.+\s).+/, 'Vui lòng nhập đia chỉ')
+      .required('Bạn chưa nhập địa chỉ.'),
+
+  });
 
 
 const UserManagerScreen = () => {
   const [searchFillter, setSearchFillter] = useState([]);
   const [listUser, setListUser] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setIsLoading] = useState(true);
+  const [loading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState(null);
-
+  
   const [checked, setChecked] = useState(false); //type
-  //   console.log("checked: ",checked);
-  //   console.log("isAdmin: ",user?.isAdmin);
+//console.log("user id:",user);
   // const isAdmin = user.isAdmin;
-
+  
   useEffect(async () => {
     const subscriber = await firestore()
       .collection('UserAddress')
@@ -53,7 +68,6 @@ const UserManagerScreen = () => {
             key: documentSnapshot.id,
           });
         });
-
         setIsLoading(false);
         setListUser(user);
       });
@@ -71,23 +85,47 @@ const UserManagerScreen = () => {
       setSearchFillter(fillter);
     }
   };
+  const updateUsers =async(values)=> {
+    setIsLoading(true);
+    try {
+      
+     //var userIfo = await auth().createUserWithEmailAndPassword(values.email,values.password);
+      firestore()
+      .collection('Users')
+      .doc(user.addressID)
+      .update({
+        fullname: values.fullname,
+        phone: values.phone,
+        
+      })
+      .then(() => {
+        //add UserAddress
+        firestore()
+        .collection('UserAddress')
+        .doc(user.addressID)
+        .update({
+          fullname: values.fullname,
+          phone: values.phone,
+          isAdmin: checked,
+          address: values.address,
+          
+        })
+        .then(() => {
+          console.log('Update!');
+          ToastAndroid.show('Sửa thành công.',ToastAndroid.SHORT);
+          setIsLoading(false);
+        });
+      });
+      
 
+    } catch (error) {
+        setIsLoading(false);
+      ToastAndroid.show('Thất bại.',ToastAndroid.SHORT);
+    } 
+}
   const deleteUser = id => {};
 
-  const updateProducts = Yup.object().shape({
-    fullname: Yup.string()
-      .max(25, () => `Tên tối đa 25 ký tự.`)
-      .matches(/(\w.+\s).+/, 'Vui lòng nhập họ và tên')
-      .required('Bạn chưa nhập họ tên.'),
-    phone: Yup.string()
-      .matches(/^(0)(\d)(?=.{8,})(?=.*[0-9])/, 'Số điện thoại không hợp lệ.')
-      .required('Bạn chưa nhập số điện thoại'),
-    address: Yup.string()
-      .max(60, () => `Tên tối đa 60 ký tự.`)
-      .matches(/(\w.+\s).+/, 'Vui lòng nhập đia chỉ')
-      .required('Bạn chưa nhập địa chỉ.'),
-
-  });
+ 
 
   const initValues = {
     fullname: user?.fullname,
@@ -115,7 +153,7 @@ const UserManagerScreen = () => {
       </View>
       <FlatList
         data={searchQuery !== '' ? searchFillter : listUser}
-        style={{marginTop: 2}}
+        style={{marginTop: 2, marginBottom: 50}}
         renderItem={({item, index}) => (
           <TouchableNativeFeedback>
             <View style={styles.item} key={item.key}>
@@ -177,13 +215,15 @@ const UserManagerScreen = () => {
                     <MenuOption
                       onSelect={() => {
                         setUser(item);
+                        setChecked(item.isAdmin);
                         setModalVisible(!modalVisible);
                       }}
                       text="Sửa thông tin"
+                      style={{backgroundColor:'#ffff',justifyContent:'center', alignItems:'center', height: 35}}
                     />
-                    <MenuOption onSelect={() => alert(`Delete`)}>
+                    {/* <MenuOption onSelect={() => alert(`Delete`)}>
                       <Text style={{color: 'red'}}>Xóa tài khoản</Text>
-                    </MenuOption>
+                    </MenuOption> */}
                   </MenuOptions>
                 </Menu>
               </View>
@@ -220,7 +260,7 @@ const UserManagerScreen = () => {
                   //borderTopLeftRadius: 20,
                 }}>
                 <Formik
-                  validationSchema={updateProducts}
+                  validationSchema={updateUser}
                   initialValues={initValues}
                   validateOnMount={true}
                   onSubmit={values => console.log(values)}>
@@ -235,139 +275,146 @@ const UserManagerScreen = () => {
                   }) => (
                     <View style={{flex: 1}}>
 
-                      <View
-                        style={{
-                          flex: 0.7,
-                          justifyContent: 'space-between',
-                          alignItems: 'center', flexDirection:'row', 
-                        }}>
-                        <View></View>
-                        <Text style={{fontSize: 17, fontWeight: '700', textAlign:'center', marginLeft: '5%'}}>Sửa thông tin</Text>
-                        <View>
-                          <TouchableOpacity onPress={() => {
-                              setChecked(false);
-                              setModalVisible(!modalVisible);
-                            }}>
-                            <Image source={deleteIcon} style={{width: 25, height: 25, marginRight: 10}}/>
-                          </TouchableOpacity>
+                      {loading ? (
+                        <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
+                          <ActivityIndicator size={35} color='green'/>
+                          <Text style={{fontSize: 17, marginTop: 20}}>Đang thực hiện...</Text>
                         </View>
-                        
-                      </View>
-
-                        {/**Input */}
-                      <View style={{flex: 8.3, justifyContent:'center'}}>
-
-                        <View style={{flexDirection: 'row'}}>
-                          <View
-                            style={{
-                              width: '10%',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                            }}>
-                            <FontAwesome
-                              name="user-o"
-                              color="#05375a"
-                              size={20}
-                            />
-                          </View>
-                          <View style={{width: '85%',borderRadius: 10, backgroundColor: 'white', height: 40, borderColor: 'green', borderWidth: 0.5,}}>
-                            <TextInput
-                              style={{width: '100%', height: '100%', color: 'black',}}
-                              placeholder="Họ tên ..."
-                              autoCapitalize="none"
-                              onChangeText={handleChange('fullname')}
-                              onBlur={handleBlur('fullname')}
-                              value={values.fullname}
-                            />
-                          </View>
-                        </View>
-                        {errors.fullname && touched.fullname && (
-                          <Text style={styles.text_err}>{errors.fullname}</Text>
-                         )}
-
-                        <View style={{flexDirection:'row',marginTop: 20}}>
-
-                          <View style={{width:'10%',justifyContent:'center', alignItems:'center'}}>
-                            <FontAwesome name="check" color="#05375a" size={20} />
-                          </View>
-
-                          <View style={{width: '85%',borderRadius: 10,backgroundColor: 'white',height: 40,borderColor: 'green',borderWidth: 0.5,}}>
+                      ):(
+                        <View style={{flex:1}}>
                             <View
-                              style={{
-                                width: '100%',
-                                height: 35,
-                                flexDirection: 'row',
-                                justifyContent: 'space-around',
-                                alignItems: 'center',
-                              }}>
-                              <RadioButton
-                                value={false}
-                                status={
-                                  checked === false ? 'checked' : 'unchecked'
-                                }
-                                onPress={() => setChecked(false)}
-                              />
-                              <Text style={styles.labelRadioBtn}>Người dùng</Text>
-
-                              <RadioButton
-                                value={true}
-                                status={
-                                  checked === true ? 'checked' : 'unchecked'
-                                }
-                                onPress={() => setChecked(true)}
-                              />
-                              <Text style={styles.labelRadioBtn}>Admin</Text>
+                            style={{
+                              flex: 0.7,
+                              justifyContent: 'space-between',
+                              alignItems: 'center', flexDirection:'row', 
+                            }}>
+                            <View></View>
+                            <Text style={{fontSize: 17, fontWeight: '700', textAlign:'center', marginLeft: '5%'}}>Sửa thông tin</Text>
+                            <View>
+                              <TouchableOpacity onPress={() => {
+                                  setChecked(false);
+                                  setModalVisible(!modalVisible);
+                                }}>
+                                <Image source={deleteIcon} style={{width: 25, height: 25, marginRight: 10}}/>
+                              </TouchableOpacity>
                             </View>
+                            
+                          </View>
+
+                            {/**Input */}
+                          <View style={{flex: 8.3, justifyContent:'center'}}>
+
+                            <View style={{flexDirection: 'row'}}>
+                              <View
+                                style={{
+                                  width: '10%',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}>
+                                <FontAwesome
+                                  name="user-o"
+                                  color="#05375a"
+                                  size={20}
+                                />
+                              </View>
+                              <View style={{width: '85%',borderRadius: 10, backgroundColor: 'white', height: 40, borderColor: 'green', borderWidth: 0.5,}}>
+                                <TextInput
+                                  style={{width: '100%', height: '100%', color: 'black',}}
+                                  placeholder="Họ tên ..."
+                                  autoCapitalize="none"
+                                  onChangeText={handleChange('fullname')}
+                                  onBlur={handleBlur('fullname')}
+                                  value={values.fullname}
+                                />
+                              </View>
+                            </View>
+                            {errors.fullname && touched.fullname && (
+                              <Text style={styles.text_err}>{errors.fullname}</Text>
+                            )}
+
+                            <View style={{flexDirection:'row',marginTop: 20}}>
+
+                              <View style={{width:'10%',justifyContent:'center', alignItems:'center'}}>
+                                <FontAwesome name="check" color="#05375a" size={20} />
+                              </View>
+
+                              <View style={{width: '85%',borderRadius: 10,backgroundColor: 'white',height: 40,borderColor: 'green',borderWidth: 0.5,}}>
+                                <View
+                                  style={{
+                                    width: '100%',
+                                    height: 35,
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-around',
+                                    alignItems: 'center',
+                                  }}>
+                                  <RadioButton
+                                    value={false}
+                                    status={ checked === false ? 'checked' : 'unchecked' }
+                                    onPress={() => setChecked(false)}
+                                  />
+                                  <Text style={styles.labelRadioBtn}>Người dùng</Text>
+
+                                  <RadioButton
+                                    value={true}
+                                    status={
+                                      checked == true ? 'checked' : 'unchecked'
+                                    }
+                                    onPress={() => setChecked(true)}
+                                  />
+                                  <Text style={styles.labelRadioBtn}>Admin</Text>
+                                </View>
+                              </View>
+                            </View>
+                            
+                            <View style={{flexDirection:'row', marginTop: 20}}>
+                              <View style={{width:'10%',justifyContent:'center', alignItems:'center'}}>
+                                  <FontAwesome name="phone" color="#05375a" size={25} />
+                              </View>
+                              <View style={{width: '85%', borderRadius: 10, backgroundColor:'white', height: 40, borderColor:'green', borderWidth: 0.5}}>
+                                <TextInput style={{width: '100%', height: '100%', color:'black'}} placeholder='Số điện thoại ...'
+                                  autoCapitalize="none"
+                                  onChangeText={handleChange('phone')}
+                                  onBlur={handleBlur('phone')}
+                                  value={values.phone}
+                                  keyboardType="phone-pad"
+                                />
+                              </View>
+                            </View>
+
+                            {errors.phone && touched.phone && (
+                              <Text style={styles.text_err}>{errors.phone}</Text>
+                            )}
+
+                            <View style={{flexDirection:'row', marginTop: 20}}>
+                              <View style={{width:'10%',justifyContent:'center', alignItems:'center'}}>
+                                  <FontAwesome name="home" color="#05375a" size={25} />
+                              </View>
+                              <View style={{width: '85%', borderRadius: 10, backgroundColor:'white', height: 40, borderColor:'green', borderWidth: 0.5}}>
+                                <TextInput style={{width: '100%', height: '100%', color:'black'}} placeholder='Địa chỉ ...'
+                                  autoCapitalize="none"
+                                  onChangeText={handleChange('address')}
+                                  onBlur={handleBlur('address')}
+                                  value={values.address}
+                                  
+                                />
+                              </View>
+                            </View>
+
+                            {errors.address && touched.address && (
+                              <Text style={styles.text_err}>{errors.address}</Text>
+                            )}
+                            
+                          
+                          </View>
+                          {/** End Input */}
+
+                          <View style={{flex: 1, alignItems:'center'}}>
+                            <View style={{width: '40%'}}>
+                              <Button disabled={!isValid} title='Lưu' onPress={()=> updateUsers(values)}/>
+                            </View>   
                           </View>
                         </View>
-                        
-                        <View style={{flexDirection:'row', marginTop: 20}}>
-                          <View style={{width:'10%',justifyContent:'center', alignItems:'center'}}>
-                              <FontAwesome name="phone" color="#05375a" size={25} />
-                          </View>
-                          <View style={{width: '85%', borderRadius: 10, backgroundColor:'white', height: 40, borderColor:'green', borderWidth: 0.5}}>
-                            <TextInput style={{width: '100%', height: '100%', color:'black'}} placeholder='Số điện thoại ...'
-                              autoCapitalize="none"
-                              onChangeText={handleChange('phone')}
-                              onBlur={handleBlur('phone')}
-                              value={values.phone}
-                              keyboardType="phone-pad"
-                            />
-                          </View>
-                        </View>
-
-                        {errors.phone && touched.phone && (
-                          <Text style={styles.text_err}>{errors.phone}</Text>
-                        )}
-
-                        <View style={{flexDirection:'row', marginTop: 20}}>
-                          <View style={{width:'10%',justifyContent:'center', alignItems:'center'}}>
-                              <FontAwesome name="home" color="#05375a" size={25} />
-                          </View>
-                          <View style={{width: '85%', borderRadius: 10, backgroundColor:'white', height: 40, borderColor:'green', borderWidth: 0.5}}>
-                            <TextInput style={{width: '100%', height: '100%', color:'black'}} placeholder='Địa chỉ ...'
-                              autoCapitalize="none"
-                              onChangeText={handleChange('address')}
-                              onBlur={handleBlur('address')}
-                              value={values.address}
-                              
-                            />
-                          </View>
-                        </View>
-
-                        {errors.address && touched.address && (
-                          <Text style={styles.text_err}>{errors.address}</Text>
-                        )}
-                        
-                       
-                      </View>
-                      {/** End Input */}
-
-                      <View style={{flex: 1, alignItems:'center'}}>
-                        <View style={{width: '40%'}}>
-                          <Button disabled={!isValid} title='Lưu'/>
-                        </View>   
-                      </View>
+                      )}
                     </View>
                   )}
                 </Formik>

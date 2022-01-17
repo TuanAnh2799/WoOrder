@@ -15,7 +15,7 @@ import {
   View,
 } from 'react-native';
 import {RadioButton, Checkbox, TouchableRipple} from 'react-native-paper';
-import deleteIcon from '../../../../img/Delete.png';
+import deleteIcon from '../../../../img/delete.png';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 import firestore from '@react-native-firebase/firestore';

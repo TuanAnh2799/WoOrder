@@ -144,8 +144,8 @@ const changePasswordScreen = () => {
                    
                     <View style={{marginTop: 30, width:'100%', alignItems:'center'}}>
                         <View style={{width:'50%'}}>
-                            <Button  title='Thay đổi' onPress={()=> {
-                                //forgotPassword(values.email);disabled={!isValid}
+                            <Button  title='Thay đổi' disabled={!isValid} onPress={()=> {
+                                //forgotPassword(values.email);
                                 Alert.alert("Xác nhận","Bạn chắc chắn muốn đổi?", [
                                 {
                                     text: 'Đồng ý',

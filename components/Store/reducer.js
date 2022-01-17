@@ -12,6 +12,7 @@ const initProduct = {
 
 const initUser = {
     User : null,
+    isAdmin: false
 }
 
 const initListProduct = {
