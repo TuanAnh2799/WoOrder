@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {Avatar, Title, Caption, TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-//import {AuthContext} from '../../Routes/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import {setUserLogout,resetStore,clearFavorite} from '../../Store/action';
 import {connect} from 'react-redux';
@@ -22,6 +21,7 @@ import { useSelector } from 'react-redux';
 function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
 
   const userid = useSelector(state => state.userState.User);
+  const isAdmin = useSelector(state => state.userState.isAdmin);
   console.log('profile - userid:',userid);
   const navigation = useNavigation();
   //const {logout, user} = useContext(AuthContext);
@@ -43,7 +43,7 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
     getData();
     getDataDaDuyet();
     
-    if (userid == '6d1OQZfciSaMqv3azVASuPtQnaV2') {
+    if (isAdmin == true) {
       return adminGetData();
     }
     // Stop listening for updates when no longer required
@@ -148,7 +148,7 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
             <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>
               {userInfo?.fullname}
             </Title>
-            {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
+            {isAdmin == true ? (
               <Caption style={styles.caption}>@Admin</Caption>
             ) : (
               <Caption style={styles.caption}>@Người dùng</Caption>
@@ -197,7 +197,7 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
           <Caption style={{fontSize: 17}}>Ví tiền</Caption>
         </View>
 
-        {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' ? (
+        {isAdmin == true ? (
           <TouchableNativeFeedback onPress={()=> navigation.navigate('CheckOrder')}>
             <View style={styles.infoBox}>
               {checkOrder.length > 0 ? (
@@ -225,7 +225,7 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
 
       <View style={styles.menuWrapper}>
       
-      {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
+      {isAdmin == true && (
           <TouchableRipple onPress={() => navigation.navigate("ProductManager")}>
             <View style={styles.menuItem}>
               <Icon name="database-plus" color="#FF6347" size={25} />
@@ -235,11 +235,21 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
         )
       }
 
-      {userid == '6d1OQZfciSaMqv3azVASuPtQnaV2' && (
+      {isAdmin == true && (
           <TouchableRipple onPress={() => navigation.navigate("UserManager")}>
             <View style={styles.menuItem}>
               <Icon name="account-details" color="#FF6347" size={25} />
               <Text style={styles.menuItemText}>Quản lý người dùng</Text>
+            </View>
+          </TouchableRipple>
+        )
+      }
+
+      {isAdmin == true && (
+          <TouchableRipple onPress={()=> navigation.navigate('Chart')}>
+            <View style={styles.menuItem}>
+              <Icon name="chart-bar" color="#FF6347" size={25} />
+              <Text style={styles.menuItemText}>Quản lý thống kê</Text>
             </View>
           </TouchableRipple>
         )
@@ -260,12 +270,12 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
             <Text style={styles.menuItemText}>Yêu thích</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {ToastAndroid.show("Chức năng sẽ cập nhật trong thời gian tới.", ToastAndroid.SHORT)}}>
+        {/* <TouchableRipple onPress={() => {ToastAndroid.show("Chức năng sẽ cập nhật trong thời gian tới.", ToastAndroid.SHORT)}}>
           <View style={styles.menuItem}>
             <Icon name="credit-card" color="#FF6347" size={25} />
             <Text style={styles.menuItemText}>Thanh toán</Text>
           </View>
-        </TouchableRipple>
+        </TouchableRipple> */}
         <TouchableRipple onPress={() => navigation.navigate('Help')}>
           <View style={styles.menuItem}>
             <Icon name="account-question-outline" color="#FF6347" size={25} />

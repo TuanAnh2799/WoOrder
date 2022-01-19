@@ -35,6 +35,7 @@ LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component
 function DetailsScreen({route, navigation, AddCart, setFavorite,AddToFavorite}) {
 
   const userid = useSelector(state => state.userState.User);
+  const isAdmin = useSelector(state => state.userState.isAdmin);
   const listFavorites = useSelector(state => state.favourites.favoriteProduct);
   const id = route.params.product.id;
   const name = route.params.product.name;
@@ -399,49 +400,52 @@ const editComment =(text,id)=>{
       </View>
 
       {/**Thong tin sản phẩm */}
-      <ScrollView showsVerticalScrollIndicator={false} >
+      
+    <ScrollView showsVerticalScrollIndicator={false} >
         <View style={styles.wrapInfo}>
           <View style={styles.wrapDetail}>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{fontSize: 17}}>Sản phẩm: </Text>
-              <Text style={{fontSize: 18, fontWeight: 'bold', marginLeft: 2}}>
+              <Text style={{fontSize: 17}}> </Text>
+              <Text style={{fontSize: 22, fontWeight: 'bold', marginLeft: 2}}>
                 {name}
               </Text>
             </View>
-            <View style={{flexDirection: 'row', marginTop: 10}}>
-              <Text style={{fontSize: 17}}>Giá:</Text>
-              <Text style={{marginLeft: '13%', fontSize: 16}}>
-                {formatCash(price)} VNĐ
+
+            <View style={{flexDirection: 'row', marginTop: 5}}>
+              <Icon name="cart-outline" size={25} color="red"/>
+              <Text style={{marginLeft: '2%', fontSize: 18, textShadowColor: 'black', textShadowRadius: 1}}>
+                {formatCash(price)}
               </Text>
+              <Text style={{color:'green', fontWeight:'700', marginLeft: 5}}>VNĐ</Text>
             </View>
+
           </View>
+
           <View style={{marginLeft: 20, marginTop: 10}}>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{fontSize: 17}}>Màu sắc: </Text>
-              {color.map((e, index) => (
-                <Text key={index} style={{marginLeft: 7, fontSize: 16}}>
-                  {e}
-                </Text>
-              ))}
+              <Text style={{fontSize: 16, marginTop: 3}}>Màu sắc: </Text>
+              <View style={{width:'70%', flexWrap:'wrap', flexDirection:'row', marginLeft: 15}}>
+                  {color.map((e, index) => (
+                  <View style={{marginTop:1,  height: 25, backgroundColor:'#f1f1f1', marginLeft: 5, borderRadius: 10, shadowColor:'black', elevation:5}} key={index}>
+                    <Text key={index} style={{marginLeft: 7, fontSize: 15, marginRight: 7}}>{e}</Text>
+                  </View>
+                  
+                ))}
+              </View>
+              
             </View>
 
             <View>
               {size.length > 1 ? (
                 <View style={{flexDirection: 'row', marginTop: 10}}>
                   <View>
-                    <Text style={{fontSize: 17}}>Size:</Text>
+                    <Text style={{fontSize: 16}}>Kích thước:</Text>
                   </View>
                   <View style={{flexDirection: 'row'}}>
                     {size.map((e, index) => (
-                      <Text
-                        key={index}
-                        style={{
-                          marginHorizontal: 5,
-                          fontSize: 16,
-                          marginLeft: 45,
-                        }}>
-                        {e}
-                      </Text>
+                      <View style={{width: 45, height: 25, justifyContent:'center', alignItems:'center',backgroundColor:'#f1f1f1', marginLeft: 10, borderRadius: 10, shadowColor:'black', elevation:5}} key={index}>
+                        <Text key={index} style={{fontSize: 15}}>{e}</Text>
+                      </View>
                     ))}
                   </View>
                 </View>
@@ -451,15 +455,15 @@ const editComment =(text,id)=>{
             </View>
 
             {/**Chi tieest inffo */}
-            <View style={{marginTop: 10}}>
-              <View style={{width: '98%', flexDirection: 'row'}}>
+            <View style={{marginTop: 10, width:'100%'}}>
+              <View style={{width: '98%'}}>
                 <View style={{width: '20%'}}>
-                  <Text style={{fontSize: 17}}>Chi tiết:</Text>
+                  <Text style={{fontSize: 16}}>Chi tiết:</Text>
                 </View>
                 
               </View>
 
-              <View style={{width: '90%', backgroundColor:'green'}}>
+              <View style={{width: '90%', borderWidth: 0.5, marginLeft: '2%', backgroundColor:'#f1f1f1',marginTop: 5, borderRadius: 20, padding:18, shadowColor:'black', elevation: 5}}>
                   {splitInfo.map((e, index) => (
                     <Text key={index} style={{fontSize: 16, textAlign: 'left'}}>
                       {e}
@@ -469,10 +473,10 @@ const editComment =(text,id)=>{
 
             </View>
 
-            <View style={{marginTop: 30}}>
+            <View style={{marginTop: 30, height: 100}}>
               <View style={{width: '60%', marginLeft: '20%'}}>
               {
-                userid == '6d1OQZfciSaMqv3azVASuPtQnaV2'? (
+                isAdmin == true? (
                   <View></View>) : (
                     <Button
                     title="Mua ngay"
@@ -487,8 +491,10 @@ const editComment =(text,id)=>{
             </View>
           </View>
         </View>
-        <View style={{width: '100%', marginTop: 50}}></View>
-      </ScrollView>
+        
+        <View style={{width: '100%', marginTop: 120}}></View>
+        </ScrollView>
+      
 
       {/**Modal pickup */}
 
@@ -524,7 +530,7 @@ const editComment =(text,id)=>{
                 </Text>
               </View>
 
-              <View style={{flex: 7, marginTop: 30}}>
+              <View style={{flex: 7, marginTop: 20}}>
                 <View style={{flexDirection: 'row'}}>
                   <View style={{marginTop: 15, marginLeft: 30}}>
                     <Text>Chọn màu sắc:</Text>
@@ -661,7 +667,7 @@ const editComment =(text,id)=>{
         </View>
         <Text style={{textAlign:'center', fontSize: 13}}>{fillterProduct?.length}</Text>
         <View style={{marginTop: 12}}>
-          <Icon name="share" size={35} color="red" onPress={()=> customShare(url[0])}/>
+          <Icon name="share" size={35} color="#023556" onPress={()=> customShare(url[0])}/>
         </View>
       </View>
 

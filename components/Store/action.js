@@ -15,6 +15,8 @@ export const SET_USER_LOGOUT = 'SET_USER_LOGOUT';
 export const SET_PRODUCT = 'SET_PRODUCT';
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
 export const SET_FAVORITE = 'SET_FAVORITE';
+export const SET_ADMIN = 'SET_ADMIN';
+
 
 export function AddCart(payload){
     return {
@@ -78,6 +80,13 @@ const AddHistoricName = payload => {
 export function setUserLogin(payload){
     return{
         type:'SET_USER_LOGIN',
+        payload
+    }
+};
+
+export function setAdmin(payload){
+    return{
+        type:'SET_ADMIN',
         payload
     }
 };

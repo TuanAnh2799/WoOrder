@@ -161,6 +161,8 @@ function ProductScreen({AddToFavorite, setProduct}) {
                           justifyContent: 'center',
                           alignItems: 'center',
                           width: '100%',
+                          height: 28,
+                          flexDirection:'row', flexWrap:'wrap-reverse'
                         }}>
                         <Text style={styles.name}>{item.name}</Text>
                       </View>

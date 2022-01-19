@@ -14,8 +14,10 @@ export const styles = StyleSheet.create({
     borderWidth: 1
   },
   name: {
-    fontSize: 16,
+    fontSize: 17,
     marginTop: 4,
+    fontWeight:'700',
+    textAlign:'center',
   },
   price: {
     fontSize: 15,

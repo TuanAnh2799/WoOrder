@@ -1,5 +1,5 @@
 import {GET_NUMBER_CART,ADD_CART,ADD_FAVORITE, DECREASE_QUANTITY, INCREASE_QUANTITY, DELETE_CART,
-     CLEAR_FAVORITE, RESET_STORE, SET_USER_LOGIN, SET_USER_REGISTER, SET_USER_LOGOUT, SET_PRODUCT, DELETE_PRODUCT, SET_FAVORITE } from  './action';
+     CLEAR_FAVORITE, RESET_STORE, SET_USER_LOGIN, SET_USER_REGISTER, SET_USER_LOGOUT, SET_PRODUCT, DELETE_PRODUCT, SET_FAVORITE, SET_ADMIN } from  './action';
 import { combineReducers } from 'redux';
 import { ToastAndroid } from 'react-native';
 
@@ -58,6 +58,13 @@ function reducerAuth( state = initUser, action){
             return {
                 User: user
             }  
+        case SET_ADMIN:
+                let Admin = action.payload
+                console.log('isAdmin bên reducer nhận đc:',Admin);
+                return {
+                    ...state,
+                    isAdmin: Admin
+                } 
 
         case SET_USER_REGISTER:
             let userRegister = action.payload
@@ -68,7 +75,8 @@ function reducerAuth( state = initUser, action){
             
         case SET_USER_LOGOUT:
             return {
-                User: null
+                User: null,
+                isAdmin:false,
             }
         default:
             return state;

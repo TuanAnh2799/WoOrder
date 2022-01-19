@@ -6,12 +6,12 @@ import ProductsScreen from '../ListProducts/Products';
 import SlideScreen from '../Slide/slide';
 import firestore from '@react-native-firebase/firestore';
 import { useSelector } from 'react-redux';
-import { setFavorite } from '../../Store/action';
+import { setFavorite,setAdmin } from '../../Store/action';
 import {connect} from 'react-redux';
 
 
 
-const HomeScreen = ({setFavorite}) => {
+const HomeScreen = ({setFavorite,setAdmin}) => {
 
   const userid = useSelector(state => state.userState.User);
   useEffect(() => {
@@ -25,6 +25,14 @@ const HomeScreen = ({setFavorite}) => {
         setFavorite(x.favorites);
       });
 
+      firestore()
+      .collection('UserAddress')
+      .doc(userid)
+      .onSnapshot(documentSnapshot => {
+        //console.log('User data: ', documentSnapshot.data());
+        let temp = documentSnapshot.data();
+        setAdmin(temp.isAdmin);
+      });
     
 
     return () => subscriber();
@@ -52,9 +60,10 @@ const HomeScreen = ({setFavorite}) => {
 function mapDispatchToProps(dispatch) {
   return {
     setFavorite: data => dispatch(setFavorite(data)),
+    setAdmin: data => dispatch(setAdmin(data)),
   };
 }
 
-export default connect(mapDispatchToProps, {setFavorite})(HomeScreen);
+export default connect(mapDispatchToProps, {setFavorite,setAdmin})(HomeScreen);
 
 

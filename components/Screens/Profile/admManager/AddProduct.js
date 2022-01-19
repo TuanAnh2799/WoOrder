@@ -118,13 +118,26 @@ const AddProduct = () => {
     setLoading(true);
     let imageUrl = await uploadImage();
     let color; 
-    
-    if(value.color !== '')
+    let result = value.color.includes(' ');
+    let result2 = value.color.includes(',');
+    let result3 = value.color.includes('.');
+    if(result == true)
     {
       let x = await chuanhoa(value.color);
       color = x.trim().split(' ');
     }
+    if(result2 == true)
+    {
+      let x = await chuanhoa(value.color);
+      color = x.trim().split(',');
+    }
+    if(result3 == true)
+    {
+      let x = await chuanhoa(value.color);
+      color = x.trim().split('.');
+    }
     console.log('Màu sắc:', color);
+    console.log('Màu sắc:', color.length);
 
     let size = '';
     let listSize;
@@ -143,7 +156,7 @@ const AddProduct = () => {
       if(sizeXXL !== false){
         size += 'XXL'+' ';
       }
-      listSize = size.toUpperCase().split(' ');
+      listSize = size.toUpperCase().trim().split(' ');
     }
     else {
       listSize = [];
@@ -280,7 +293,7 @@ const initValues = {
                 <View style={{width: '30%', justifyContent:'center'}}>
                   <Text style={styles.label}>Tên sản phẩm</Text>
                </View>
-                <View style={{width: '70%', height: 35}}>
+                <View style={{width: '70%', height: 37}}>
                   <TextInput 
                     style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}}
                     autoCapitalize="none"
@@ -366,7 +379,7 @@ const initValues = {
                   <Text style={styles.label}>Màu sắc</Text>
                 </View>
                 <View style={{width: '70%', height: 36}}>
-                  <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} placeholder='Đỏ , Xanh, Vàng ...' 
+                  <TextInput style={{width: 250, borderWidth: 1, borderRadius: 10, backgroundColor:'#ffff'}} placeholder='Đỏ Xanh Vàng ...' 
                     autoCapitalize="none"
                     onChangeText={handleChange('color')}
                     onBlur={handleBlur('color')}
@@ -588,8 +601,8 @@ const initValues = {
 
           <View style={{flex: 1.3, borderTopWidth: 3, borderTopColor:'#fff'}}>
             <View style={styles.wrappButton}>
-              <View style={{width: '100%', height: 35, alignItems: 'center'}}>
-                <View style={{width: '50%'}}>
+              <View style={{width: '100%', height: 40, alignItems: 'center', justifyContent:'center'}}>
+                <View style={{width: '50%', marginBottom: 5}}>
                   <Button title="Thêm" disabled={!isValid}  onPress={()=> {
                     
                     if(listIMG.length == 0){

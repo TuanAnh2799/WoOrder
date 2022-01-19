@@ -18,7 +18,6 @@ import {
 import { Searchbar } from 'react-native-paper';
 import {styles} from './styles';
 import firestore, {firebase} from '@react-native-firebase/firestore';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Colors, ActivityIndicator} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {FlatList} from 'react-native-gesture-handler';
@@ -68,7 +67,7 @@ const windowHeight = Dimensions.get('window').height;
 
 const ListProduct = () => {
 
-  const products = useSelector(state => state.productStore.Product);
+  const [products, setProduct] = useState([]);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingUpdate, setIsLoadUpdate] = useState(false);
@@ -104,12 +103,28 @@ const ListProduct = () => {
     
   }
 
-  useEffect(() => {
 
-    setIsLoading(false);
-    setDataList(products);
+  useEffect(async () => {
+    const subscriber = await firestore()
+      .collection('Products')
+      .onSnapshot(querySnapshot => {
+        const productss = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          productss.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+
+        setIsLoading(false);
+        setProduct(productss);
+        setDataList(productss);
+        
+      });
     LogBox.ignoreLogs(["Can't perform a React state update on an unmounted component."]);
-}, []);
+    return () => subscriber();
+  }, []);
 
 const Search =(text)=>{
   if(text !== ''){
@@ -316,8 +331,8 @@ const setStatusFillter = getType => {
 
               <View style={{width: '10%', justifyContent: 'center'}}>
                 <Menu>
-                  <MenuTrigger text="Q.lý" />
-                  <MenuOptions>
+                  <MenuTrigger text="Q.lý"/>
+                  <MenuOptions >
                     <MenuOption
                       onSelect={() => {
                         if (item.type == 2) {
@@ -347,8 +362,10 @@ const setStatusFillter = getType => {
                         setModalVisible(!modalVisible);
                       }}
                       text="Sửa thông tin"
+                      style={{backgroundColor:'#ffff',justifyContent:'center', alignItems:'center', height: 35, borderBottomWidth: 0.5}}
                     />
                     <MenuOption
+                      style={{backgroundColor:'#ffff',justifyContent:'center', alignItems:'center', height: 35}}
                       onSelect={() => {
                         Alert.alert('Xác nhận', 'Bạn muốn xóa sản phẩm?', [
                           {
@@ -366,6 +383,7 @@ const setStatusFillter = getType => {
                         ]);
                       }}>
                       <Text style={{color: 'red'}}>Xóa</Text>
+                      
                     </MenuOption>
                   </MenuOptions>
                 </Menu>

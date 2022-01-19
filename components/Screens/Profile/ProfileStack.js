@@ -16,6 +16,7 @@ import IconAddUserScreen from './admManager/IconAddUserScreen';
 import UserStack from './admManager/UserStack';
 import AddUserScreen from './admManager/AddUserScreen';
 import changePasswordScreen from './changePassword';
+import statisticalScreen from './chart/statistical';
 
 
 const ProfileStack = createStackNavigator();
@@ -137,6 +138,15 @@ const ProfileStackScreen = () => (
         component={AddProduct}
         options={{
           title:'Thêm sản phẩm',
+          headerTitleAlign: 'center',
+          headerShown: true,
+      }}/>
+
+    <ProfileStack.Screen
+        name="Chart"
+        component={statisticalScreen}
+        options={{
+          title:'Quản lý thống kê',
           headerTitleAlign: 'center',
           headerShown: true,
       }}/>
