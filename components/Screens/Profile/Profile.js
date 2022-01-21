@@ -159,7 +159,9 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
             size={25}
             color="tomato"
             style={styles.iconEdit}
-            onPress={() => navigation.navigate('EditProfile')}
+            onPress={() => navigation.navigate('EditProfile',{
+              info: userInfo,
+            })}
           />
         </View>
       </View>

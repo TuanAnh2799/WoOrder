@@ -11,6 +11,9 @@ import {
   ToastAndroid,
   Platform,
   Alert,
+  Dimensions,
+  Modal,
+  TouchableNativeFeedback
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Formik} from 'formik';
@@ -24,13 +27,18 @@ import {ActivityIndicator} from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 
-const EditProfile = ({navigation}) => {
+const deviceWidth = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
 
+const EditProfile = ({navigation, route}) => {
+  const info = route.params.info;
   const userid = useSelector(state => state.userState.User);
   const [userInfo, setUserInfo] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [image, setImage] = useState(null);
+  const [modalVisble, setmodalVisble] = useState(false);
+ console.log("User info: ",info);
 
   var avatarDefault =
     'https://bloganchoi.com/wp-content/uploads/2020/07/meo-cua-lisa-17.jpg';
@@ -73,13 +81,13 @@ const EditProfile = ({navigation}) => {
       .then(image => {
         //console.log(image);
         const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-        bs.current.snapTo(1);
+        setmodalVisble(false);
         setImage(imageUri);
       })
       .catch(err => {
         console.log('openCamera catch' + err.toString());
         ToastAndroid.show('Tải ảnh lên thất bại!.', ToastAndroid.SHORT);
-        bs.current.snapTo(1);
+        setmodalVisble(false);
       });
   };
 
@@ -98,7 +106,7 @@ const EditProfile = ({navigation}) => {
         //console.log(image);
         const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
         console.log('link anh: ' + imageUri);
-        bs.current.snapTo(1);
+        setmodalVisble(false);
         setImage(imageUri);
 
         ImagePicker.clean().then(() => {
@@ -112,7 +120,7 @@ const EditProfile = ({navigation}) => {
       .catch(err => {
         console.log('openCamera catch' + err.toString());
         ToastAndroid.show('Tải ảnh lên thất bại!.', ToastAndroid.SHORT);
-        bs.current.snapTo(1);
+        setmodalVisble(false);
       });
   };
 
@@ -186,44 +194,16 @@ const EditProfile = ({navigation}) => {
     }
   };
 
-  renderInner = () => (
-    <View style={styles.panel}>
-      <View style={{alignItems: 'center'}}>
-        <Text style={styles.panelTitle}>Tải ảnh lên</Text>
-        <Text style={styles.panelSubtitle}>Chọn ảnh đại diện của bạn</Text>
-      </View>
-      <TouchableOpacity
-        style={styles.panelButton}
-        onPress={takePhotoFromCamera}>
-        <Text style={styles.panelButtonTitle}>Chụp từ máy ảnh</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.panelButton}
-        onPress={choosePhotoFromLibrary}>
-        <Text style={styles.panelButtonTitle}>Chọn từ thư viện ảnh</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.panelButton}
-        onPress={() => bs.current.snapTo(1)}>
-        <Text style={styles.panelButtonTitle}>Hủy</Text>
-      </TouchableOpacity>
-    </View>
-  );
 
-  renderHeader = () => (
-    <View style={styles.header}>
-      <View style={styles.panelHeader}>
-        <View style={styles.panelHandle}></View>
-      </View>
-    </View>
-  );
-
-  const bs = React.createRef();
-  const fall = new Animated.Value(1);
+  const initValues = {
+    fullname: info?.fullname,
+    phonenumber: info?.phone.toString(),
+    address: info?.address,
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <BottomSheet
+      {/* <BottomSheet
         ref={bs}
         snapPoints={[330, 0]}
         renderContent={renderInner}
@@ -231,14 +211,64 @@ const EditProfile = ({navigation}) => {
         initialSnap={1}
         callbackNode={fall}
         enabledGestureInteraction={true} // kéo xuống để tắt
-      />
+      /> */}
+
+      <Modal
+        visible={modalVisble}
+        animationType={'fade'}
+        transparent={true}
+        onRequestClose={()=>setmodalVisble(!modalVisble)}>
+        <TouchableNativeFeedback
+          onPress={() => {
+            setmodalVisble(false);
+          }}>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: '#000000AA',
+                justifyContent: 'flex-end',
+              }}>
+              <TouchableNativeFeedback>
+                <View
+                  style={{
+                    backgroundColor: '#fff',
+                    width: '100%',
+                    height: deviceHeight * 0.36,
+                    borderTopRightRadius: 20,
+                    borderTopLeftRadius: 20,
+                  }}>
+                    <View style={styles.panel}>
+                      <View style={{alignItems: 'center'}}>
+                        <Text style={styles.panelTitle}>Tải ảnh lên</Text>
+                        <Text style={styles.panelSubtitle}>Chọn ảnh đại diện của bạn</Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.panelButton}
+                        onPress={takePhotoFromCamera}>
+                        <Text style={styles.panelButtonTitle}>Chụp từ máy ảnh</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.panelButton}
+                        onPress={choosePhotoFromLibrary}>
+                        <Text style={styles.panelButtonTitle}>Chọn từ thư viện ảnh</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.panelButton}
+                        onPress={() => setmodalVisble(false)}>
+                        <Text style={styles.panelButtonTitle}>Hủy</Text>
+                      </TouchableOpacity>
+                    </View>
+                </View>
+              </TouchableNativeFeedback>
+              
+            </View>
+          </TouchableNativeFeedback>
+        
+      </Modal>
+
       <Formik
         validationSchema={registerValidSchema}
-        initialValues={{
-          fullname: '',
-          address: '',
-          phonenumber: '',
-        }}
+        initialValues={initValues}
         validateOnMount={true}
         onSubmit={values => console.log(values)}>
         {({
@@ -270,9 +300,9 @@ const EditProfile = ({navigation}) => {
                     <Icon
                       name="camera"
                       size={30}
-                      color="green"
+                      color="orange"
                       style={styles.iconCamera}
-                      onPress={() => bs.current.snapTo(0)}
+                      onPress={() => setmodalVisble(true)}
                     />
                   </View>
                 </ImageBackground>
@@ -552,7 +582,6 @@ const styles = StyleSheet.create({
   },
   panel: {
     padding: 20,
-    backgroundColor: '#FFFFFF',
     paddingTop: 5,
   },
 });

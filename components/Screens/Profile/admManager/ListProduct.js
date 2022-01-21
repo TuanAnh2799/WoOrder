@@ -1,12 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {
-  SafeAreaView,
   Text,
   View,
   Image,
   TouchableNativeFeedback,
   TouchableOpacity,
-  ScrollView,
   Dimensions,
   Modal,
   Button,
@@ -17,9 +15,8 @@ import {
 } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import {styles} from './styles';
-import firestore, {firebase} from '@react-native-firebase/firestore';
-import {Colors, ActivityIndicator} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import {ActivityIndicator} from 'react-native-paper';
 import {FlatList} from 'react-native-gesture-handler';
 import Textarea from 'react-native-textarea';
 import {
@@ -34,8 +31,7 @@ import chuanhoa from '../../API/convertString';
 import {Checkbox} from 'react-native-paper';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import { useSelector } from 'react-redux';
-import {connect} from 'react-redux';
+
 
 const listTab = [
   {
@@ -68,7 +64,6 @@ const windowHeight = Dimensions.get('window').height;
 const ListProduct = () => {
 
   const [products, setProduct] = useState([]);
-  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingUpdate, setIsLoadUpdate] = useState(false);
   const [statusType, setStatusType] = useState(0);
@@ -317,11 +312,7 @@ const setStatusFillter = getType => {
 
                 <View style={styles.wrapPrice}>
                   <View
-                    style={{
-                      justifyContent: 'center',
-                      alignItems: 'flex-start',
-                      width: '100%',
-                    }}>
+                    style={{justifyContent: 'center',alignItems: 'flex-start',width: '100%'}}>
                     <Text style={styles.price}>
                       Giá: {formatCash(item.price)} VNĐ
                     </Text>
@@ -362,10 +353,10 @@ const setStatusFillter = getType => {
                         setModalVisible(!modalVisible);
                       }}
                       text="Sửa thông tin"
-                      style={{backgroundColor:'#ffff',justifyContent:'center', alignItems:'center', height: 35, borderBottomWidth: 0.5}}
+                      style={styles.editProductButton}
                     />
                     <MenuOption
-                      style={{backgroundColor:'#ffff',justifyContent:'center', alignItems:'center', height: 35}}
+                      style={styles.deleteProductButton}
                       onSelect={() => {
                         Alert.alert('Xác nhận', 'Bạn muốn xóa sản phẩm?', [
                           {
@@ -427,17 +418,12 @@ const setStatusFillter = getType => {
                 }>
                 <View
                   style={{
-                    flex: 1,
-                    backgroundColor: '#000000AA',
-                    justifyContent: 'flex-end',
+                    flex: 1, backgroundColor: '#000000AA',justifyContent: 'flex-end',
                   }}>
                   <TouchableNativeFeedback>
                     <View
                       style={{
-                        backgroundColor: '#fff',
-                        width: '100%',
-                        height: '92%',
-                        borderRadius: 20,
+                        backgroundColor: '#fff',width: '100%',height: '92%',borderRadius: 20,
                         //borderTopLeftRadius: 20,
                       }}>
                       <Formik
@@ -599,19 +585,12 @@ const setStatusFillter = getType => {
                                 height: 37,
                               }}>
                               <View
-                                style={{
-                                  width: '30%',
-                                  justifyContent: 'center',
-                                }}>
+                                style={{width: '30%',justifyContent: 'center',}}>
                                 <Text style={{marginLeft: 5}}>Màu sắc:</Text>
                               </View>
                               <View style={{width: '70%', flexDirection:'row'}}>
                                 <TextInput
-                                  style={{
-                                    width: '80%',
-                                    height: 37,
-                                    borderWidth: 1,
-                                  }}
+                                  style={{width: '80%',height: 37,borderWidth: 1,}}
                                   onChangeText={handleChange('color')}
                                   onBlur={handleBlur('color')}
                                   value={values.color}
@@ -658,11 +637,6 @@ const setStatusFillter = getType => {
 
 
                           </View>
-                          
-                          {/* <View style={{height: '40%', top: -5}}>
-                            <Text style={{textAlign: 'center'}}>Ảnh sản phẩm</Text>
-                            <ViewPhoto/>
-                          </View> */}
                         </View>
                         <View
                           style={{
@@ -696,17 +670,6 @@ const setStatusFillter = getType => {
                             {
                               updateProduct(values.name, values.price, values.color, values.info);
                             }
-                              // if(type === '2' && (sizeM !== false || sizeL !== false || sizeXL !== false || sizeXXL !== false))
-                              // {
-                              //   updateProduct(values.name, values.price, values.color, values.info); 
-                              //   setSizeMChecked(false);
-                              //   setSizeLChecked(false);
-                              //   setSizeXLChecked(false);
-                              //   setSizeXXLChecked(false);                              
-                              // }
-                              // else if(type === '2' && (sizeM == false || sizeL == false || sizeXL == false || sizeXXL == false)){
-                              //   ToastAndroid.show("Thông báo!", "Chưa điền đầy đủ thông tin.");
-                              // }
                             }
                               }/>
                           </View>

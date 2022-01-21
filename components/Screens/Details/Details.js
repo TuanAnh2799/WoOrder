@@ -531,7 +531,7 @@ const editComment =(text,id)=>{
               </View>
 
               <View style={{flex: 7, marginTop: 20}}>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{flexDirection: 'row', alignItems:'center'}}>
                   <View style={{marginTop: 15, marginLeft: 30}}>
                     <Text>Chọn màu sắc:</Text>
                   </View>
@@ -540,9 +540,10 @@ const editComment =(text,id)=>{
                       marginLeft: 35,
                       borderWidth: 1,
                       borderColor: 'black',
+                      justifyContent:'center', alignItems:'center'
                     }}>
                     <Picker
-                      style={{height: 45, width: 150, padding: 5}}
+                      style={{height: 30, width: 120, padding: 1}}
                       selectedValue={selectedColor}
                       onValueChange={(itemValue, itemIndex) =>
                         setSelectedColor(itemValue)
@@ -566,9 +567,10 @@ const editComment =(text,id)=>{
                           borderWidth: 1,
                           borderColor: 'black',
                           alignItems: 'center',
+                          justifyContent:'center',
                         }}>
                         <Picker
-                          style={{height: 40, width: 150}}
+                          style={{height: 45, width: 120}}
                           selectedValue={selectedSize}
                           onValueChange={(itemValue, itemIndex) =>
                             setSelectedSize(itemValue)

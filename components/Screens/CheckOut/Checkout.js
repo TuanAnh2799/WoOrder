@@ -580,7 +580,7 @@ function CheckOutScreen({
                 Lưu ý:{' '}
               </Text>
               <Text style={{fontSize: 16, width: '85%', lineHeight: 27}}>
-                Hàng vận chuyển trong vòng 7 ngày. Nên cân nhắc khi đặt hàng.
+                Hàng vận chuyển trong vòng 7 -14 ngày. Nên cân nhắc trước khi đặt hàng.
               </Text>
             </View>
 

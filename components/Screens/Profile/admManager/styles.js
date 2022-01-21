@@ -147,5 +147,17 @@ export const styles = StyleSheet.create({
     fontSize: 17,
     marginTop: 7,
   },
-  
+  editProductButton: {
+    backgroundColor:'#ffff',
+    justifyContent:'center',
+    alignItems:'center',
+    height: 35,
+    borderBottomWidth: 0.5,
+  },
+  deleteProductButton: {
+    backgroundColor:'#ffff',
+    justifyContent:'center',
+    alignItems:'center',
+    height: 35,
+  },
 });
