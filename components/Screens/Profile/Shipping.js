@@ -162,7 +162,7 @@ const onRefresh = React.useCallback(() => {
                         <Text style={{fontSize: 16, marginRight: 10, color: 'green', fontWeight:'700'}}>{item.orderStatus}</Text>
                       </View>
                       <View style={{width:'90%', marginLeft:'5%', marginTop: 15}}>
-                        <Text style={{fontSize: 16, textAlign:'center', fontStyle:'italic', color:Colors.red600}}>Hàng được vận chuyển trong vòng 7 ngày. Xin vui lòng chờ...</Text>
+                        <Text style={{fontSize: 16, textAlign:'center', fontStyle:'italic', color:Colors.red600}}>Hàng được vận chuyển trong vòng 7 - 14 ngày. Xin vui lòng chờ...</Text>
                       </View>
                     </View>
                   </View>

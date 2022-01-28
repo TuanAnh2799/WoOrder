@@ -11,14 +11,14 @@ import {
 import {Avatar, Title, Caption, TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firestore from '@react-native-firebase/firestore';
-import {setUserLogout,resetStore,clearFavorite} from '../../Store/action';
+import {setUserLogout,resetStore,clearFavorite,setAdmin} from '../../Store/action';
 import {connect} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 
 
-function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
+function ProfileScreen({setUserLogout,resetStore,clearFavorite,setAdmin}) {
 
   const userid = useSelector(state => state.userState.User);
   const isAdmin = useSelector(state => state.userState.isAdmin);
@@ -39,6 +39,16 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
         //console.log('User data: ', documentSnapshot.data());
         setUserInfo(documentSnapshot.data());
       });
+
+      firestore()
+      .collection('UserAddress')
+      .doc(userid)
+      .onSnapshot(documentSnapshot => {
+        //console.log('User data: ', documentSnapshot.data());
+        let temp = documentSnapshot.data();
+        setAdmin(temp.isAdmin);
+      });
+
 
     getData();
     getDataDaDuyet();
@@ -214,7 +224,7 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite}) {
           <TouchableNativeFeedback
             onPress={() => navigation.navigate('MyOrder')}>
             <View style={styles.infoBox}>
-              {myOrder.length > 1 || myOrder2.length > 1 ? (
+              {myOrder.length > 0 || myOrder2.length > 0 ? (
                 <Title style={{color: 'red'}}>{myOrder.length + myOrder2.length} *</Title>
               ) : (
                 <Title>0</Title>
@@ -337,10 +347,11 @@ function mapDispatchToProps(dispatch) {
     setUserLogout: () => dispatch(setUserLogout()),
     resetStore: () => dispatch(resetStore()),
     clearFavorite: () => dispatch(clearFavorite()),
+    setAdmin: data => dispatch(setAdmin(data)),
   };
 }
 
-export default connect(mapDispatchToProps, {setUserLogout,resetStore,clearFavorite})(ProfileScreen);
+export default connect(mapDispatchToProps, {setUserLogout,resetStore,clearFavorite,setAdmin})(ProfileScreen);
 
 
 const styles = StyleSheet.create({

@@ -6,23 +6,52 @@ import {Picker} from '@react-native-picker/picker';
 
 
 const statisticalScreen = () => {
+
 const [listOrder,setListOrder] = useState([]);
 const [selectedColor, setSelectedColor] = useState(month);
-
+//var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const d = new Date();
 let month = d.getMonth() +1;
-console.log(month);
-// const createMonth =()=>{
-//    
-//     let date =[];
-//     for(let i =1; i <=d; i++)
-//     {
-//         date.push(i);
-//     }
-//     return date;
+let thisMon = ''+d.getFullYear()+'-'+ d.getMonth()+1;
+console.log("Năm tháng: ",thisMon);
+
+ const getYYDD = (data)=> {
+    const event = new Date(data);
+    //console.log(event.toString());
+    console.log("convert IOS",event.toISOString().slice(0,7));
+    return event.toISOString().slice(0,7)
+ }
+
+
+let thisMonth =()=> {
+    let Month = [];
+    
+    for(let i = 0; i < listOrder.length; i++)
+    {
+        //console.log("Test convert:",listOrder[i].dateTime.toDate().toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3"));
+        if(getYYDD(listOrder[i].dateTime.toDate().toISOString()) == thisMon)
+        {
+            console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
+            Month.push(listOrder[i]);
+        }
+    }
+    return Month;
+}
+
+// const formatYmd =(date) => {
+//     console.log('convert: ',date+'');
+//     //date.toISOString().slice(0, 10);
 // }
-//     let month = createMonth();
-//     console.log(month);
+
+// for(let i = 0; i < listOrder.length; i++)
+//     {
+
+//         console.log("Test convert:",formatYmd(listOrder[i].dateTime.toDate().toString()));
+
+//     }
+
+let data = thisMonth();
+console.log("Đơn trong tháng:",data);
 
 useEffect(async () => {
     const subscriber = await firestore()
@@ -44,10 +73,10 @@ useEffect(async () => {
     ]);
     return () => subscriber();
   }, []);
-console.log('order',listOrder)
+
 
     const listMonth = [];
-    for (let i = 1; i <= month; i++) {
+    for (let i = 1; i <= d.getMonth()+1; i++) {
         console.log("tháng:",i);
         listMonth.push(<Picker.Item key={i} value={i} label={i.toString()} />);}
 

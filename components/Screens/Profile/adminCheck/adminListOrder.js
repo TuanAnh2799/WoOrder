@@ -319,6 +319,7 @@ export default function AdminOrderScreen({navigation}) {
                   </View>
                 );
               })}
+              <View style={{height: 55}}></View>
             </ScrollView>
           ) : (
             <View

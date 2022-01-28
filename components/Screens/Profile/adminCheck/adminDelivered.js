@@ -225,7 +225,7 @@ const onRefresh = React.useCallback(() => {
               </View>
             );
           })}
-
+          <View style={{height: 50}}></View>
         </ScrollView>
       ) : (
         <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>

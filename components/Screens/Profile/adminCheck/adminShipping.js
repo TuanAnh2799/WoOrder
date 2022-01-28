@@ -219,36 +219,66 @@ const onRefresh = React.useCallback(() => {
                   <View style={styles.WrapButton}>
                     <View
                       style={{
-                        width: '50%',
-                        alignItems: 'flex-end',
-                        marginLeft: '45%',
+                        width: '100%',
+                        alignItems: 'center',
                       }}>
                       {
                         
                         item.orderStatus == "Đã duyệt" ? (
-                        <Button title="Xác nhận giao hàng" onPress={()=> {
-                            Alert.alert('Thông báo', 'Xác nhận đã giao hàng?', [
-                            {
-                              text: 'Đồng ý',
-                              onPress: () => {
-                                firestore()
-                                .collection('Orders')
-                                .doc(item.id)
-                                .update({
-                                  orderStatus: 'Đã giao hàng'
-                                }).then(
-                                  ToastAndroid.show('Giao hàng thành công.',ToastAndroid.SHORT),
-                                  getData()
-                                )
-                              },
-                            },
-                            {
-                              text: 'Hủy',
-                              onPress: () => console.log('Cancel Pressed'),
-                              style: 'cancel',
-                            },
-                          ]);
-                        }}/>
+
+                          <View style={{flexDirection:'row', width: '100%', justifyContent:'space-around'}}>
+                            <View style={{width: '48%'}}>
+                              <Button title="Xác nhận giao hàng" onPress={()=> {
+                                Alert.alert('Thông báo', 'Xác nhận giao hàng?', [
+                                {
+                                  text: 'Đồng ý',
+                                  onPress: () => {
+                                    firestore()
+                                    .collection('Orders')
+                                    .doc(item.id)
+                                    .update({
+                                      orderStatus: 'Đã giao hàng'
+                                    }).then(
+                                      ToastAndroid.show('Giao hàng thành công.',ToastAndroid.SHORT),
+                                      getData()
+                                    )
+                                  },
+                                },
+                                {
+                                  text: 'Hủy',
+                                  onPress: () => console.log('Cancel Pressed'),
+                                  style: 'cancel',
+                                },
+                              ]);
+                            }}/>
+                            </View>
+                            <View style={{width: '48%'}}>
+                              <Button title="Giao hàng thất bại" onPress={()=> {
+                                  Alert.alert('Thông báo', 'Xác nhận giao hàng thất bại?', [
+                                  {
+                                    text: 'Đồng ý',
+                                    onPress: () => {
+                                      firestore()
+                                      .collection('Orders')
+                                      .doc(item.id)
+                                      .update({
+                                        orderStatus: 'Thất bại'
+                                      }).then(
+                                        ToastAndroid.show('Giao hàng thành công.',ToastAndroid.SHORT),
+                                        getData()
+                                      )
+                                    },
+                                  },
+                                  {
+                                    text: 'Hủy',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                  },
+                                ]);
+                              }}/>
+                            </View>
+                          </View>
+                        
                         ):(
                           <View></View>
                         )
@@ -260,7 +290,7 @@ const onRefresh = React.useCallback(() => {
               </View>
             );
           })}
-
+          <View style={{height: 50}}></View>
         </ScrollView>
       ) : (
         <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>

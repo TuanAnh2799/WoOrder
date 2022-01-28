@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import formatCash from '../../API/ConvertPrice';
+import { or } from 'react-native-reanimated';
 
 
 export default function AdminCancelOrdersScreen() {
@@ -11,6 +12,7 @@ export default function AdminCancelOrdersScreen() {
   const userid = useSelector(state => state.userState.User);
 
   const [myOrder, setMyOrder] = useState([]);
+  const [myOrder2, setMyOrder2] = useState([]);
   const [isLoading,setLoading] = useState(true);
   const [isRefreshing,setRefreshing] = useState(false);
   const [myAddress, setMyAddress] = useState([]);
@@ -18,13 +20,15 @@ export default function AdminCancelOrdersScreen() {
   useEffect(() => {
     getData();
     UserAddress();
+    orderThatbai();
   }, []);
   
+  let data = myOrder.concat(myOrder2);
+
   const getData= async()=>{
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
-      .where('orderBy', '==', `${userid}`)
       .where('orderStatus', '==', 'Đã hủy đơn hàng')
       .get()
       .then(querySnapshot => {
@@ -65,6 +69,29 @@ export default function AdminCancelOrdersScreen() {
   return () => subscriber();
   }
 
+  const  orderThatbai = async()=> {
+    const subscriber = await firestore()
+      .collection('Orders')
+      // Filter results
+      .where('orderStatus', '==', 'Giao hàng thất bại')
+      .get()
+      .then(querySnapshot => {
+        const order = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          order.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+          setMyOrder2(order);
+        });
+        console.log("giao thất bại",myOrder2);
+      });
+
+  // Unsubscribe from events when no longer in use
+  return () => subscriber();
+  }
+
 
   function wait(time){
     return new Promise(resolve => {
@@ -86,11 +113,11 @@ const onRefresh = React.useCallback(() => {
     {
       isLoading || isRefreshing ? (<View style={{flex: 1, justifyContent:'center'}}><ActivityIndicator size='large' color={Colors.blue500}/></View>) : 
       (<View>
-        {myOrder.length > 0 ? (
+        {data.length > 0 ? (
         <ScrollView refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>
           }>
-          {myOrder.map((item, index) => {
+          {data.map((item, index) => {
                 let fullname = '';
                 let phone ='';
                 let diachi = '';
@@ -159,7 +186,7 @@ const onRefresh = React.useCallback(() => {
                     }
                   </View>
 
-                  <View style={styles.WrapOrderDetail}>
+                  <View >
                     <View style={{marginLeft: 7, marginTop: 20}}>
                     <View
                         style={{
@@ -173,6 +200,23 @@ const onRefresh = React.useCallback(() => {
                         <Text style={{fontSize: 17}}>Ngày đặt: </Text>
                         <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}</Text>
                       </View>
+
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginLeft: '1%',marginTop: 5,
+                          }}>
+                          <View style={{width: '30%'}}>
+                            <Text style={{fontSize: 17}}>Địa chỉ nhận: </Text>
+                          </View>
+                            
+                          <View style={{width: '70%'}}>
+                            <Text style={{fontSize: 16, marginRight: 10, marginLeft: 35,textAlign:'right'}}>{fullname} - {diachi} - {phone}</Text>
+                          </View>
+                            
+                      </View>
+
                       <View
                         style={{
                           flexDirection: 'row',
@@ -202,6 +246,7 @@ const onRefresh = React.useCallback(() => {
               </View>
             );
           })}
+            <View style={{height: 50}}></View>
 
         </ScrollView>
       ) : (

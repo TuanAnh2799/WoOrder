@@ -75,14 +75,14 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
             {
               canReply && <Text onPress={()=> {
                 setActiveComment({id: comment.idComment, type: "replying"})
-              }} style={{fontSize: 14, fontStyle: 'italic'}}>Trả lời</Text>
+              }} style={{fontSize: 14,}}>Trả lời</Text>
             }
           </View>
           <View>
             {
               canEdit && <Text onPress={()=> {
                 setActiveComment({id: comment.idComment, type: "editing"})
-              }} style={{fontSize: 14, fontStyle: 'italic'}}>Sửa</Text>
+              }} style={{fontSize: 14, }}>Sửa</Text>
             }
           </View>
           <View>
@@ -101,7 +101,7 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
                   ]
                 );
                 
-              }} style={{fontSize: 14, fontStyle: 'italic'}}>Xóa</Text>
+              }} style={{fontSize: 14, }}>Xóa</Text>
             }
           </View>
 

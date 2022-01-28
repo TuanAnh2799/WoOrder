@@ -23,8 +23,8 @@ export default function TabScreen() {
         if (route.name === 'Trang chủ') {
           iconName = 'home';
           size = focused ? 23 : 20;
-        } else if (route.name === 'Đặt hàng') {
-          iconName = 'shopping-bag';
+        } else if (route.name === 'Giỏ hàng') {
+          iconName = 'shopping-cart';
           size = focused ? 23 : 20;
         }
         else if(route.name === 'Tôi')
@@ -47,7 +47,7 @@ export default function TabScreen() {
     initialRouteName="Trang chủ"
     >
       <Tab.Screen name="Trang chủ" component={AppScreen}/>
-      <Tab.Screen name="Đặt hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems}}/>
+      <Tab.Screen name="Giỏ hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems}}/>
       <Tab.Screen name="Tôi" component={ProfileStackScreen} />
     </Tab.Navigator>  
     )

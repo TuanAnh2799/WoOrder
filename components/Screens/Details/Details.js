@@ -479,7 +479,7 @@ const editComment =(text,id)=>{
                 isAdmin == true? (
                   <View></View>) : (
                     <Button
-                    title="Mua ngay"
+                    title="Thêm vào giỏ hàng"
                     onPress={() => {
                       openModal();
                     }}
@@ -532,18 +532,20 @@ const editComment =(text,id)=>{
 
               <View style={{flex: 7, marginTop: 20}}>
                 <View style={{flexDirection: 'row', alignItems:'center'}}>
-                  <View style={{marginTop: 15, marginLeft: 30}}>
+                  <View style={{marginTop: 15, marginLeft: 20}}>
                     <Text>Chọn màu sắc:</Text>
                   </View>
                   <View
                     style={{
-                      marginLeft: 35,
+                      marginLeft: 45,
                       borderWidth: 1,
+                      borderRadius: 10,
                       borderColor: 'black',
-                      justifyContent:'center', alignItems:'center'
+                      alignItems: 'center',
+                      justifyContent:'center',
                     }}>
                     <Picker
-                      style={{height: 30, width: 120, padding: 1}}
+                      style={{height: 40, width: 120, padding: 1,justifyContent:'center', alignItems:'center'}}
                       selectedValue={selectedColor}
                       onValueChange={(itemValue, itemIndex) =>
                         setSelectedColor(itemValue)
@@ -558,13 +560,14 @@ const editComment =(text,id)=>{
                 <View style={{marginTop: 20}}>
                   {size.length > 1 ? (
                     <View style={{flexDirection: 'row'}}>
-                      <View style={{marginTop: 15, marginLeft: 30}}>
+                      <View style={{marginTop: 15, marginLeft: 20}}>
                         <Text>Chọn kích cỡ:</Text>
                       </View>
                       <View
                         style={{
-                          marginLeft: 45,
+                          marginLeft: 55,
                           borderWidth: 1,
+                          borderRadius: 10,
                           borderColor: 'black',
                           alignItems: 'center',
                           justifyContent:'center',
@@ -595,12 +598,12 @@ const editComment =(text,id)=>{
                 </View>
               </View>
               <View style={styles.modalWrappButton}>
-                <View style={{width: '40%', marginTop: 5}}>
+                <View style={{width: '35%', marginTop: 5}}>
                   <Button title="Hủy" onPress={() => closeModal()} />
                 </View>
-                <View style={{width: '40%', marginTop: 5}}>
+                <View style={{width: '50%', marginTop: 5}}>
                   <Button
-                    title="Đặt mua"
+                    title="Thêm vào giỏ hàng"
                     onPress={() => {
                       if (type === 2) {
                         let _item = {
@@ -616,7 +619,7 @@ const editComment =(text,id)=>{
                         };
                         AddCart(_item);
                         //console.log('Thong tin hàng mua: ',_item);
-                        navigation.navigate('Đặt hàng');
+                        navigation.navigate('Giỏ hàng');
                       } else {
                         let _item1 = {
                           id: id,
@@ -631,7 +634,7 @@ const editComment =(text,id)=>{
                         };
                         AddCart(_item1);
                         //console.log('Thong tin hàng mua loại 1 3: ',_item1);
-                        navigation.navigate('Đặt hàng');
+                        navigation.navigate('Giỏ hàng');
                       }
                     }}
                   />

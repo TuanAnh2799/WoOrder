@@ -14,7 +14,7 @@ const AppStack = createStackNavigator();
 export default function AppScreen() {
 
     return (
-        <AppStack.Navigator>
+        <AppStack.Navigator initialRouteName='Home'>
             <AppStack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
             <AppStack.Screen name="Products" component={ProductsScreen}/>
             <AppStack.Screen name="Details" component={DetailsScreen} options={{
