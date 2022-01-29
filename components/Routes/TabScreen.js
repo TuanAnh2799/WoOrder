@@ -3,14 +3,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AppScreen from './AppStack';
 import ProfileStackScreen from '../Screens/Profile/ProfileStack';
-import CheckOutScreen from '../Screens/CheckOut/Checkout';
 import CheckStackScreen from '../Screens/CheckOut/CheckoutStack';
 import { useSelector } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
 export default function TabScreen() {
-
+    const isAdmin = useSelector(state => state.userState.isAdmin);
     const cartItems = useSelector(state => state.cartStore.numberCart);
     console.log("length",cartItems)
 
@@ -47,7 +46,10 @@ export default function TabScreen() {
     initialRouteName="Trang chủ"
     >
       <Tab.Screen name="Trang chủ" component={AppScreen}/>
-      <Tab.Screen name="Giỏ hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems}}/>
+      {
+        isAdmin ? null : <Tab.Screen name="Giỏ hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems}}/>
+      }
+      
       <Tab.Screen name="Tôi" component={ProfileStackScreen} />
     </Tab.Navigator>  
     )
