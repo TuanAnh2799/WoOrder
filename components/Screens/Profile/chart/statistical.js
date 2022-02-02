@@ -9,6 +9,13 @@ import formatCash from '../../API/ConvertPrice';
 const statisticalScreen = () => {
 
 const [listOrder,setListOrder] = useState([]);
+const [listOrderMonth,setListOrderMonth] = useState([]);
+const [listOrderYear,setListOrderYear] = useState([]);
+const [countMonth,setCountMonth] = useState(0);
+const [countYear,setCountYear] = useState(0);
+const [cashMonth,setMonthCash]= useState(0);
+const [cashYear,setCashYear]= useState(0);
+
 
 const d = new Date();
 let month = (d.getMonth() +1)+'';
@@ -32,7 +39,7 @@ console.log("Picker lựa chọn tháng: ",selectedMonth);
  const getDay = (data)=> {
     const event = new Date(data);
     //console.log(event.toString());
-    console.log("convert day",event.toISOString().slice(0,10));
+    //console.log("convert day",event.toISOString().slice(0,10));
     return event.toISOString().slice(0,9)
  }
 
@@ -59,43 +66,77 @@ console.log("Picker lựa chọn tháng: ",selectedMonth);
 
 let day = thisDay();
 
- let thisYear =()=> {
-    let Year = [];
+//  let thisYear =()=> {
+//     let Year = [];
     
-    for(let i = 0; i < listOrder.length; i++)
-    {
-        if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
-        {
-            //console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
-            Year.push(listOrder[i]);
-        }
-    }
-    return Year;
-}
+//     for(let i = 0; i < listOrder.length; i++)
+//     {
+//         if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+//         {
+//             //console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
+//             Year.push(listOrder[i]);
+//         }
+//     }
+//     return Year;
+// }
 
-let inYear = thisYear();
-console.log("Đơn trong năm:",inYear.length);
-let inYearCash = 0;
-inYear.map((e,index)=> inYearCash += e.total);
+// let inYear = thisYear();
+// console.log("Đơn trong năm:",inYear.length);
+// let inYearCash = 0;
+// inYear.map((e,index)=> inYearCash += e.total);
 
 let thisMonth =()=> {
+    console.log('chạy hàm lọc tháng.')
     let Month = [];
-    
+    let fillter = [];
+    let count = 0;
+    let cash = 0;
     for(let i = 0; i < listOrder.length; i++)
     {
         if(getYYDD(listOrder[i].dateTime.toDate().toISOString()) == thisMon && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
         {
             //console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
-            Month.push(listOrder[i]);
+            count++;
+            fillter.push(listOrder[i].order)
+            cash += listOrder[i].total;
         }
     }
-    return Month;
+    setListOrderMonth(fillter);
+    setCountMonth(count);
+    setMonthCash(cash);
+    console.log("số đơn trong tháng ",count);
 }
 
-let inMonth = thisMonth();
-console.log("Đơn trong tháng:",inMonth.length);
-let inMonthCash = 0;
-inMonth.map((e,index)=> inMonthCash += e.total);
+let thisYear =()=> {
+    console.log('chạy hàm lọc năm.')
+    let fillter = [];
+    let count = 0;
+    let cash = 0;
+    for(let i = 0; i < listOrder.length; i++)
+    {
+        if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+        {
+            //console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
+            count++;
+            fillter.push(listOrder[i].order)
+            cash += listOrder[i].total;
+        }
+    }
+    setListOrderYear(fillter);
+    setCountYear(count);
+    setCashYear(cash);
+    console.log("số đơn trong năm ",count);
+}
+
+// const filterByProduct =()=>{
+//     let listOrder = [];
+//     inMonth.map(order => listOrder.push(order.order))
+//     return listOrder;
+// }
+
+// let order = filterByProduct();
+
+// console.log(order);
 
 useEffect(async () => {
     const subscriber = await firestore()
@@ -109,14 +150,16 @@ useEffect(async () => {
             key: documentSnapshot.id,
           });
         });
-        //setIsLoading(false);
         setListOrder(order);
       });
+
+      thisMonth();
+      thisYear();
     LogBox.ignoreLogs([
       "Can't perform a React state update on an unmounted component.",
     ]);
     return () => subscriber();
-  }, []);
+  }, [thisMon,selectedYear]);
 
 
     const listMonth = [];
@@ -171,12 +214,12 @@ useEffect(async () => {
 
                 <View style={{width: '100%', flexDirection:'row', justifyContent:'space-around'}}>
                     <LinearGradient colors={['#ffff', 'yellow', '#fff']} style={{width: '40%',height: 100,justifyContent:'center', alignItems:'center', borderRadius: 10}}>
-                        <Text style={{fontSize: 30}}>{inMonth.length}</Text>
+                        <Text style={{fontSize: 30}}>{countMonth}</Text>
                         <Text style={{fontSize: 15}}>Đơn hàng</Text>
                     </LinearGradient>
 
                     <LinearGradient colors={['red', 'white', 'green']} style={{width: '40%', height: 100,justifyContent:'center', alignItems:'center', borderRadius: 10}}>
-                        <Text style={{fontSize: 18, marginTop: 15}}>{formatCash(inMonthCash)} VNĐ</Text>
+                        <Text style={{fontSize: 18, marginTop: 15}}>{formatCash(cashMonth)} VNĐ</Text>
                         <Text style={{fontSize: 15, marginTop: 5}}>Tổng tiền</Text>
                     </LinearGradient>
 
@@ -206,12 +249,12 @@ useEffect(async () => {
 
                 <View style={{width: '100%', flexDirection:'row', justifyContent:'space-around'}}>
                     <LinearGradient colors={['#ffff', 'yellow', '#fff']} style={{width: '40%',height: 100,justifyContent:'center', alignItems:'center', borderRadius: 10}}>
-                        <Text style={{fontSize: 30}}>{inYear.length}</Text>
+                        <Text style={{fontSize: 30}}>{countYear}</Text>
                         <Text style={{fontSize: 15}}>Đơn hàng</Text>
                     </LinearGradient>
 
                     <LinearGradient colors={['red', 'white', 'green']} style={{width: '40%', height: 100,justifyContent:'center', alignItems:'center', borderRadius: 10}}>
-                        <Text style={{fontSize: 18, marginTop: 15}}>{formatCash(inYearCash)} VNĐ</Text>
+                        <Text style={{fontSize: 18, marginTop: 15}}>{formatCash(cashYear)} VNĐ</Text>
                         <Text style={{fontSize: 15, marginTop: 5}}>Tổng tiền</Text>
                     </LinearGradient>
 
