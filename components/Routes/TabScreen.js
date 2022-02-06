@@ -45,7 +45,7 @@ export default function TabScreen() {
     }}
     initialRouteName="Trang chủ"
     >
-      <Tab.Screen name="Trang chủ" component={AppScreen}/>
+      <Tab.Screen name="Trang chủ" component={AppScreen} />
       {
         isAdmin ? null : <Tab.Screen name="Giỏ hàng" component={CheckStackScreen} options={{ tabBarBadge: cartItems}}/>
       }

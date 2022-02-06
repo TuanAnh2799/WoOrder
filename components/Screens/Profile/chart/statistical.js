@@ -8,7 +8,7 @@ import formatCash from '../../API/ConvertPrice';
 
 const statisticalScreen = () => {
 
-const [listOrder,setListOrder] = useState([]);
+const [listOrder,setListOrder] = useState(null);
 const [listOrderMonth,setListOrderMonth] = useState([]);
 const [listOrderYear,setListOrderYear] = useState([]);
 const [countMonth,setCountMonth] = useState(0);
@@ -26,34 +26,31 @@ const [selectedYear, setSelectedYear] = useState(year);
 
 let a = selectedMonth < 10 ? "0" +selectedMonth : selectedMonth;
 let thisMon = ''+d.getFullYear()+'-'+ a;
-console.log("Năm hiện tại: ",selectedYear);
-console.log("Picker lựa chọn tháng: ",selectedMonth);
+// console.log("Năm hiện tại: ",selectedYear);
+// console.log("Picker lựa chọn tháng: ",selectedMonth);
 
  const getYYDD = (data)=> {
     const event = new Date(data);
-    //console.log(event.toString());
-    //console.log("convert IOS",event.toISOString().slice(0,7));
     return event.toISOString().slice(0,7)
  }
 
  const getDay = (data)=> {
     const event = new Date(data);
-    //console.log(event.toString());
-    //console.log("convert day",event.toISOString().slice(0,10));
     return event.toISOString().slice(0,9)
  }
 
  const getYear = (data)=> {
     const event = new Date(data);
-    //console.log(event.toString());
-    //console.log("convert Year",event.toISOString().slice(0,4));
     return event.toISOString().slice(0,4)
  }
+
+
 
  let thisDay =()=> {
     let day = [];
     
-    for(let i = 0; i < listOrder.length; i++)
+    if(listOrder != null){
+        for(let i = 0; i < listOrder.length; i++)
     {
         if(getDay(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
         {
@@ -61,33 +58,15 @@ console.log("Picker lựa chọn tháng: ",selectedMonth);
             day.push(listOrder[i]);
         }
     }
+    }
     return day;
 }
 
 let day = thisDay();
 
-//  let thisYear =()=> {
-//     let Year = [];
-    
-//     for(let i = 0; i < listOrder.length; i++)
-//     {
-//         if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
-//         {
-//             //console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
-//             Year.push(listOrder[i]);
-//         }
-//     }
-//     return Year;
-// }
-
-// let inYear = thisYear();
-// console.log("Đơn trong năm:",inYear.length);
-// let inYearCash = 0;
-// inYear.map((e,index)=> inYearCash += e.total);
-
 let thisMonth =()=> {
-    console.log('chạy hàm lọc tháng.')
-    let Month = [];
+    if(listOrder != null){
+       console.log("Chạy hàm tháng: ",listOrder.length);
     let fillter = [];
     let count = 0;
     let cash = 0;
@@ -104,39 +83,35 @@ let thisMonth =()=> {
     setListOrderMonth(fillter);
     setCountMonth(count);
     setMonthCash(cash);
-    console.log("số đơn trong tháng ",count);
+    //console.log("số đơn trong tháng ",count);
+   }
+    
 }
 
-let thisYear =()=> {
-    console.log('chạy hàm lọc năm.')
-    let fillter = [];
-    let count = 0;
-    let cash = 0;
-    for(let i = 0; i < listOrder.length; i++)
+const thisYear =()=> {
+    if(listOrder != null)
     {
-        if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+        console.log("Chạy hàm năm");
+        let fillter = [];
+        let count = 0;
+        let cash = 0;
+        for(let i = 0; i < listOrder.length; i++)
         {
-            //console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
-            count++;
-            fillter.push(listOrder[i].order)
-            cash += listOrder[i].total;
+            if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+            {
+                //console.log("Data:",getYYDD(listOrder[i].dateTime.toDate().toISOString())); 
+                count++;
+                fillter.push(listOrder[i].order)
+                cash += listOrder[i].total;
+            }
         }
+        setListOrderYear(fillter);
+        setCountYear(count);
+        setCashYear(cash);
+        //console.log("số đơn trong năm ",count); 
     }
-    setListOrderYear(fillter);
-    setCountYear(count);
-    setCashYear(cash);
-    console.log("số đơn trong năm ",count);
+    
 }
-
-// const filterByProduct =()=>{
-//     let listOrder = [];
-//     inMonth.map(order => listOrder.push(order.order))
-//     return listOrder;
-// }
-
-// let order = filterByProduct();
-
-// console.log(order);
 
 useEffect(async () => {
     const subscriber = await firestore()
@@ -151,16 +126,31 @@ useEffect(async () => {
           });
         });
         setListOrder(order);
+         
       });
-
-      thisMonth();
-      thisYear();
-    LogBox.ignoreLogs([
+        // if(listOrder != null)
+        //     {
+        //         thisMonth();
+        //         thisYear();
+        //     }   
+        LogBox.ignoreLogs([
       "Can't perform a React state update on an unmounted component.",
     ]);
-    return () => subscriber();
-  }, [thisMon,selectedYear]);
 
+    
+    return () => subscriber();
+    
+  }, []);
+
+  useEffect(async () => {
+
+    if(listOrder != null)
+        {
+            thisMonth();
+            thisYear();
+        }   
+    
+  }, [thisMon,selectedYear,listOrder]);
 
     const listMonth = [];
         for (let i = 1; i <= d.getMonth()+1; i++) {
