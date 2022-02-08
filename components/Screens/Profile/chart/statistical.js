@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from 'react'
-import { LogBox, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { LogBox, ScrollView, StyleSheet, Text, View ,Button} from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 import LinearGradient from 'react-native-linear-gradient';
 import {Picker} from '@react-native-picker/picker';
 import formatCash from '../../API/ConvertPrice';
 import {PieChart} from "react-native-chart-kit";
 import { Dimensions } from "react-native";
-  
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+
 const screenWidth = Dimensions.get("window").width;
 
 const statisticalScreen = () => {
@@ -23,10 +26,13 @@ const [typeY3, setTypeY3] = useState(0); //do do chơi theo năm
 const [countMonth,setCountMonth] = useState(0);
 const [countYear,setCountYear] = useState(0);
 
+const [date, setDate] = useState(new Date());
+const [show, setShow] = useState(false);
 
 const d = new Date();
 let month = (d.getMonth() +1)+'';
 let year = d.getFullYear();
+
 
 const [selectedMonth, setSelectedMonth] = useState(month);
 const [selectedYear, setSelectedYear] = useState(year);
@@ -41,7 +47,7 @@ let thisMon = ''+d.getFullYear()+'-'+ a;
 
  const getDay = (data)=> {
     const event = new Date(data);
-    return event.toISOString().slice(0,9)
+    return event.toISOString().slice(0,10)
  }
 
  const getYear = (data)=> {
@@ -55,7 +61,7 @@ let thisMon = ''+d.getFullYear()+'-'+ a;
     if(listOrder != null){
         for(let i = 0; i < listOrder.length; i++)
     {
-        if(getDay(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+        if(getDay(listOrder[i].dateTime.toDate().toISOString()) == getDay(date) && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
         {
             day.push(listOrder[i]);
         }
@@ -65,6 +71,12 @@ let thisMon = ''+d.getFullYear()+'-'+ a;
 }
 
 let day = thisDay();
+
+function convertDate (s) {
+    let arr =s.split('-');
+    let day = arr[2]+"-"+arr[1]+"-"+arr[0];
+    return day;
+}
 
 let thisMonth =()=> {
     if(listOrder != null){
@@ -130,6 +142,16 @@ const thisYear =()=> {
     }
     
 }
+
+const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+  };
+
+  const openDate = () => {
+    setShow(true);
+  };
 
 useEffect(async () => {
     const subscriber = await firestore()
@@ -234,7 +256,7 @@ useEffect(async () => {
         
       ];
 
-
+console.log("Picker: ",date);
     return (
         <View style={{width: '100%', height: '100%'}}>
             <ScrollView style={{flex: 1}}>
@@ -243,17 +265,39 @@ useEffect(async () => {
                         <Text style={{fontSize: 18, marginBottom: 10, marginTop: 5}}>Trong ngày</Text>
                     </View>
 
-                    <View style={{width: '96%', height: 200, backgroundColor:'#fff',shadowColor:'black', elevation:5 , marginLeft:'2%', marginTop: 15, borderTopLeftRadius: 100, borderBottomRightRadius: 100}}>
+                    <View style={{width: '100%', flexDirection:'row', justifyContent:'flex-end', alignItems:'center', marginTop: 10}}>
+                        <View style={{marginRight: 10}}>
+                            <Text style={{fontSize: 17, }}>Chọn ngày</Text>
+                        </View>
+                        <View style={{marginRight: 30}}>
+                            <Icon name="calendar-month" color="#FF6347" size={30} onPress={openDate} />
+                        </View>
+                    </View>
+                    {show && (
+                    <DateTimePicker
+                        testID="dateTimePicker"
+                        value={date}
+                        mode={'date'}
+                        display="calendar"
+                        onChange={onChange}
+                        />
+                    )}
+                    <View style={{width: '96%', height: 200, backgroundColor:'#fff',shadowColor:'black', elevation:5 , marginLeft:'2%', marginTop: 10, borderTopLeftRadius: 100, borderBottomRightRadius: 100}}>
                         {
-                            day.length > 0 ? 
+                            day.length <= 0 ?  
                             (<View style={{width: '100%', height: '100%', justifyContent:'center', alignItems:'center'}}>
-                                <Text style={{fontSize: 18, color:'green', fontWeight: '700'}}>Hôm nay không có đơn hàng nào :(((</Text>
+                                <Text style={{fontSize: 17, bottom: 10}}>{convertDate(getDay(date))}</Text>
+                                <Icon name="emoticon-sad-outline" color="#FF6347" size={80} />
+                                <Text style={{fontSize: 18, color:'green', fontWeight: '700'}}>Không có đơn hàng nào :(((</Text>
                             </View>)
                             :
                             (<View style={{width: '100%', height: '100%'}}>
+                                <View style={{width: '100%', justifyContent:'center', alignItems:'center', bottom: -20}}>
+                                    <Text style={{fontSize: 17}}>{convertDate(getDay(date))}</Text>
+                                </View>
                                 <View style={{width: '100%', height: '100%', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}}>
                                     <View style={{width:'38%', height: 100, backgroundColor:'rgb(135,206,235)', shadowColor:'black', elevation:5 , borderTopLeftRadius: 50, borderBottomRightRadius: 50, justifyContent:'center', alignItems:'center'}}>
-                                        <Text style={{fontSize: 30}}>15</Text>
+                                        <Text style={{fontSize: 30}}>{day.length}</Text>
                                         <Text style={{fontSize: 15}}>Đơn hàng</Text>
                                     </View>
                                     <View style={{width:'50%', height: 100, backgroundColor:'orange',shadowColor:'black', elevation:5 , borderTopLeftRadius: 50, borderBottomRightRadius: 50, justifyContent:'center', alignItems:'center' }}>
