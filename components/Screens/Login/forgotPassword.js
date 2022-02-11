@@ -17,6 +17,8 @@ export default function ForgotPasswordScreen (){
          //(?=.*[!@#\$%\^&\*]) bỏ phải nhập ký tự #009387#1c1c1c1c
       });
 
+
+
     return(
 
         <View style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center'}}>
@@ -61,22 +63,7 @@ export default function ForgotPasswordScreen (){
                           <Text style={{color:'red', fontSize: 13}}>{errors.email}</Text>
                          )}
                     <View style={{marginTop: 30}}>
-                        <Button disabled={!isValid} title='Lấy lại' onPress={()=> {
-                            forgotPassword(values.email);
-                            Alert.alert("Lấy lại thành công!","Hãy kiểm tra hòm thư email của bạn!", [
-                            {
-                                text: 'Đồng ý',
-                                onPress: () => {
-                                navigation.navigate('Login');
-                                },
-                            },
-                            // {
-                            //     text: 'Hủy',
-                            //     onPress: () => console.log('Cancel Pressed'),
-                            //     style: 'cancel',
-                            // },
-                            ])
-                        }}/>
+                        <Button disabled={!isValid} title='Lấy lại' onPress={()=> forgotPassword(values.email)}/>
                     </View>
                 </View>
             )}

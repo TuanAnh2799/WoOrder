@@ -46,7 +46,7 @@ const ProfileStackScreen = () => (
       name="EditProfile"
       component={EditProfile}
       options={{
-        title: 'Chỉnh sửa thông tin',
+        title: 'Cập nhật thông tin',
         headerTitleAlign: 'center',
       }}
     />

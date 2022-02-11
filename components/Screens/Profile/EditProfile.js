@@ -300,7 +300,7 @@ const EditProfile = ({navigation, route}) => {
                     <Icon
                       name="camera"
                       size={30}
-                      color="orange"
+                      color="white"
                       style={styles.iconCamera}
                       onPress={() => setmodalVisble(true)}
                     />

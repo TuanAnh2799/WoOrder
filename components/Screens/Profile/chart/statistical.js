@@ -29,6 +29,9 @@ const [countYear,setCountYear] = useState(0);
 const [date, setDate] = useState(new Date());
 const [show, setShow] = useState(false);
 
+const [countDay, setCountDay] = useState(0);
+const [cashDay, setCashDay] = useState(0);
+
 const d = new Date();
 let month = (d.getMonth() +1)+'';
 let year = d.getFullYear();
@@ -55,22 +58,26 @@ let thisMon = ''+d.getFullYear()+'-'+ a;
     return event.toISOString().slice(0,4)
  }
 
- let thisDay =()=> {
-    let day = [];
-    
+const thisDay =()=> {
+    let count = 0;
+    let cash =0;
+
     if(listOrder != null){
         for(let i = 0; i < listOrder.length; i++)
     {
         if(getDay(listOrder[i].dateTime.toDate().toISOString()) == getDay(date) && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
         {
-            day.push(listOrder[i]);
+            count++;
+            listOrder[i].order.map( e => {
+                cash += e.price * e.quantity;
+            });
         }
     }
     }
-    return day;
+    setCountDay(count);
+    setCashDay(cash);
 }
 
-let day = thisDay();
 
 function convertDate (s) {
     let arr =s.split('-');
@@ -187,6 +194,16 @@ useEffect(async () => {
     
   }, [thisMon,selectedYear,listOrder]);
 
+  useEffect(() => {
+
+    if(listOrder != null)
+        {
+            thisDay();
+        }   
+    
+  }, [date]);
+
+
     const listMonth = [];
         for (let i = 1; i <= d.getMonth()+1; i++) {
             listMonth.push(<Picker.Item key={i} value={i.toString()} label={i.toString()} />);}
@@ -257,6 +274,7 @@ useEffect(async () => {
       ];
 
 console.log("Picker: ",date);
+
     return (
         <View style={{width: '100%', height: '100%'}}>
             <ScrollView style={{flex: 1}}>
@@ -284,7 +302,7 @@ console.log("Picker: ",date);
                     )}
                     <View style={{width: '96%', height: 200, backgroundColor:'#fff',shadowColor:'black', elevation:5 , marginLeft:'2%', marginTop: 10, borderTopLeftRadius: 100, borderBottomRightRadius: 100}}>
                         {
-                            day.length <= 0 ?  
+                            countDay <= 0 ?  
                             (<View style={{width: '100%', height: '100%', justifyContent:'center', alignItems:'center'}}>
                                 <Text style={{fontSize: 17, bottom: 10}}>{convertDate(getDay(date))}</Text>
                                 <Icon name="emoticon-sad-outline" color="#FF6347" size={80} />
@@ -297,11 +315,11 @@ console.log("Picker: ",date);
                                 </View>
                                 <View style={{width: '100%', height: '100%', flexDirection:'row', justifyContent:'space-around', alignItems:'center'}}>
                                     <View style={{width:'38%', height: 100, backgroundColor:'rgb(135,206,235)', shadowColor:'black', elevation:5 , borderTopLeftRadius: 50, borderBottomRightRadius: 50, justifyContent:'center', alignItems:'center'}}>
-                                        <Text style={{fontSize: 30}}>{day.length}</Text>
+                                        <Text style={{fontSize: 30}}>{countDay}</Text>
                                         <Text style={{fontSize: 15}}>Đơn hàng</Text>
                                     </View>
                                     <View style={{width:'50%', height: 100, backgroundColor:'orange',shadowColor:'black', elevation:5 , borderTopLeftRadius: 50, borderBottomRightRadius: 50, justifyContent:'center', alignItems:'center' }}>
-                                        <Text style={{fontSize: 18, marginTop: 15, color:'black'}}>14.000.000 VNĐ</Text>
+                                        <Text style={{fontSize: 18, marginTop: 15, color:'black'}}>{formatCash(cashDay)} VNĐ</Text>
                                         <Text style={{fontSize: 15, marginTop: 5}}>Tổng tiền</Text>
                                     </View>
                                 </View>
