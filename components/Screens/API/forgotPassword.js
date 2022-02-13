@@ -13,7 +13,7 @@ const forgotPassword = async(email)=> {
             },]);
        });
     } catch (error) {
-        Alert.alert("Thông báo!","Vui lòng kiểm tra lại địa chỉ email.", [
+        Alert.alert("Thông báo!","Email không tồn tại, vui lòng kiểm tra lại.", [
             {
                 text: 'Đồng ý',
             },]) 
