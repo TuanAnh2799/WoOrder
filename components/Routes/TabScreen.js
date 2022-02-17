@@ -43,7 +43,7 @@ export default function TabScreen() {
       labelStyle: {fontSize: 15},
       style: {position:'absolute'},
     }}
-    initialRouteName="Trang chủ"
+    //initialRouteName="Trang chủ"
     >
       <Tab.Screen name="Trang chủ" component={AppScreen} />
       {

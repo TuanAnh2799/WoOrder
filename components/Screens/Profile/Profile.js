@@ -52,13 +52,13 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite,setAdmin}) {
 
     getData();
     getDataDaDuyet();
+    adminGetData();
     
-    if (isAdmin == true) {
-      return adminGetData();
-    }
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
+
+
 
   const getData = async () => {
     const subscriber = await firestore()

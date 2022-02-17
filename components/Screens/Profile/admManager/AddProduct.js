@@ -118,26 +118,25 @@ const AddProduct = () => {
     setLoading(true);
     let imageUrl = await uploadImage();
     let color; 
-    let result = value.color.includes(' ');
-    let result2 = value.color.includes(',');
-    let result3 = value.color.includes('.');
-    if(result == true)
-    {
+    // let result = value.color.includes(' ');
+    // let result2 = value.color.includes(',');
+    // let result3 = value.color.includes('.');
+
       let x = await chuanhoa(value.color);
       color = x.trim().split(' ');
-    }
-    if(result2 == true)
-    {
-      let x = await chuanhoa(value.color);
-      color = x.trim().split(',');
-    }
-    if(result3 == true)
-    {
-      let x = await chuanhoa(value.color);
-      color = x.trim().split('.');
-    }
+
+    // if(result2 == true)
+    // {
+    //   let x = await chuanhoa(value.color);
+    //   color = x.trim().split(',');
+    // }
+    // if(result3 == true)
+    // {
+    //   let x = await chuanhoa(value.color);
+    //   color = x.trim().split('.');
+    // }
     console.log('Màu sắc:', color);
-    console.log('Màu sắc:', color.length);
+
 
     let size = '';
     let listSize;

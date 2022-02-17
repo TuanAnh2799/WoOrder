@@ -1,11 +1,9 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
   Image,
-  FlatList,
   Button,
   ScrollView,
   ImageBackground,
@@ -17,8 +15,8 @@ import {styles} from './styles';
 import firestore from '@react-native-firebase/firestore';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 import formatCash from '../../API/ConvertPrice';
-//import {getListOrder,myOrder} from '../../API/getListOrder';
-
+import convertDate from '../../API/convertDate';
+import getDay from '../../API/getDay';
 
 
 export default function AdminOrderScreen({navigation}) {
@@ -216,8 +214,7 @@ export default function AdminOrderScreen({navigation}) {
                             }}>
                             <Text style={{fontSize: 17}}>Ngày đặt: </Text>
                             <Text style={{fontSize: 16, marginRight: 10}}>
-                              {item.dateTime
-                                .toDate().toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}
+                              {convertDate(getDay(item.dateTime.toDate().toISOString()))}
                             </Text>
                           </View>
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import {Text, View, Image, StyleSheet, Alert} from 'react-native';
 import CommentForm from './CommentForm';
+import convertDate from '../API/convertDate';
+import getDay from '../API/getDay';
 
 
 const Comment = ({comment, replies, onDelete, addReply,editComment, userid, activeComment, setActiveComment,isAdmin, parentId = null}) => {
@@ -14,6 +16,8 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
   const isEditing = activeComment && activeComment.type ==="editing" && activeComment.id === comment.idComment;
   const replyId = parentId ? parentId : comment.idComment;
   
+  
+
   return (
     <View
       style={{
@@ -36,15 +40,15 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
             flexDirection: 'row',
             justifyContent: 'space-between',
           }}>
-          <View style={{width: '75%'}}>
+          <View style={{width: '70%'}}>
             <Text style={{fontSize: 15, fontWeight: '700'}}>
               {comment.name}
             </Text>
           </View>
 
-          <View style={{width: '25%'}}>
+          <View style={{width: '30%'}}>
             <Text style={{fontSize: 12, textAlign: 'right'}}>
-              {createAt}
+              {convertDate(getDay(comment.createAt.toDate().toISOString()))}
             </Text>
           </View>
         </View>

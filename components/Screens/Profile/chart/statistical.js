@@ -8,6 +8,7 @@ import {PieChart} from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import convertDate from '../../API/convertDate';
 
 
 const screenWidth = Dimensions.get("window").width;
@@ -61,11 +62,11 @@ let thisMon = ''+d.getFullYear()+'-'+ a;
 const thisDay =()=> {
     let count = 0;
     let cash =0;
-
+    console.log("Chạy qua lọc ngày")
     if(listOrder != null){
         for(let i = 0; i < listOrder.length; i++)
     {
-        if(getDay(listOrder[i].dateTime.toDate().toISOString()) == getDay(date) && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+        if(getDay(listOrder[i].dateTime.toDate().toISOString()) == getDay(date) && listOrder[i].orderStatus =='Đang chờ xử lý')
         {
             count++;
             listOrder[i].order.map( e => {
@@ -79,12 +80,6 @@ const thisDay =()=> {
 }
 
 
-function convertDate (s) {
-    let arr =s.split('-');
-    let day = arr[2]+"-"+arr[1]+"-"+arr[0];
-    return day;
-}
-
 let thisMonth =()=> {
     if(listOrder != null){
     let count = 0;
@@ -94,7 +89,7 @@ let thisMonth =()=> {
 
     for(let i = 0; i < listOrder.length; i++)
     {
-        if(getYYDD(listOrder[i].dateTime.toDate().toISOString()) == thisMon && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+        if(getYYDD(listOrder[i].dateTime.toDate().toISOString()) == thisMon && listOrder[i].orderStatus == 'Đã giao hàng')
         {
             count++;
             listOrder[i].order.map( e => {
@@ -126,7 +121,7 @@ const thisYear =()=> {
         let dochoi = 0;
         for(let i = 0; i < listOrder.length; i++)
         {
-            if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus !== 'Đã hủy đơn hàng' && listOrder[i].orderStatus !== 'Giao hàng thất bại')
+            if(getYear(listOrder[i].dateTime.toDate().toISOString()) == selectedYear && listOrder[i].orderStatus == 'Đã giao hàng')
             {
                 count++;
                 listOrder[i].order.map( e => {
@@ -173,7 +168,7 @@ useEffect(async () => {
           });
         });
         setListOrder(order);
-         
+         thisDay();
       });
         LogBox.ignoreLogs([
       "Can't perform a React state update on an unmounted component.",
@@ -190,6 +185,7 @@ useEffect(async () => {
         {
             thisMonth();
             thisYear();
+            thisDay();
         }   
     
   }, [thisMon,selectedYear,listOrder]);

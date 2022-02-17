@@ -18,7 +18,8 @@ import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import formatCash from '../API/ConvertPrice';
 import {useSelector } from 'react-redux';
-
+import convertDate from '../API/convertDate';
+import getDay from '../API/getDay';
 
 
 export default function DeliveredScreen({navigation}) {
@@ -157,7 +158,7 @@ const onRefresh = React.useCallback(() => {
                         }}>
                         
                         <Text style={{fontSize: 17}}>Ngày đặt: </Text>
-                        <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB')}</Text>
+                        <Text style={{fontSize: 16, marginRight: 10}}>{convertDate(getDay(item.dateTime.toDate().toISOString()))}</Text>
                       </View>
                       <View
                         style={{
@@ -190,7 +191,7 @@ const onRefresh = React.useCallback(() => {
               </View>
             );
           })}
-
+          <View style={{height: 55}}></View>
         </ScrollView>
       ) : (
         <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>

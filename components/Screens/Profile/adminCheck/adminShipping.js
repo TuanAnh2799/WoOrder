@@ -4,6 +4,8 @@ import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 
 import formatCash from '../../API/ConvertPrice';
+import convertDate from '../../API/convertDate';
+import getDay from '../../API/getDay';
 
 
 export default function AdminShippingScreen() {
@@ -167,7 +169,7 @@ const onRefresh = React.useCallback(() => {
                         }}>
                         
                         <Text style={{fontSize: 17}}>Ngày đặt: </Text>
-                        <Text style={{fontSize: 16, marginRight: 10}}>{item.dateTime.toDate().toLocaleDateString('en-GB').replace( /(\d{2})[-/](\d{2})[-/](\d+)/, "$2/$1/$3")}</Text>
+                        <Text style={{fontSize: 16, marginRight: 10}}>{convertDate(getDay(item.dateTime.toDate().toISOString()))}</Text>
                       </View>
 
                       <View

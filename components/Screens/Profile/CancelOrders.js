@@ -4,6 +4,8 @@ import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import formatCash from '../API/ConvertPrice';
 import { useSelector } from 'react-redux';
+import convertDate from '../API/convertDate';
+import getDay from '../API/getDay';
 
 
 export default function CancelOrdersScreen() {
@@ -234,7 +236,7 @@ const onRefresh = React.useCallback(() => {
               </View>
             );
           })}
-
+          <View style={{height: 55}}></View>
         </ScrollView>
       ) : (
         <View style={{justifyContent:'center', alignItems:'center',width: '100%', height: '100%'}}>

@@ -27,6 +27,8 @@ import Comment from './Comment';
 import Share from 'react-native-share';
 
 
+
+
 const deviceWitdh = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
@@ -545,7 +547,7 @@ const editComment =(text,id)=>{
                       justifyContent:'center',
                     }}>
                     <Picker
-                      style={{height: 40, width: 120, padding: 1,justifyContent:'center', alignItems:'center'}}
+                      style={{height: 40, width: 125, padding: 1,justifyContent:'center', alignItems:'center'}}
                       selectedValue={selectedColor}
                       onValueChange={(itemValue, itemIndex) =>
                         setSelectedColor(itemValue)
