@@ -14,12 +14,14 @@ import {
   TouchableWithoutFeedback,
   ToastAndroid,
   LogBox,
+  TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {AddCart, setFavorite, AddToFavorite} from '../../Store/action';
 import {Picker} from '@react-native-picker/picker';
 import {styles} from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAw from 'react-native-vector-icons/FontAwesome5';
 import { useSelector } from 'react-redux';
 import formatCash from '../API/ConvertPrice';
 import firestore from '@react-native-firebase/firestore';
@@ -408,17 +410,35 @@ const editComment =(text,id)=>{
           <View style={styles.wrapDetail}>
             <View style={{flexDirection: 'row'}}>
               <Text style={{fontSize: 17}}> </Text>
-              <Text style={{fontSize: 22, fontWeight: 'bold', marginLeft: 2}}>
+              <Text style={{fontSize: 21, fontWeight: 'bold', marginLeft: 2}}>
                 {name}
               </Text>
             </View>
 
-            <View style={{flexDirection: 'row', marginTop: 5}}>
-              <Icon name="cart-outline" size={25} color="red"/>
-              <Text style={{marginLeft: '2%', fontSize: 18, textShadowColor: 'black', textShadowRadius: 1}}>
-                {formatCash(price)}
-              </Text>
-              <Text style={{color:'green', fontWeight:'700', marginLeft: 5}}>VNĐ</Text>
+            <View style={{flexDirection: 'row', marginTop: 15, justifyContent:'space-around'}}>
+              <View style={{flexDirection:'row', marginRight: 25, alignItems:'center'}}>
+                <FontAw name="wallet" size={20} color="#171717"/>
+                <Text style={{marginLeft: 5, fontSize: 18, textShadowColor: 'black', textShadowRadius: 1}}>
+                  {formatCash(price)}
+                </Text>
+                <Text style={{color:'green', fontWeight:'700', marginLeft: 5}}>VNĐ</Text>
+              </View>
+
+              {
+                isAdmin == true ? (null) : (
+                  <View style={{marginRight: 45}}>
+                    <TouchableOpacity style={{alignItems:'center', backgroundColor:'orange', height: 35, justifyContent:'center', borderRadius: 20, width: 145}} onPress={() => {
+                          openModal();
+                        }}>
+                      <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                        <Icon name="cart-outline" size={25} color="white"/>
+                        <Text style={{color:'black', textDecorationLine:'underline', fontSize: 14}}>Thêm giỏ hàng</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                )
+              }
+
             </View>
 
           </View>
@@ -475,7 +495,7 @@ const editComment =(text,id)=>{
 
             </View>
 
-            <View style={{marginTop: 30, height: 100}}>
+            {/* <View style={{marginTop: 30, height: 100}}>
               <View style={{width: '60%', marginLeft: '20%'}}>
               {
                 isAdmin == true? (
@@ -490,7 +510,7 @@ const editComment =(text,id)=>{
               }
                 
               </View>
-            </View>
+            </View> */}
           </View>
         </View>
         

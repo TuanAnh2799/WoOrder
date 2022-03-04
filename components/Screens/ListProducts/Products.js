@@ -145,6 +145,7 @@ function ProductScreen({AddToFavorite, setProduct}) {
                   onPress={() =>
                     navigation.navigate('Details', {
                       product: item,
+                      name: item.name,
                     })
                   }>
                   <View style={styles.item} key={index}>

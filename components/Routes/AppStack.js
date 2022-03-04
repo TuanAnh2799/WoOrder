@@ -16,10 +16,7 @@ export default function AppScreen() {
         <AppStack.Navigator initialRouteName='Home'>
             <AppStack.Screen name="Home" component={HomeScreen} options={{headerShown: false}}/>
             <AppStack.Screen name="Products" component={ProductsScreen}/>
-            <AppStack.Screen name="Details" component={DetailsScreen} options={{
-                title:'Chi tiết',
-                headerTitleAlign:'center',
-                }}/>
+            <AppStack.Screen name="Details" component={DetailsScreen} options={({ route }) => ({ title: route.params.name , headerTitleAlign: 'center'})}/>
             <AppStack.Screen name="Search" component={SearchScreen} options={{
                 title: 'Tìm kiếm',
                 headerTitleAlign:'center',

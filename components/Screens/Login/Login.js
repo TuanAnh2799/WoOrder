@@ -10,6 +10,7 @@ import {
   StatusBar,
   ToastAndroid,
   Dimensions,
+  Alert,
 } from 'react-native';
 import Banner from '../../../img/banner.jpg';
 //import {AuthContext} from '../../Routes/AuthProvider';
@@ -44,12 +45,13 @@ const LoginScreen = ({navigation,setUserLogin}) => {
       await auth().signInWithEmailAndPassword(email, pass)
       .then(()=> {
         auth().onAuthStateChanged((user) => {
-          if (user) {
+          if (user.emailVerified == true) {
             // User logged in already or has just logged in.
-            console.log('get user from firebase:',user.uid);
+            console.log('isConfirm? :',user.emailVerified);
             setUserLogin(user.uid);
           } else {
-            // User not logged in or has just logged out.
+            setIsLoading(false);
+            Alert.alert("Thông báo.", "Vui lòng xác minh tài khoản.");
           }
         });
           ToastAndroid.show('Đăng nhập thành công.',ToastAndroid.SHORT);   
@@ -118,7 +120,7 @@ const LoginScreen = ({navigation,setUserLogin}) => {
                 style={styles.banner}
               />
             </View>
-            <Animatable.View animation="fadeInUpBig" style={styles.Input}>
+            <Animatable.View animation="fadeInUpBig" duration={2000} style={styles.Input}>
               <Text style={[styles.text, {marginTop: 35}]}>Email</Text>
               <View style={{flexDirection: 'row', marginTop: 20,}}>
                 <FontAwesome

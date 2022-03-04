@@ -22,7 +22,7 @@ import PasswordInputText from 'react-native-hide-show-password-input';
 import {connect} from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import {setUserRegister} from '../../Store/action';
-import auth from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator } from 'react-native-paper';
 
@@ -40,10 +40,18 @@ function RegisterScreen({navigation,setUserRegister}) {
     setIsLoading(true);
     try {
       
-     var userIfo = await auth().createUserWithEmailAndPassword(values.email,values.password);
-     
-      var userID = userIfo.user;
-      console.log('userID:',userID.uid);
+     var userInfo = await auth().createUserWithEmailAndPassword(values.email,values.password);
+
+      var userID = userInfo.user;
+      let user = firebase.auth().currentUser;
+      user.sendEmailVerification();
+      console.log('userInffo:',user);
+      // await firebase.auth().currentUser.sendEmailVerification({
+      //   handleCodeInApp: false,
+      // });
+
+      // userID.sendEmailVerification(); //send confirm
+
       firestore()
       .collection('Users')
       .doc(userID.uid)
@@ -72,7 +80,8 @@ function RegisterScreen({navigation,setUserRegister}) {
         })
         .then(() => {
           console.log('Added User Address!');
-          setUserRegister(userID.uid);
+          //setUserRegister(userID.uid);
+          navigation.navigate("Confirm");
           ToastAndroid.show('Đăng ký thành công.',ToastAndroid.SHORT);
           setIsLoading(false);
         });
@@ -139,7 +148,7 @@ function RegisterScreen({navigation,setUserRegister}) {
       <View style={styles.header}>
         <Text style={styles.text_header}>Đăng ký ngay!</Text>
       </View>
-      <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+      <Animatable.View animation="fadeInUpBig" style={styles.footer} duration={2000}>
         <Formik
           validationSchema={registerValidSchema}
           initialValues={{
@@ -160,7 +169,7 @@ function RegisterScreen({navigation,setUserRegister}) {
             touched,
             isValid,
           }) => (
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator ={false}>
               <Text style={styles.text_footer}>Họ tên</Text>
               <View style={styles.action}>
                 <FontAwesome name="user-o" color="#05375a" size={20} />

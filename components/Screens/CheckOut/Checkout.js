@@ -133,8 +133,8 @@ function CheckOutScreen({
                           width: '60%',
                           marginLeft: 10,
                         }}>
-                        <View style={{width: '100%', height: 40}}>
-                          <Title>{item.name}</Title>
+                        <View style={{width: '95%', height: 40}}>
+                          <Title style={{fontSize: 17}}>{item.name}</Title>
                         </View>
                         <View
                           style={{

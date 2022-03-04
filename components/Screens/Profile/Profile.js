@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {Avatar, Title, Caption, TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import firestore from '@react-native-firebase/firestore';
+import firestore, { firebase } from '@react-native-firebase/firestore';
 import {setUserLogout,resetStore,clearFavorite,setAdmin} from '../../Store/action';
 import {connect} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -30,6 +30,7 @@ function ProfileScreen({setUserLogout,resetStore,clearFavorite,setAdmin}) {
   const [myOrder2, setMyOrder2] = useState(0);
   const [checkOrder, setCheckOrder] = useState([]);
 
+ 
 
   useEffect(() => {
     const subscriber = firestore()
