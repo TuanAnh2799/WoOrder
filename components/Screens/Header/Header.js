@@ -41,7 +41,7 @@ export default function HeaderScreen() {
 const styles = StyleSheet.create({
     wrappHeader: {
         flexDirection:'row',
-        height: 41,
+        height: 45,
         justifyContent:'space-between',
         backgroundColor:'#fff'
     },

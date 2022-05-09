@@ -25,12 +25,9 @@ export default function AdminDeliveredScreen({navigation}) {
   const [isRefreshing,setRefreshing] = useState(false);
 
 
-  useEffect(() => {
-    getData();
+  useEffect(async() => {
+    //getData();
     UserAddress();
-  }, []);
-  
-  const getData= async()=>{
     const subscriber = await firestore()
       .collection('Orders')
       // Filter results
@@ -52,7 +49,31 @@ export default function AdminDeliveredScreen({navigation}) {
 
     // Unsubscribe from events when no longer in use
     return () => subscriber();
-  }
+  }, []);
+  
+  // const getData= async()=>{
+  //   const subscriber = await firestore()
+  //     .collection('Orders')
+  //     // Filter results
+  //     .where('orderStatus', '==', 'Đã giao hàng')
+  //     .get()
+  //     .then(querySnapshot => {
+  //       const myorder = [];
+
+  //       querySnapshot.forEach(documentSnapshot => {
+  //         myorder.push({
+  //           ...documentSnapshot.data(),
+  //           key: documentSnapshot.id,
+  //         });
+          
+  //       });
+  //       setLoading(false);
+  //       setMyOrder(myorder);
+  //     });
+
+  //   // Unsubscribe from events when no longer in use
+  //   return () => subscriber();
+  // }
 
   const  UserAddress = async()=> {
     const subscriber = await firestore()

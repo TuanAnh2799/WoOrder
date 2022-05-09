@@ -6,7 +6,9 @@ import {persistReducer,persistStore} from 'redux-persist';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
+    blacklist: ['navigation'],
 };
+
 export default ()=>{
     const persistedReducer = persistReducer(persistConfig,reducer);
     let store =  createStore(persistedReducer);

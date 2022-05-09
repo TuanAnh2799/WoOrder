@@ -25,9 +25,31 @@ export default function AdminOrderScreen({navigation}) {
   const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    getListOrder();
+  useEffect(async() => {
+    //getListOrder();
     UserAddress();
+    const subscriber = await firestore()
+      .collection('Orders')
+      // Filter results
+      .where('orderStatus', '==', 'Đang chờ xử lý')
+      .get()
+      .then(querySnapshot => {
+        const myorder = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          myorder.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+        setLoading(false);
+        setMyOrder(myorder);
+
+      });
+
+      //UserAddress();
+
+    return () => subscriber();
   }, []);
 
 

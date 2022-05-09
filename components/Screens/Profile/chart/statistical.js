@@ -61,7 +61,7 @@ let thisMon = ''+d.getFullYear()+'-'+ a;
 
 const thisDay =()=> {
     let count = 0;
-    let cash =0;
+    let cash = 0;
     console.log("Chạy qua lọc ngày")
     if(listOrder != null){
         for(let i = 0; i < listOrder.length; i++)
@@ -74,9 +74,11 @@ const thisDay =()=> {
             });
         }
     }
-    }
+
     setCountDay(count);
     setCashDay(cash);
+    }
+    
 }
 
 

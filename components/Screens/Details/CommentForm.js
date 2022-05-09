@@ -7,15 +7,15 @@ const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, h
     const isDisabled = text.length === 0 || text.length >100;
 
     return (
-        <View style={{width:'100%', marginTop: 5}}>
-            <View style={{width:'100%', height: 40, borderColor:'black', borderWidth:0.5, borderRadius:10}}>
+        <View style={styles.wrapComment}>
+            <View style={styles.wrapTextInput}>
             <TextInput placeholder={holder}
                 value={text}
                 onChangeText={(text) => setText(text)}
                 />
             </View>
-            <View style={{flexDirection:'row', width:'100%', justifyContent:'space-around', marginTop: 12, height: 35}}>
-                <View style={{width:'40%', height: '100%'}}>
+            <View style={styles.wrapButton}>
+                <View style={styles.button}>
                     <Button title={submitLabel} disabled={isDisabled} onPress={() => {
                         if(text !== ''){
                             setActiveComment(null);
@@ -27,7 +27,7 @@ const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, h
                         }
                     }}/>
                 </View>
-                <View style={{ width:'25%', height: '100%'}}>
+                <View style={styles.activeButton}>
                     <Button title='Hủy' onPress={()=>setActiveComment(null)}/>
                 </View>
             </View>
@@ -37,4 +37,31 @@ const CommentForm = ({ handleSubmit, submitLabel,setActiveComment,initialText, h
 
 export default CommentForm
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    wrapComment: {
+        width:'100%',
+        marginTop: 5
+    },
+    wrapTextInput: {
+        width:'100%',
+        height: 40,
+        borderColor:'black',
+        borderWidth:0.5,
+        borderRadius:10
+    },
+    wrapButton: {
+        flexDirection:'row',
+        width:'100%',
+        justifyContent:'space-around',
+        marginTop: 12,
+        height: 35
+    },
+    button: {
+        width:'40%',
+        height: '100%'
+    },
+    activeButton: {
+        width:'25%',
+        height: '100%'
+    }
+})

@@ -15,6 +15,7 @@ export default function TabScreen() {
 
     return (
         <Tab.Navigator
+        initialRouteName='Trang chủ'
         screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
         let iconName;

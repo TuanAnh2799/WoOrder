@@ -15,9 +15,30 @@ export default function AdminShippingScreen() {
   const [isLoading,setLoading] = useState(true);
   const [isRefreshing,setRefreshing] = useState(false);
 
-  useEffect(() => {
-    getData();
+  useEffect(async() => {
+    //getData();
     UserAddress();
+    const subscriber = await firestore()
+      .collection('Orders')
+      // Filter results
+      .where('orderStatus', '==', 'Đã duyệt')
+      .get()
+      .then(querySnapshot => {
+        const myorder = [];
+
+        querySnapshot.forEach(documentSnapshot => {
+          myorder.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+          
+        });
+        setLoading(false);
+        setMyOrder(myorder);
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
   }, []);
   
   const getData= async()=>{

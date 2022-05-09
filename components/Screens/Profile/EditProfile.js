@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -19,8 +19,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import firestore from '@react-native-firebase/firestore';
-import Animated from 'react-native-reanimated';
-import BottomSheet from 'reanimated-bottom-sheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import {ActivityIndicator} from 'react-native-paper';
@@ -414,7 +412,7 @@ const EditProfile = ({navigation, route}) => {
               <View style={styles.wrappButton}>
                 <Button
                   title="Cập nhật"
-                  disabled={!isValid}
+                  disabled={values.fullname === initValues.fullname && values.address === initValues.address && values.phonenumber === initValues.phonenumber ? true : !isValid}
                   onPress={() => {
                     try {
                       firestore()

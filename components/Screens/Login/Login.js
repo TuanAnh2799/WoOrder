@@ -35,8 +35,8 @@ const LoginScreen = ({navigation,setUserLogin}) => {
 
   var user = useSelector(state => state.userState.User);
 
-  console.log("test get data:",isLoading);
-  console.log("User bên login hiện tại:",user);
+  // console.log("test get data:",isLoading);
+  // console.log("User bên login hiện tại:",user);
 
   const Login =async(email,pass) => {
     setIsLoading(true);
@@ -140,7 +140,7 @@ const LoginScreen = ({navigation,setUserLogin}) => {
                 />
               </View>
               {errors.email && touched.email && (
-                <Text style={{fontSize: 14, color: 'red', marginLeft: '10%'}}>
+                <Text style={styles.errText}>
                   {errors.email}
                 </Text>
               )}
@@ -163,7 +163,7 @@ const LoginScreen = ({navigation,setUserLogin}) => {
                 </View>
 
                 {errors.password && touched.password && (
-                  <Text style={{fontSize: 14, color: 'red', marginLeft: '10%'}}>
+                  <Text style={styles.errText}>
                     {errors.password}
                   </Text>
                 )}
@@ -249,6 +249,9 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === 'ios' ? 0 : -12,
     paddingLeft: 10,
     width: '85%',
+  },
+  errText: {
+    fontSize: 14, color: 'red', marginLeft: '10%'
   },
 });
 

@@ -6,9 +6,6 @@ const linkEmail = 'https://mail.google.com/mail';
 
 const ConfirmEmailScreen = ({navigation}) => {
 
-    // var user = firebase.auth().currentUser;
-
-    // console.log('user curent confirm:', user);
 
     const OpenURLButton = ({ url, children }) => {
         const handlePress = useCallback(async () => {

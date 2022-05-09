@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Alert, Platform } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Alert, Platform, Dimensions, SafeAreaView } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -8,6 +8,9 @@ import changePassword from '../API/forgotPassword'
 import PasswordInputText from 'react-native-hide-show-password-input';
 import auth, { firebase } from '@react-native-firebase/auth';
 import onChangePasswordPress from '../API/changePassword';
+
+
+const {width, height} = Dimensions.get('window');
 
 const changePasswordScreen = () => {
 
@@ -52,7 +55,7 @@ const changePasswordScreen = () => {
     //   }
 
     return (
-        <View style={{width:'100%', height:'100%',justifyContent:'center', alignItems:'center'}}>
+        <SafeAreaView style={styles.wrapForgetPass}>
             <Formik
                 validationSchema={ChangePassValidSchema}
                 initialValues={{password: '', newpassword:'', confirmPassword: ''}}
@@ -67,7 +70,7 @@ const changePasswordScreen = () => {
                     touched,
                     isValid,
                   }) => (
-                <View style={{width:'90%', height:400, backgroundColor:'#fff', borderRadius: 20, borderWidth: 0.5 , borderColor:'#1c1c1c', shadowColor:'black', elevation: 5,}}>
+                <View style={{width:'90%', height: height *0.35, backgroundColor:'#fff', borderRadius: 20, borderWidth: 0.5 , borderColor:'#1c1c1c', shadowColor:'black', elevation: 5,}}>
                     <View>
                         <Text style={styles.text}>Mật khẩu cũ</Text>
                         <View style={{flexDirection: 'row', width: '100%'}}>
@@ -95,7 +98,7 @@ const changePasswordScreen = () => {
                     <View>
                         <Text style={styles.text}>Mật khẩu mới</Text>
                         <View style={{flexDirection: 'row'}}>
-                            <View style={{marginTop: 15, marginLeft: 15, justifyContent:'center', alignItems:'center'}}>
+                            <View style={styles.wrapIcon}>
                                 <FontAwesome name="lock" color="#05375a" size={24} />
                             </View>
 
@@ -120,7 +123,7 @@ const changePasswordScreen = () => {
                     <View>
                         <Text style={styles.text}>Nhập lại mật khẩu mới</Text>
                         <View style={{flexDirection: 'row'}}>
-                            <View style={{marginTop: 15, marginLeft: 15, justifyContent:'center', alignItems:'center'}}>
+                            <View style={styles.wrapIcon}>
                                 <FontAwesome name="lock" color="#05375a" size={24} />
                             </View>
 
@@ -165,13 +168,18 @@ const changePasswordScreen = () => {
                 </View>
             )}
             </Formik>
-        </View>
+        </SafeAreaView>
     )
 }
 
 export default changePasswordScreen;
 
 const styles = StyleSheet.create({
+    wrapForgetPass: {
+        flex: 1,
+        backgroundColor:'#fff',
+        justifyContent:'center', alignItems:'center'
+    },
     textInputPass: {
         marginTop: Platform.OS === 'ios' ? 0 : -12,
         paddingLeft: 10,
@@ -182,4 +190,10 @@ const styles = StyleSheet.create({
         left: 15,
         marginTop: 20,
       },
+    wrapIcon: {
+        marginTop: 15,
+        marginLeft: 15,
+        justifyContent:'center',
+        alignItems:'center'
+    },
 })

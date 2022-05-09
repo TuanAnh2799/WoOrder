@@ -28,6 +28,9 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+
+
+
  const updateUser = Yup.object().shape({
     fullname: Yup.string()
       .max(25, () => `Tên tối đa 25 ký tự.`)
@@ -207,10 +210,14 @@ const UserManagerScreen = () => {
                   </View>
                 </View>
               </View>
+              
+              {/* customStyles={{width: 50, height: 50}} text={<View style={{width: 30, height: 30, backgroundColor:'green', borderRadius: 30, justifyContent:'center', alignItems:'center'}}>
+                    <Icon name='dots-vertical' size={25} color='black' style={{marginLeft: 5, marginTop: 2}}/>
+                  </View>} */}
 
               <View style={{width: '10%', justifyContent: 'center'}}>
                 <Menu>
-                  <MenuTrigger text="Q.lý" />
+                  <MenuTrigger text='Q.lý' />
                   <MenuOptions>
                     <MenuOption
                       onSelect={() => {
@@ -565,4 +572,5 @@ const styles = StyleSheet.create({
   labelRadioBtn: {
     left: -20,
   },
+
 });

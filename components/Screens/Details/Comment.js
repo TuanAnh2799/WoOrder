@@ -19,27 +19,13 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
   
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        width: '94%',
-        marginLeft: '3%',
-        marginTop: 10,
-      }}
-      key={comment.idComment}>
-      <View style={{width: '15%', height: 50, borderRadius: 100, marginTop: 5}}>
-        <Image
-          style={{width: '100%', height: '100%', borderRadius: 100}}
-          source={{uri: comment.avatar}}
-        />
+    <View style={styles.wrapCMT} key={comment.idComment}>
+      <View style={styles.wrapAvatar}>
+        <Image style={styles.avatar} source={{uri: comment.avatar}} />
       </View>
       <View style={{width: '85%'}}>
         <View
-          style={{
-            marginLeft: 10,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
+          style={styles.wrapRow1}>
           <View style={{width: '70%'}}>
             <Text style={{fontSize: 15, fontWeight: '700'}}>
               {comment.name}
@@ -157,4 +143,27 @@ const Comment = ({comment, replies, onDelete, addReply,editComment, userid, acti
 
 export default Comment;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  wrapCMT: {
+    flexDirection: 'row',
+    width: '94%',
+    marginLeft: '3%',
+    marginTop: 10,
+  },
+  wrapAvatar: {
+    width: '15%',
+    height: 50,
+    borderRadius: 100,
+    marginTop: 5
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 100
+  },
+  wrapRow1: {
+    marginLeft: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+});
