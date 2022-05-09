@@ -70,7 +70,7 @@ const changePasswordScreen = () => {
                     touched,
                     isValid,
                   }) => (
-                <View style={{width:'90%', height: height *0.35, backgroundColor:'#fff', borderRadius: 20, borderWidth: 0.5 , borderColor:'#1c1c1c', shadowColor:'black', elevation: 5,}}>
+                <View style={{width:'90%', height: "55%", backgroundColor:'#fff', borderRadius: 20, borderWidth: 0.5 , borderColor:'#1c1c1c', shadowColor:'black', elevation: 5,}}>
                     <View>
                         <Text style={styles.text}>Mật khẩu cũ</Text>
                         <View style={{flexDirection: 'row', width: '100%'}}>
